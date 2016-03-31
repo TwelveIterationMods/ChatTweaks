@@ -7,6 +7,7 @@ import java.util.Map;
 @IFMLLoadingPlugin.Name("BetterMinecraftChat")
 @IFMLLoadingPlugin.MCVersion("1.9")
 @IFMLLoadingPlugin.TransformerExclusions("net.blay09.mods.bmc.coremod")
+@IFMLLoadingPlugin.SortingIndex(1001)
 public class LoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
