@@ -2,7 +2,7 @@
 {
   "modid": "BetterMinecraftChat",
   "code": "BetterMinecraftChat",
-  "description": "such better",
+  "description": "Emoticons, Image Preview, Tabs and Filters. Client-side only.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

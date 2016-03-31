@@ -34,7 +34,7 @@ public class ClassTransformer implements IClassTransformer {
                     for(int i = 0; i < method.instructions.size(); i++) {
                         AbstractInsnNode node = method.instructions.get(i);
                         if(node instanceof MethodInsnNode) {
-                            if(node.getOpcode() == Opcodes.INVOKESTATIC && ((MethodInsnNode) node).name.equals("enableBlend")) {
+                            if(node.getOpcode() == Opcodes.INVOKESTATIC && (((MethodInsnNode) node).name.equals("enableBlend") || ((MethodInsnNode) node).name.equals("func_179147_l"))) {
                                 insertAfter = node;
                                 break;
                             }
@@ -57,7 +57,7 @@ public class ClassTransformer implements IClassTransformer {
                     for(int i = 0; i < method.instructions.size(); i++) {
                         AbstractInsnNode node = method.instructions.get(i);
                         if(node instanceof MethodInsnNode) {
-                            if(node.getOpcode() == Opcodes.INVOKESTATIC && ((MethodInsnNode) node).name.equals("disableAlpha")) {
+                            if(node.getOpcode() == Opcodes.INVOKESTATIC && (((MethodInsnNode) node).name.equals("disableAlpha") || ((MethodInsnNode) node).name.equals("func_179118_c"))) {
                                 insertBefore = node;
                                 break;
                             }
