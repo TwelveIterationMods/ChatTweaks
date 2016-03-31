@@ -37,9 +37,9 @@ public class RenderHandler {
 		ChatMessage chatLine = (ChatMessage) BetterMinecraftChat.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
 		if (chatLine != null) {
 			if(chatLine.hasBackgroundColor()) {
-				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), chatLine.getBackgroundColor() | ((event.getAlpha() / 4) << 24));
+				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), chatLine.getBackgroundColor() | ((event.getAlpha() / 2) << 24));
 			} else {
-				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), (backgroundColorAlternate ? BetterMinecraftChatConfig.backgroundColor1 : BetterMinecraftChatConfig.backgroundColor2) | ((event.getAlpha() / 4) << 24));
+				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), (backgroundColorAlternate ? BetterMinecraftChatConfig.backgroundColor1 : BetterMinecraftChatConfig.backgroundColor2) | ((event.getAlpha() / 2) << 24));
 			}
 			if(chatLine.hasRGBColors()) {
 				RGBFontRenderer.reset();

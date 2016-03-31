@@ -106,7 +106,7 @@ public class BetterMinecraftChatConfig {
 		BetterMinecraftChat.getChatHandler().setActiveChannel(defaultChannel);
 	}
 
-	public static void createDefaultChannels() {
+	private static void createDefaultChannels() {
 		ChatChannel defaultChannel = new ChatChannel("*");
 		defaultChannel.setShowTimestamps(true);
 		BetterMinecraftChat.getChatHandler().addChannel(defaultChannel);
@@ -119,7 +119,7 @@ public class BetterMinecraftChatConfig {
 		BetterMinecraftChat.getChatHandler().addChannel(bedSpamChannel);
 
 		ChatChannel commandChannel = new ChatChannel("Common Commands");
-		commandChannel.setFilterPattern("(Set the time to [0-9]|Toggled downfall|Given \\[.+\\] \\* [0-9]+ to .+)");
+		commandChannel.setFilterPattern("(Set the time to [0-9]+|Toggled downfall|Given \\[.+\\] \\* [0-9]+ to .+)");
 		commandChannel.setMessageStyle(MessageStyle.Side);
 		commandChannel.setExclusive(true);
 		BetterMinecraftChat.getChatHandler().addChannel(commandChannel);
