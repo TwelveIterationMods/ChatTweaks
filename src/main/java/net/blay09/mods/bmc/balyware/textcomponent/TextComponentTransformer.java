@@ -5,9 +5,13 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.translation.I18n;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public abstract class TextComponentTransformer {
 
-	private static final String PATTERN_ARGUMENT = "%[sdf]";
+	private static final Pattern PATTERN_ARGUMENT = Pattern.compile("(?:%([0-9])\\$[sdf]|%[sdf])");
+	private static final Matcher MATCHER_ARGUMENT = PATTERN_ARGUMENT.matcher("");
 
 	public void begin(ITextComponent chatComponent) {}
 
@@ -55,26 +59,33 @@ public abstract class TextComponentTransformer {
 		return walkTextComponentString(convertTranslationComponent(chatComponent));
 	}
 
-	public static TextComponentString convertTranslationComponent(TextComponentTranslation chatComponent) {
+	private static TextComponentString convertTranslationComponent(TextComponentTranslation chatComponent) {
 		Object[] args = chatComponent.getFormatArgs();
 		String[] splitKey = I18n.translateToLocal(chatComponent.getKey()).split("(?<=" + PATTERN_ARGUMENT + ")|(?=" + PATTERN_ARGUMENT + ")");
 		TextComponentString root = null;
 		int currentArg = 0;
 		for(String key : splitKey) {
-			if(key.matches(PATTERN_ARGUMENT)) {
+			MATCHER_ARGUMENT.reset(key);
+			if(MATCHER_ARGUMENT.matches()) {
 				if(root == null) {
 					root = new TextComponentString("");
 					root.setChatStyle(chatComponent.getChatStyle().createShallowCopy());
 				}
-				if(args.length > currentArg) {
-					if(args[currentArg] instanceof TextComponentString) {
-						root.appendSibling(((TextComponentString) args[currentArg]).createCopy());
-					} else if(args[currentArg] instanceof TextComponentTranslation) {
-						root.appendSibling(convertTranslationComponent((TextComponentTranslation) args[currentArg]));
+				int thisArg = currentArg;
+				if(MATCHER_ARGUMENT.group(1) != null) {
+					thisArg = Integer.parseInt(MATCHER_ARGUMENT.group(1)) - 1;
+				}
+				if(args.length > thisArg) {
+					if(args[thisArg] instanceof TextComponentString) {
+						root.appendSibling(((TextComponentString) args[thisArg]).createCopy());
+					} else if(args[thisArg] instanceof TextComponentTranslation) {
+						root.appendSibling(convertTranslationComponent((TextComponentTranslation) args[thisArg]));
 					} else {
-						root.appendText(args[currentArg] == null ? "null" : String.valueOf(args[currentArg]));
+						root.appendText(args[thisArg] == null ? "null" : String.valueOf(args[thisArg]));
 					}
-					currentArg++;
+					if(thisArg == currentArg) {
+						currentArg++;
+					}
 				}
 			} else {
 				if(root == null) {
