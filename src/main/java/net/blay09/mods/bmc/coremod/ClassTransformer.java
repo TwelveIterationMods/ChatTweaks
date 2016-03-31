@@ -13,7 +13,9 @@ public class ClassTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String className, String transformedName, byte[] bytes) {
         if(transformedName.equals("net.minecraft.client.gui.GuiNewChat")) {
-            ClassNode classNode = new ClassNode();
+			boolean patchedDrawChat = false;
+			boolean patchedPrintMessage = false;
+			ClassNode classNode = new ClassNode();
             ClassReader classReader = new ClassReader(bytes);
             classReader.accept(classNode, 0);
             for(MethodNode method : classNode.methods) {
@@ -63,6 +65,9 @@ public class ClassTransformer implements IClassTransformer {
                     }
                     if(insertBefore != null) {
                         method.instructions.insertBefore(insertBefore, mn.instructions);
+						System.out.println("BetterMinecraftChat: Successfully patched drawChat");
+						patchedDrawChat = true;
+						if(patchedPrintMessage) break;
                     }
                 } else if(method.name.equals("printChatMessageWithOptionalDeletion") || method.name.equals("func_146234_a")) {
                     // Insert printChatMessage event call
@@ -84,12 +89,22 @@ public class ClassTransformer implements IClassTransformer {
                     mn.visitInsn(Opcodes.RETURN);
                     mn.visitLabel(afterReturn);
                     method.instructions.insertBefore(method.instructions.getFirst(), mn.instructions);
+					System.out.println("BetterMinecraftChat: Successfully patched printChatMessage");
+					patchedPrintMessage = true;
+					if(patchedDrawChat) break;
                 }
             }
+			if(!patchedDrawChat) {
+				System.err.println("Could not patch drawChat - most chat rendering features (like emotes) are not going to work!");
+			}
+			if(!patchedPrintMessage) {
+				System.err.println("Could not patch printChatMessage - everything is going to horribly break!");
+			}
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
             return writer.toByteArray();
         } else if(transformedName.equals("net.minecraft.client.gui.FontRenderer")) {
+			boolean patchedRenderString = false;
             ClassNode classNode = new ClassNode();
             ClassReader classReader = new ClassReader(bytes);
             classReader.accept(classNode, 0);
@@ -130,10 +145,16 @@ public class ClassTransformer implements IClassTransformer {
 							mn.visitMethodInsn(Opcodes.INVOKESTATIC, "net/blay09/mods/bmc/coremod/RGBFontRenderer", "popColor", "(Lnet/minecraft/client/gui/FontRenderer;Z)V", false);
 							mn.visitLabel(afterRGB);
 							method.instructions.insertBefore(insertBefore, mn.instructions);
+							patchedRenderString = true;
+							System.out.println("BetterMinecraftChat: Successfully patched renderString");
+							break;
 						}
 					}
 				}
             }
+			if(!patchedRenderString) {
+				System.err.println("Could not patch FontRenderer - RGB Font Rendering is not going to work!");
+			}
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
             return writer.toByteArray();
