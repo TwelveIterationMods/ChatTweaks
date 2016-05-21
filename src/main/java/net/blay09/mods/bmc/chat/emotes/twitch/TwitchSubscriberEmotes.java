@@ -45,19 +45,21 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 				String code = entry.get("code").getAsString();
 				matcher.reset(code);
 				if(matcher.matches()) {
+					int id = entry.get("id").getAsInt();
 					IEmoteGroup group = groupMap.get(emoteSet);
 					if(group == null) {
 						group = BetterMinecraftChatAPI.registerEmoteGroup("Twitch-" + emoteSet);
 						groupMap.put(emoteSet, group);
 					}
 					IEmote emote = BetterMinecraftChatAPI.registerEmote(code, this);
-					emote.setCustomData(entry.get("id").getAsInt());
+					emote.setCustomData(id);
 					String channel = TwitchAPI.getChannelForEmoteSet(emoteSet);
 					if(channel != null) {
 						emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmoteChannel") + channel);
 					}
-					emote.setImageCacheFile("twitch-" + entry.get("id").getAsInt());
+					emote.setImageCacheFile("twitch-" + id);
 					group.addEmote(emote);
+					TwitchAPI.registerTwitchEmote(id, emote);
 				}
 			}
 		}

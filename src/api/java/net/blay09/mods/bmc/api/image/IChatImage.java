@@ -7,6 +7,8 @@ public interface IChatImage {
 
 	int getIndex();
 
+	void setIndex(int index);
+
 	int getSpaces();
 
 	int getWidth();

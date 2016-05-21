@@ -34,9 +34,9 @@ public class BetterMinecraftChatConfig {
 
 	public static void preInitLoad(Configuration config) {
 		BetterMinecraftChatConfig.config = config;
-		backgroundColor1 = colorFromHex(config.getString("Background Color 1", "theme", "000000", "The background color to use for even line numbers in HEX."));
-		backgroundColor2 = colorFromHex(config.getString("Background Color 2", "theme", "111111", "The background color to use for uneven line numbers in HEX."));
-		backgroundColorHighlight = colorFromHex(config.getString("Highlight Color", "theme", "FF0000", "The background color to use for highlighted lines in HEX."));
+		backgroundColor1 = BetterMinecraftChat.colorFromHex(config.getString("Background Color 1", "theme", "000000", "The background color to use for even line numbers in HEX."));
+		backgroundColor2 = BetterMinecraftChat.colorFromHex(config.getString("Background Color 2", "theme", "111111", "The background color to use for uneven line numbers in HEX."));
+		backgroundColorHighlight = BetterMinecraftChat.colorFromHex(config.getString("Highlight Color", "theme", "FF0000", "The background color to use for highlighted lines in HEX."));
 		highlightName = config.getBoolean("Highlight Name", "highlights", true, "If set to true, mentions of your Minecraft IGN will be highlighted in chat.");
 		highlightStrings = config.getStringList("Highlighted Words", "highlights", new String[0], "List of words that are highlighted in chat.");
 		emoteTabCompletion = config.getBoolean("Tab Completion for Emotes", "general", false, "Should Tab completion be enabled for emotes?");
@@ -140,10 +140,6 @@ public class BetterMinecraftChatConfig {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private static int colorFromHex(String hex) {
-		return Integer.parseInt(hex.startsWith("#") ? hex.substring(1) : hex, 16);
 	}
 
 }

@@ -2,7 +2,6 @@ package net.blay09.mods.bmc;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.SimpleImageURLTransformer;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
@@ -10,11 +9,8 @@ import net.blay09.mods.bmc.chat.ChatMacros;
 import net.blay09.mods.bmc.chat.emotes.twitch.*;
 import net.blay09.mods.bmc.handler.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -132,5 +128,9 @@ public class BetterMinecraftChat {
 
 	public static void registerImageURLTransformer(Function<String, String> function) {
 		instance.imageURLTransformers.add(function);
+	}
+
+	public static int colorFromHex(String hex) {
+		return Integer.parseInt(hex.startsWith("#") ? hex.substring(1) : hex, 16);
 	}
 }

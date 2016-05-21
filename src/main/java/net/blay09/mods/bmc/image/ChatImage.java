@@ -7,9 +7,13 @@ import java.util.List;
 
 public abstract class ChatImage implements IChatImage {
 
-    private final int index;
+    private int index;
 
     protected ChatImage(int index) {
+        this.index = index;
+    }
+
+    public void setIndex(int index) {
         this.index = index;
     }
 

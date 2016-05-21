@@ -29,6 +29,7 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 	private void loadEmotes(JsonArray jsonArray, String tooltip, boolean includeSmileys, IEmoteGroup group) {
 		for(int i = 0; i < jsonArray.size(); i++) {
 			JsonObject entry = jsonArray.get(i).getAsJsonObject();
+			int id = entry.get("id").getAsInt();
 			String code = entry.get("code").getAsString();
 			IEmote emote;
 			if(code.matches(".*\\p{Punct}.*")) {
@@ -42,10 +43,11 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 			} else {
 				emote = BetterMinecraftChatAPI.registerEmote(code, this);
 			}
-			emote.setCustomData(entry.get("id").getAsInt());
+			emote.setCustomData(id);
 			emote.addTooltip(tooltip);
-			emote.setImageCacheFile("twitch-" + entry.get("id").getAsInt());
+			emote.setImageCacheFile("twitch-" + id);
 			group.addEmote(emote);
+			TwitchAPI.registerTwitchEmote(id, emote);
 		}
 	}
 
