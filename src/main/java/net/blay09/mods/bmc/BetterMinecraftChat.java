@@ -2,6 +2,7 @@ package net.blay09.mods.bmc;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.SimpleImageURLTransformer;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
@@ -9,8 +10,11 @@ import net.blay09.mods.bmc.chat.ChatMacros;
 import net.blay09.mods.bmc.chat.emotes.twitch.*;
 import net.blay09.mods.bmc.handler.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -23,12 +27,13 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
-@Mod(modid = BetterMinecraftChat.MOD_ID, name = "BetterMinecraftChat", clientSideOnly = true, guiFactory = "net.blay09.mods.bmc.gui.GuiFactory")
+@Mod(modid = BetterMinecraftChat.MOD_ID, name = "BetterMinecraftChat", clientSideOnly = true, guiFactory = "net.blay09.mods.bmc.gui.GuiFactory",
+	updateJSON = "http://balyware.com/new/forge_update.php?modid=" + BetterMinecraftChat.MOD_ID)
 public class BetterMinecraftChat {
 
-	public static final String MOD_ID = "BetterMinecraftChat";
+	public static final String MOD_ID = "betterminecraftchat";
 
-	@Mod.Instance
+	@Mod.Instance(MOD_ID)
     public static BetterMinecraftChat instance;
 
 	private Configuration config;
@@ -52,6 +57,7 @@ public class BetterMinecraftChat {
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
 		BetterMinecraftChatConfig.preInitLoad(config);
+		AuthManager.load();
 
 		BetterMinecraftChatAPI._internal_setupAPI(new InternalMethodsImpl());
 

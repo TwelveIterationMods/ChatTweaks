@@ -1,0 +1,54 @@
+<!--
+Copyright (c) 2014 tduva
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Twitch Integration - Access Token</title>
+    <meta name="ROBOTS" content="NOFOLLOW" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript">
+        <!--
+        function initiate() {
+            var hash = document.location.hash.substr(1);
+            var hashParts = hash.split("&");
+            var access_token = null;
+            for (var i=0;i<hashParts.length;++i) {
+                var parameterParts = hashParts[i].split("=");
+                var key = parameterParts[0];
+                var value = parameterParts[1];
+                if (key == "access_token") {
+                    access_token = value;
+                }
+            }
+            document.getElementById("javascript").className = "";
+            if (access_token != null) {
+                document.location.replace("http://127.0.0.1:61324/token/"+access_token);
+            }
+            else {
+                document.getElementById("javascript").innerHTML = "Error: Access Token not found";
+            }
+        }
+        -->
+    </script>
+</head>
+<body onload="initiate()">
+<h1>Twitch Integration - Access Token</h1>
+<noscript>
+    <p>This page requires <strong>JavaScript</strong> to get the token.
+    If you don't want to enable it, you can copy the text in the URL between
+    <code>access_token=</code> and <code>&amp;scope...</code> instead and set it in
+    BetterMinecraftChat via the Connect Manually button.</p>
+</noscript>
+<p id="javascript" class="hide">
+    You should be redirected...
+</p>
+<span style="font-size: small">Authentication Flow adapted from <a href="https://github.com/chatty/chatty">Chatty</a> as per <a href="https://opensource.org/licenses/MIT">MIT License</a><br />Copyright (c) 2014 tduva</span>
+</body>
+</html>

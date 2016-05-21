@@ -39,8 +39,8 @@ public class GuiSleepMPExt extends GuiChatExt {
 	}
 
 	private void wakeFromSleep() {
-		NetHandlerPlayClient netHandler = mc.thePlayer.sendQueue;
-		netHandler.addToSendQueue(new CPacketEntityAction(mc.thePlayer, CPacketEntityAction.Action.STOP_SLEEPING));
+		NetHandlerPlayClient netHandler = mc.thePlayer.connection;
+		netHandler.sendPacket(new CPacketEntityAction(mc.thePlayer, CPacketEntityAction.Action.STOP_SLEEPING));
 		Minecraft.getMinecraft().displayGuiScreen(null);
 	}
 }

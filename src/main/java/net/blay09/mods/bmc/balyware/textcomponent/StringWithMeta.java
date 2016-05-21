@@ -55,7 +55,7 @@ public class StringWithMeta {
 			}
 			textComponent = new TextComponentString(text.substring(lastIndex, Math.min(text.length(), region.getIndex() + region.getLength())));
 			for(MetaEntry meta : metadata.get(region)) {
-				meta.apply(textComponent.getChatStyle());
+				meta.apply(textComponent.getStyle());
 			}
 			if(root == null) {
 				root = new TextComponentString("");

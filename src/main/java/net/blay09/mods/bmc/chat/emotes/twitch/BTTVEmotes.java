@@ -2,11 +2,13 @@ package net.blay09.mods.bmc.chat.emotes.twitch;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 import net.blay09.mods.bmc.api.emote.IEmoteLoader;
 import net.blay09.mods.bmc.balyware.CachedAPI;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
 import java.net.MalformedURLException;
@@ -32,7 +34,7 @@ public class BTTVEmotes implements IEmoteLoader {
 				String code = entry.get("code").getAsString();
 				IEmote emote = BetterMinecraftChatAPI.registerEmote(code, this);
 				emote.setCustomData(entry.get("id").getAsString());
-				emote.addTooltip(TextFormatting.GRAY + "BetterTTV");
+				emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipBTTVEmotes"));
 				emote.setImageCacheFile("bttv-" + entry.get("id").getAsString());
 				group.addEmote(emote);
 			}

@@ -3,10 +3,12 @@ package net.blay09.mods.bmc.chat.emotes.twitch;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 import net.blay09.mods.bmc.api.emote.IEmoteLoader;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
 import java.net.MalformedURLException;
@@ -52,7 +54,7 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 					emote.setCustomData(entry.get("id").getAsInt());
 					String channel = TwitchAPI.getChannelForEmoteSet(emoteSet);
 					if(channel != null) {
-						emote.addTooltip(TextFormatting.GRAY + "Channel: " + channel);
+						emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmoteChannel") + channel);
 					}
 					emote.setImageCacheFile("twitch-" + entry.get("id").getAsInt());
 					group.addEmote(emote);

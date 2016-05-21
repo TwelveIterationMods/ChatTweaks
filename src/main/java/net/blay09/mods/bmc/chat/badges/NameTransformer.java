@@ -28,7 +28,7 @@ public class NameTransformer extends TextComponentTransformer {
 	@Override
 	public ITextComponent transformStyle(ITextComponent component) {
 		if(isNameComponent && nameColor != null) {
-			component.getChatStyle().setColor(nameColor);
+			component.getStyle().setColor(nameColor);
 			nameColor = null;
 			isNameComponent = false;
 		}

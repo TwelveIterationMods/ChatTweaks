@@ -19,6 +19,6 @@ public class MetaEntryHoverEvent extends MetaEntry {
 
 	@Override
 	public void apply(Style style) {
-		style.setChatHoverEvent(hoverEvent);
+		style.setHoverEvent(hoverEvent);
 	}
 }

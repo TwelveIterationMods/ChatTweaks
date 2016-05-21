@@ -25,13 +25,13 @@ public class StyleExtractor extends TextComponentTransformer {
 			return component;
 		}
 		offset += length;
-		Style style = component.getChatStyle();
-		if (style.getColor() != null || style.getInsertion() != null || style.getStrikethrough() || style.getBold() || style.getItalic() || style.getUnderlined() || style.getObfuscated() || style.getChatClickEvent() != null || style.getChatHoverEvent() != null) {
-			if (style.getChatClickEvent() != null) {
-				metadata.put(new StringRegion(start, length), new MetaEntryClickEvent(start, length, style.getChatClickEvent()));
+		Style style = component.getStyle();
+		if (style.getColor() != null || style.getInsertion() != null || style.getStrikethrough() || style.getBold() || style.getItalic() || style.getUnderlined() || style.getObfuscated() || style.getClickEvent() != null || style.getHoverEvent() != null) {
+			if (style.getClickEvent() != null) {
+				metadata.put(new StringRegion(start, length), new MetaEntryClickEvent(start, length, style.getClickEvent()));
 			}
-			if (style.getChatHoverEvent() != null) {
-				metadata.put(new StringRegion(start, length), new MetaEntryHoverEvent(start, length, style.getChatHoverEvent()));
+			if (style.getHoverEvent() != null) {
+				metadata.put(new StringRegion(start, length), new MetaEntryHoverEvent(start, length, style.getHoverEvent()));
 			}
 			if (style.getBold()) {
 				metadata.put(new StringRegion(start, length), new MetaEntryFormatting(start, length, TextFormatting.BOLD));

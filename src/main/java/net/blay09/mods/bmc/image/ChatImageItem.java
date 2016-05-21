@@ -27,8 +27,8 @@ public class ChatImageItem extends ChatImage {
 	private void renderItemModelIntoGUI(ItemStack itemStack, int x, int y, IBakedModel model, int alpha) {
 		TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 		GlStateManager.pushMatrix();
-		textureManager.bindTexture(TextureMap.locationBlocksTexture);
-		textureManager.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+		textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
 		GlStateManager.enableRescaleNormal();
 		GlStateManager.enableAlpha();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f);
@@ -41,8 +41,8 @@ public class ChatImageItem extends ChatImage {
 		GlStateManager.disableRescaleNormal();
 		GlStateManager.disableLighting();
 		GlStateManager.popMatrix();
-		textureManager.bindTexture(TextureMap.locationBlocksTexture);
-		textureManager.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+		textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
 	}
 
 	private static void renderItem(ItemStack itemStack, IBakedModel model, int alpha) {

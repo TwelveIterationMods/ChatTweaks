@@ -7,12 +7,12 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiButtonNavigateChannel extends GuiButton {
+public class GuiButtonNavigate extends GuiButton {
 
 	protected static final ResourceLocation texture = new ResourceLocation(BetterMinecraftChat.MOD_ID, "gui.png");
 	private final boolean isNext;
 
-	public GuiButtonNavigateChannel(int buttonId, int x, int y, boolean isNext) {
+	public GuiButtonNavigate(int buttonId, int x, int y, boolean isNext) {
 		super(buttonId, x, y, 12, 12, "");
 		this.isNext = isNext;
 	}

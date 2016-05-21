@@ -21,7 +21,7 @@ public class PatronBadges {
 	private static final Map<String, NameBadge> playerMap = Maps.newHashMap();
 
 	public static void init() {
-		JsonObject root = CachedAPI.loadCachedAPI("http://blay09.net/eiranet/api/badges.php", "patron_badges.json");
+		JsonObject root = CachedAPI.loadCachedAPI("http://balyware.com/control-panel/api/badges.php", "patron_badges.json");
 		if(root != null) {
 			String urlTemplate = "http:" + root.get("url_template").getAsString();
 			JsonArray jsonArray = root.getAsJsonArray("badges");

@@ -51,8 +51,6 @@ public class ChatChannel implements IChatChannel {
 	private boolean showTimestamps;
 	private MessageStyle messageStyle = MessageStyle.Chat;
 
-	private boolean isManaged;
-
 	private Matcher messageMatcher = DEFAULT_PATTERN.matcher("");
 
 	private final EmoteScanner emoteScanner = new EmoteScanner() {
@@ -350,12 +348,7 @@ public class ChatChannel implements IChatChannel {
 
 	@Override
 	public boolean isManaged() {
-		return isManaged;
-	}
-
-	@Override
-	public void setManaged(boolean managed) {
-		isManaged = managed;
+		return false;
 	}
 
 	@Override

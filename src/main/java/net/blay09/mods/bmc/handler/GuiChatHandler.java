@@ -2,25 +2,25 @@ package net.blay09.mods.bmc.handler;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
+import net.blay09.mods.bmc.api.IGuiOverlay;
 import net.blay09.mods.bmc.api.event.ChatComponentClickEvent;
 import net.blay09.mods.bmc.api.event.TabCompletionEvent;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.ChatMacros;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.blay09.mods.bmc.gui.chat.*;
-import net.blay09.mods.bmc.gui.emotes.GuiButtonEmote;
-import net.blay09.mods.bmc.gui.emotes.GuiButtonEmoteGroup;
 import net.blay09.mods.bmc.gui.emotes.GuiButtonEmotes;
 import net.blay09.mods.bmc.gui.emotes.GuiOverlayEmotes;
-import net.blay09.mods.bmc.gui.settings.GuiOverlaySettings;
+import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
 import net.blay09.mods.bmc.gui.settings.GuiButtonSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.command.CommandBase;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -33,21 +33,21 @@ import org.lwjgl.input.Mouse;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class GuiChatHandler {
 
-	private GuiOverlayEmotes overlayEmotes;
-	private GuiOverlaySettings overlaySettings;
+	private final List<IGuiOverlay> overlayList = Lists.newArrayList();
 
 	@SubscribeEvent
 	public void onOpenGui(GuiOpenEvent event) {
 		if(event.getGui() instanceof GuiSleepMP) {
 			event.setGui(new GuiSleepMPExt());
-			overlaySettings = null;
+			clearOverlays();
 		} else if (event.getGui() instanceof GuiChat) {
 			event.setGui(new GuiChatExt(((GuiChat) event.getGui()).defaultInputFieldText));
-			overlaySettings = null;
+			clearOverlays();
 		}
 	}
 
@@ -68,13 +68,12 @@ public class GuiChatHandler {
 
 			updateChannelButtons(event.getGui());
 
-			if(overlayEmotes != null) {
-				overlayEmotes = new GuiOverlayEmotes(event.getGui());
-			}
-			if(overlaySettings != null) {
-				ChatChannel selectedChannel = overlaySettings.getSelectedChannel();
-				overlaySettings = new GuiOverlaySettings(event.getGui());
-				overlaySettings.selectChannel(selectedChannel);
+			List<IGuiOverlay> oldList = Lists.newArrayList(overlayList);
+			overlayList.clear();
+			for(IGuiOverlay overlay : oldList) {
+				IGuiOverlay newOverlay = overlay.recreateFor(overlay, event.getGui());
+				newOverlay.initGui();
+				overlayList.add(newOverlay);
 			}
 		}
 	}
@@ -84,32 +83,19 @@ public class GuiChatHandler {
 		if (event.getGui() instanceof GuiChat) {
 			if(event.getButton() instanceof GuiButtonChannelTab) {
 				BetterMinecraftChat.getChatHandler().setActiveChannel(((GuiButtonChannelTab) event.getButton()).getChannel());
-				if(overlaySettings != null) {
-					overlaySettings.selectChannel(((GuiButtonChannelTab) event.getButton()).getChannel());
-				}
 			} else if(event.getButton() instanceof GuiButtonEmotes) {
-				if (overlayEmotes != null) {
-					overlayEmotes.clear(true);
-					overlayEmotes = null;
+				GuiOverlayEmotes overlayEmotes = getOverlay(GuiOverlayEmotes.class);
+				if(overlayEmotes == null) {
+					overlayList.add(new GuiOverlayEmotes(event.getGui()));
 				} else {
-					overlayEmotes = new GuiOverlayEmotes(event.getGui());
-				}
-			} else if(event.getButton() instanceof GuiButtonEmoteGroup) {
-				if (overlayEmotes != null) {
-					overlayEmotes.displayGroup(((GuiButtonEmoteGroup) event.getButton()).getEmoteGroup());
+					removeOverlay(overlayEmotes);
 				}
 			} else if(event.getButton() instanceof GuiButtonSettings) {
-				if(overlaySettings != null) {
-					overlaySettings.apply(true);
-					overlaySettings.clear();
-					overlaySettings = null;
-				} else {
-					overlaySettings = new GuiOverlaySettings(event.getGui());
+				Minecraft.getMinecraft().displayGuiScreen(new GuiTabSettings(null));
+			} else {
+				for(IGuiOverlay overlay : overlayList) {
+					overlay.actionPerformed(event.getButton());
 				}
-			} else if(event.getButton() instanceof GuiButtonEmote) {
-				((GuiChat) event.getGui()).inputField.writeText(" " + ((GuiButtonEmote) event.getButton()).getEmote().getCode() + " ");
-			} else if(overlaySettings != null) {
-				overlaySettings.actionPerformed(event.getButton());
 			}
 		}
 	}
@@ -117,11 +103,8 @@ public class GuiChatHandler {
 	@SubscribeEvent
 	public void onDrawGuiChatPre(GuiScreenEvent.DrawScreenEvent.Pre event) {
 		if(event.getGui() instanceof GuiChat) {
-			if(overlayEmotes != null) {
-				overlayEmotes.drawOverlay();
-			}
-			if(overlaySettings != null) {
-				overlaySettings.drawOverlayBackground(event.getMouseX(), event.getMouseY());
+			for(IGuiOverlay overlay : overlayList) {
+				overlay.drawOverlayBackground(event.getMouseX(), event.getMouseY());
 			}
 		}
 	}
@@ -129,8 +112,8 @@ public class GuiChatHandler {
 	@SubscribeEvent
 	public void onDrawGuiChatPre(GuiScreenEvent.DrawScreenEvent.Post event) {
 		if(event.getGui() instanceof GuiChat) {
-			if(overlaySettings != null) {
-				overlaySettings.drawOverlay(event.getMouseX(), event.getMouseY());
+			for(IGuiOverlay overlay : overlayList) {
+				overlay.drawOverlay(event.getMouseX(), event.getMouseY());
 			}
 		}
 	}
@@ -140,7 +123,7 @@ public class GuiChatHandler {
 		if(event.getGui() instanceof GuiChat) {
 			if (Keyboard.getEventKeyState()) {
 				int keyCode = Keyboard.getEventKey();
-				if (overlaySettings == null && (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) && keyCode == Keyboard.KEY_TAB) {
+				if ((Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) && keyCode == Keyboard.KEY_TAB) {
 					ChatChannel channel = BetterMinecraftChat.getChatHandler().getNextChatChannel(BetterMinecraftChat.getChatHandler().getActiveChannel());
 					if(channel != null) {
 						BetterMinecraftChat.getChatHandler().setActiveChannel(channel);
@@ -152,17 +135,20 @@ public class GuiChatHandler {
 					if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
 						if(!inputField.getText().isEmpty()) {
 							ChatMacros.setChatMacro(index, inputField.getText());
-							ITextComponent result = new TextComponentString("Text stored in Macro #" + (index + 1) + ".");
-							result.getChatStyle().setColor(TextFormatting.AQUA);
+							ITextComponent result = new TextComponentTranslation(BetterMinecraftChat.MOD_ID + ":gui.chat.textStoredInMacro", index + 1);
+							result.getStyle().setColor(TextFormatting.AQUA);
 							Minecraft.getMinecraft().thePlayer.addChatComponentMessage(result);
 							inputField.setText("");
 						}
 					} else if(!Strings.isNullOrEmpty(ChatMacros.getChatMacro(index))) {
 						inputField.setText(ChatMacros.getChatMacro(index));
 					}
-				} else if(overlaySettings != null) {
-					if(overlaySettings.keyTyped(Keyboard.getEventKey(), Keyboard.getEventCharacter())) {
-						event.setCanceled(true);
+				} else {
+					for(IGuiOverlay overlay : overlayList) {
+						if(overlay.keyTyped(Keyboard.getEventKey(), Keyboard.getEventCharacter())) {
+							event.setCanceled(true);
+							break;
+						}
 					}
 				}
 			}
@@ -172,17 +158,22 @@ public class GuiChatHandler {
 	@SubscribeEvent
 	public void onGuiMouseInput(GuiScreenEvent.MouseInputEvent.Pre event) {
 		if(event.getGui() instanceof GuiChat) {
-			if(Mouse.getEventButtonState() && overlaySettings != null) {
+			if(Mouse.getEventButtonState()) {
 				ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
-				if(overlaySettings.mouseClicked(Mouse.getEventX() / resolution.getScaleFactor(), resolution.getScaledHeight() - Mouse.getEventY() / resolution.getScaleFactor(), Mouse.getEventButton())) {
-					event.setCanceled(true);
-					return;
+				int mouseX = Mouse.getEventX() / resolution.getScaleFactor();
+				int mouseY = resolution.getScaledHeight() - Mouse.getEventY() / resolution.getScaleFactor();
+				int mouseButton = Mouse.getEventButton();
+				for(IGuiOverlay overlay : overlayList) {
+					if(overlay.mouseClicked(mouseX, mouseY, mouseButton)) {
+						event.setCanceled(true);
+						return;
+					}
 				}
 			}
-			if(overlayEmotes != null) {
-				int delta = Mouse.getEventDWheel();
-				if (delta != 0) {
-					overlayEmotes.scroll(delta > 0);
+			int delta = Mouse.getEventDWheel();
+			if (delta != 0) {
+				for(IGuiOverlay overlay : overlayList) {
+					overlay.mouseScrolled(delta);
 				}
 			}
 		}
@@ -190,7 +181,7 @@ public class GuiChatHandler {
 
 	@SubscribeEvent
 	public void onClickChatComponent(ChatComponentClickEvent event) {
-		ClickEvent clickEvent = event.getComponent().getChatStyle().getChatClickEvent();
+		ClickEvent clickEvent = event.getComponent().getStyle().getClickEvent();
 		if (clickEvent != null) {
 			if (clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
 				String url = clickEvent.getValue();
@@ -233,4 +224,35 @@ public class GuiChatHandler {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T extends IGuiOverlay> T getOverlay(Class<T> clazz) {
+		for(IGuiOverlay overlay : overlayList) {
+			if(clazz.isAssignableFrom(overlay.getClass())) {
+				return (T) overlay;
+			}
+		}
+		return null;
+	}
+
+	public void addOverlay(IGuiOverlay overlay) {
+		overlayList.add(overlay);
+		overlay.initGui();
+	}
+
+	public void removeOverlay(IGuiOverlay overlay) {
+		overlay.onGuiClosed();
+		overlayList.remove(overlay);
+	}
+
+	public void clearOverlays() {
+		for(IGuiOverlay overlay : overlayList) {
+			overlay.onGuiClosed();
+		}
+		overlayList.clear();
+	}
+
+	public void switchOverlay(IGuiOverlay from, IGuiOverlay to) {
+		removeOverlay(from);
+		addOverlay(to);
+	}
 }

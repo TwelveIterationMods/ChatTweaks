@@ -20,8 +20,6 @@ public interface IChatChannel {
 
 	boolean isManaged();
 
-	void setManaged(boolean managed);
-
 	IChatMessage getChatLine(int id);
 
 	void setFilterPattern(String pattern);

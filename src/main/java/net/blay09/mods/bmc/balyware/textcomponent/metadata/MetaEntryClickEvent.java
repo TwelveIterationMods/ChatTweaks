@@ -19,6 +19,6 @@ public class MetaEntryClickEvent extends MetaEntry {
 
 	@Override
 	public void apply(Style style) {
-		style.setChatClickEvent(clickEvent);
+		style.setClickEvent(clickEvent);
 	}
 }

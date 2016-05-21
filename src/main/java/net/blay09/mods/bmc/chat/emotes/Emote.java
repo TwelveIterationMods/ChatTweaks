@@ -1,11 +1,13 @@
 package net.blay09.mods.bmc.chat.emotes;
 
 import com.google.common.collect.Lists;
+import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.emote.IEmoteLoader;
 import net.blay09.mods.bmc.image.renderable.NullRenderable;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
 import java.io.File;
@@ -31,7 +33,7 @@ public class Emote implements IEmote {
 		this.loader = loader;
 
 		if(!isRegex) {
-			tooltip.add(TextFormatting.YELLOW + "Emote: " + TextFormatting.WHITE + code);
+			tooltip.add(TextFormatting.YELLOW + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmote") + " " + TextFormatting.WHITE + code);
 		}
 	}
 

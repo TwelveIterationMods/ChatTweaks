@@ -1,11 +1,13 @@
 package net.blay09.mods.bmc.gui.settings;
 
+import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.balyware.gui.FormattedFontRenderer;
 import net.blay09.mods.bmc.balyware.gui.GuiFormattedTextField;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.regex.Pattern;
@@ -19,7 +21,7 @@ public class GuiRegExField extends GuiFormattedTextField {
 
 	private GuiRegExField(int id, FormattedFontRenderer fontRenderer, int x, int y, int width, int height) {
 		super(id, fontRenderer, x, y, width, height);
-		setDisplayTextWhenEmpty(TextFormatting.GRAY+ "(all messages)");
+		setDisplayTextWhenEmpty(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.textfield.allMessages"));
 		setEmptyText(ChatChannel.DEFAULT_PATTERN.pattern());
 	}
 

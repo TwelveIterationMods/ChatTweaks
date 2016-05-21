@@ -9,7 +9,7 @@ public class GuiFormattedTextField extends GuiTextField {
 	private String displayTextWhenEmpty = "";
 	private String emptyText = "";
 
-	protected GuiFormattedTextField(int id, FormattedFontRenderer fontRenderer, int x, int y, int width, int height) {
+	public GuiFormattedTextField(int id, FormattedFontRenderer fontRenderer, int x, int y, int width, int height) {
 		super(id, fontRenderer, x, y, width, height);
 		this.fontRenderer = fontRenderer;
 		setMaxStringLength(Integer.MAX_VALUE);

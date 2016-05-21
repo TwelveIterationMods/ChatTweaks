@@ -42,9 +42,9 @@ public abstract class TextComponentTransformer {
 	}
 
 	private ITextComponent walkTextComponentString(TextComponentString chatComponent) {
-		String newText = transformText(chatComponent, chatComponent.getChatComponentText_TextValue());
+		String newText = transformText(chatComponent, chatComponent.getText());
 		TextComponentString transformedComponent = new TextComponentString(newText);
-		transformedComponent.setChatStyle(chatComponent.getChatStyle());
+		transformedComponent.setStyle(chatComponent.getStyle());
 		transformStyle(transformedComponent);
 		for(Object object : chatComponent.getSiblings()) {
 			ITextComponent adjustedComponent = walkTextComponentInternal((ITextComponent) object);
@@ -69,7 +69,7 @@ public abstract class TextComponentTransformer {
 			if(MATCHER_ARGUMENT.matches()) {
 				if(root == null) {
 					root = new TextComponentString("");
-					root.setChatStyle(chatComponent.getChatStyle().createShallowCopy());
+					root.setStyle(chatComponent.getStyle().createShallowCopy());
 				}
 				int thisArg = currentArg;
 				if(MATCHER_ARGUMENT.group(1) != null) {
@@ -90,7 +90,7 @@ public abstract class TextComponentTransformer {
 			} else {
 				if(root == null) {
 					root = new TextComponentString(key);
-					root.setChatStyle(chatComponent.getChatStyle().createShallowCopy());
+					root.setStyle(chatComponent.getStyle().createShallowCopy());
 				} else {
 					root.appendSibling(new TextComponentString(key));
 				}

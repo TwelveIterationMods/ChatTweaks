@@ -1,5 +1,6 @@
 package net.blay09.mods.bmc.gui.chat;
 
+import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
@@ -52,9 +54,9 @@ public class GuiImagePreview extends GuiScreen {
 			}).start();
 		}
 
-		buttonList.add(new GuiButton(0, width / 2 - 150, height / 2 + 65, 90, 20, "Open in Browser"));
-		buttonList.add(new GuiButton(1, width / 2 - 50, height / 2 + 65, 100, 20, "Copy to Clipboard"));
-		buttonList.add(new GuiButton(2, width / 2 + 60, height / 2 + 65, 90, 20, "Close"));
+		buttonList.add(new GuiButton(0, width / 2 - 150, height / 2 + 65, 90, 20, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.openInBrowser")));
+		buttonList.add(new GuiButton(1, width / 2 - 50, height / 2 + 65, 100, 20, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.copyToClipboard")));
+		buttonList.add(new GuiButton(2, width / 2 + 60, height / 2 + 65, 90, 20, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.close")));
 	}
 
 	@Override
@@ -90,7 +92,7 @@ public class GuiImagePreview extends GuiScreen {
 			loadBuffer = null;
 		}
 		if(textureId == -1) {
-			drawCenteredString(fontRendererObj, "Loading preview...", width / 2, height / 2 - 20, 0xFFFFFFFF);
+			drawCenteredString(fontRendererObj, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.loadingPreview"), width / 2, height / 2 - 20, 0xFFFFFFFF);
 		} else {
 			float renderWidth = textureWidth;
 			float renderHeight = textureHeight;

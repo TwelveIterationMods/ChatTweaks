@@ -86,4 +86,8 @@ public class BetterMinecraftChatAPI {
 	public static void clearChat() {
 		internalMethods.clearChat();
 	}
+
+	public static void registerIntegration(IntegrationModule module) {
+
+	}
 }
