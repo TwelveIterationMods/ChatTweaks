@@ -18,7 +18,7 @@ public interface IChatChannel {
 
 	boolean isHidden();
 
-	boolean isManaged();
+	void addManagedChatLine(IChatMessage message);
 
 	IChatMessage getChatLine(int id);
 

@@ -33,5 +33,5 @@ public interface InternalMethods {
 	void registerImageURLTransformer(Function<String, String> function);
 	IChatChannel getChatChannel(String name, boolean create);
 	void clearChat();
-
+	void refreshChat();
 }

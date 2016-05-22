@@ -60,13 +60,14 @@ public class BetterMinecraftChat {
 		BetterMinecraftChatAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".+\\.(?:png|jpg)", ""));
 		BetterMinecraftChatAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*imgur\\.com/[A-Za-z]+", ".png"));
 		BetterMinecraftChatAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*gyazo\\.com/[a-z0-9]+", ".png"));
+
+		ChatMacros.load(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/macros.ini"));
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		//noinspection ResultOfMethodCallIgnored
 		new File(Minecraft.getMinecraft().mcDataDir, "bmc/cache/").mkdirs();
-		ChatMacros.load(new File(Minecraft.getMinecraft().mcDataDir, "bmc/macros.ini"));
 	}
 
     @Mod.EventHandler

@@ -116,6 +116,11 @@ public class InternalMethodsImpl implements InternalMethods {
 		}
 	}
 
+	@Override
+	public void refreshChat() {
+		BetterMinecraftChat.getChatHandler().setActiveChannel(BetterMinecraftChat.getChatHandler().getActiveChannel());
+	}
+
 	private boolean loadEmoteImageFromCache(IEmote emote) {
 		if(emote.getImageCacheFile() != null && emote.getImageCacheFile().exists() && emote.getImageCacheFile().lastModified() - System.currentTimeMillis() < IMAGE_CACHE_TIME) {
 			try(FileInputStream in = new FileInputStream(emote.getImageCacheFile())) {

@@ -1,5 +1,7 @@
 package net.blay09.mods.bmc.integration.twitch;
 
+import net.blay09.mods.bmc.api.IChatChannel;
+
 public class TwitchChannel {
 
 	public enum DeletedMessages {
@@ -9,11 +11,17 @@ public class TwitchChannel {
 		HIDE;
 
 		public static DeletedMessages fromName(String name) {
-			return null;
+			try {
+				return valueOf(name.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				return HIDE;
+			}
 		}
 	}
 
 	private final String name;
+	private String targetChannelName;
+	private IChatChannel targetChannel;
 	private boolean subscribersOnly;
 	private DeletedMessages deletedMessages;
 
@@ -39,5 +47,21 @@ public class TwitchChannel {
 
 	public void setDeletedMessages(DeletedMessages deletedMessages) {
 		this.deletedMessages = deletedMessages;
+	}
+
+	public void setTargetChannelName(String targetChannelName) {
+		this.targetChannelName = targetChannelName;
+	}
+
+	public String getTargetChannelName() {
+		return targetChannelName;
+	}
+
+	public IChatChannel getTargetChannel() {
+		return targetChannel;
+	}
+
+	public void setTargetChannel(IChatChannel targetChannel) {
+		this.targetChannel = targetChannel;
 	}
 }

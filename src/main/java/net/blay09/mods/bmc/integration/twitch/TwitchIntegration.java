@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.integration.twitch;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 @Mod(modid = TwitchIntegration.MOD_ID, name = TwitchIntegration.NAME, dependencies = "required-after:betterminecraftchat")
 public class TwitchIntegration implements IntegrationModule {
@@ -35,7 +35,7 @@ public class TwitchIntegration implements IntegrationModule {
 
 	private static TextureAtlasSprite icon;
 
-	private static final List<TwitchChannel> channels = Lists.newArrayList();
+	private static final Map<String, TwitchChannel> channels = Maps.newHashMap();
 	public static boolean useAnonymousLogin;
 	public static boolean showWhispers;
 	public static String singleMessageFormat;
@@ -48,7 +48,7 @@ public class TwitchIntegration implements IntegrationModule {
 		MinecraftForge.EVENT_BUS.register(this);
 
 		Gson gson = new Gson();
-		try (FileReader reader = new FileReader(new File(event.getModConfigurationDirectory(), ""))) {
+		try (FileReader reader = new FileReader(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/twitchintegration.json"))) {
 			JsonObject jsonRoot = gson.fromJson(reader, JsonObject.class);
 			JsonObject jsonFormat = jsonRoot.getAsJsonObject("format");
 			singleMessageFormat = jsonFormat.get("singleMessage").getAsString();
@@ -63,7 +63,8 @@ public class TwitchIntegration implements IntegrationModule {
 				TwitchChannel channel = new TwitchChannel(jsonChannel.get("name").getAsString());
 				channel.setSubscribersOnly(jsonChannel.has("subscribersOnly") && jsonChannel.get("subscribersOnly").getAsBoolean());
 				channel.setDeletedMessages(TwitchChannel.DeletedMessages.fromName(jsonChannel.get("deletedMessages").getAsString()));
-				channels.add(channel);
+				channel.setTargetChannelName(jsonChannel.get("targetTab").getAsString());
+				channels.put(channel.getName().toLowerCase(), channel);
 				if(jsonChannel.has("active") && jsonChannel.get("active").getAsBoolean()) {
 //					activeChannels.add(channel);
 				}
@@ -124,11 +125,23 @@ public class TwitchIntegration implements IntegrationModule {
 		return new GuiTwitchConnect(parentScreen);
 	}
 
+	public static TwitchChannel getTwitchChannel(String channel) {
+		return channels.get(channel.charAt(0) == '#' ? channel.substring(1).toLowerCase() : channel.toLowerCase());
+	}
+
 	public static void connect() {
+		for(TwitchChannel channel : channels.values()) {
+			channel.setTargetChannel(BetterMinecraftChatAPI.getChatChannel(channel.getTargetChannelName(), false));
+		}
+
 		AuthManager.TokenPair tokenPair = AuthManager.getToken(TwitchIntegration.MOD_ID);
 		if(tokenPair != null) {
 			String token = tokenPair.getToken().startsWith("oauth:") ? tokenPair.getToken() : "oauth:" + tokenPair.getToken();
-			IRCConfiguration config = TMIClient.defaultBuilder().debug(true).nick(tokenPair.getUsername()).password(token).autoJoinChannel("#playhearthstone").build();
+			IRCConfiguration.IRCConfigurationBuilder builder = TMIClient.defaultBuilder().debug(true).nick(tokenPair.getUsername()).password(token);
+			for(TwitchChannel channel : channels.values()) {
+				builder.autoJoinChannel("#" + channel.getName().toLowerCase());
+			}
+			IRCConfiguration config = builder.build();
 			TMIClient connection = new TMIClient(config, new TwitchChatHandler());
 			connection.connect();
 		}

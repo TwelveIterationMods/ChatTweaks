@@ -12,6 +12,8 @@ public interface IChatMessage {
 
 	ITextComponent getChatComponent();
 
+	void setChatComponent(ITextComponent component);
+
 	NBTTagCompound getCustomData();
 
 	boolean hasData();
@@ -31,4 +33,8 @@ public interface IChatMessage {
 	boolean hasImages();
 
 	long getTimestamp();
+
+	void setManaged(boolean managed);
+
+	boolean isManaged();
 }

@@ -21,6 +21,7 @@ public class ChatMessage implements IChatMessage {
     private NBTTagCompound customData;
 	private long timestamp;
 	private ChatChannel exclusiveChannel;
+	private boolean managed;
 
 	public ChatMessage(int id, ITextComponent chatComponent, NBTTagCompound customData) {
         this.id = id;
@@ -37,6 +38,11 @@ public class ChatMessage implements IChatMessage {
 	@Override
 	public ITextComponent getChatComponent() {
 		return chatComponent;
+	}
+
+	@Override
+	public void setChatComponent(ITextComponent chatComponent) {
+		this.chatComponent = chatComponent;
 	}
 
 	@Override
@@ -108,13 +114,19 @@ public class ChatMessage implements IChatMessage {
 		return timestamp;
 	}
 
+	@Override
+	public void setManaged(boolean managed) {
+		this.managed = managed;
+	}
+
+	@Override
+	public boolean isManaged() {
+		return managed;
+	}
+
 	public List<IChatImage> getImages() {
         return images;
     }
-
-	public void setChatComponent(ITextComponent chatComponent) {
-		this.chatComponent = chatComponent;
-	}
 
 	public ChatMessage copy() {
 		ChatMessage out = new ChatMessage(id, chatComponent, customData);

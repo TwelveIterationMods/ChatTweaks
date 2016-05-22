@@ -20,6 +20,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -201,7 +203,6 @@ public class ChatHandler {
 		chatLineCounter.set(10);
 	}
 
-
 	public IChatMessage getChatLine(int id) {
 		IChatMessage chatLine = activeChannel.getChatLine(id);
 		if(chatLine != null) {
@@ -218,7 +219,7 @@ public class ChatHandler {
 		this.activeChannel = channel;
 		if(Minecraft.getMinecraft().ingameGUI != null && channel.getMessageStyle() == MessageStyle.Chat) { // 99% of the time the case, only not true if no chat channels available.
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().chatLines.clear();
-			for (ChatMessage chatLine : channel.getChatLines()) {
+			for (IChatMessage chatLine : channel.getChatLines()) {
 				markAsRead(chatLine);
 				Minecraft.getMinecraft().ingameGUI.getChatGUI().chatLines.add(0, new ChatLine(Minecraft.getMinecraft().ingameGUI.getUpdateCounter(), chatLine.getChatComponent(), chatLine.getId()));
 			}
@@ -229,21 +230,22 @@ public class ChatHandler {
 	public void refreshChannel(ChatChannel channel) {
 		channel.clearChat();
 		for(ChatMessage chatLine : chatLines.values()) {
-			if (channel.messageMatches(chatLine.getChatComponent().getUnformattedText()) && (!chatLine.isExclusiveChannel() || chatLine.getExclusiveChannel() == channel)) {
+			if (!chatLine.isManaged() && channel.messageMatches(chatLine.getChatComponent().getUnformattedText()) && (!chatLine.isExclusiveChannel() || chatLine.getExclusiveChannel() == channel)) {
 				channel.addChatLine(chatLine);
 			}
 		}
+		channel.sortMessages();
 	}
 
 	public ChatChannel getActiveChannel() {
 		return activeChannel;
 	}
 
-	public boolean isUnread(ChatMessage chatLine) {
+	public boolean isUnread(IChatMessage chatLine) {
 		return unreadMessages.contains(chatLine.getId());
 	}
 
-	public void markAsRead(ChatMessage chatLine) {
+	public void markAsRead(IChatMessage chatLine) {
 		unreadMessages.remove(chatLine.getId());
 	}
 

@@ -37,8 +37,9 @@ public class ChatChannel implements IChatChannel {
 	public static final Matcher MATCHER_GROUPS = Pattern.compile("\\$([0-9])").matcher("");
 	private static final int MAX_MESSAGES = 100;
 
-	private final Map<Integer, ChatMessage> chatLineMap = Maps.newHashMap();
-	private final List<ChatMessage> chatLines = Lists.newArrayList();
+	private final Map<Integer, IChatMessage> chatLineMap = Maps.newHashMap();
+	private final List<IChatMessage> chatLines = Lists.newArrayList();
+	private final List<IChatMessage> managedChatLines = Lists.newArrayList();
 	private final MultiTextComponentTransformer transformers = new MultiTextComponentTransformer();
 
 	private String pattern;
@@ -254,24 +255,36 @@ public class ChatChannel implements IChatChannel {
 		return chatLineMap.get(id);
 	}
 
-	public Collection<ChatMessage> getChatLines() {
+	public Collection<IChatMessage> getChatLines() {
 		return chatLines;
 	}
 
+	@Override
+	public void addManagedChatLine(IChatMessage chatLine) {
+		chatLines.add(chatLine);
+		managedChatLines.add(chatLine);
+		chatLineMap.put(chatLine.getId(), chatLine);
+		if(chatLines.size() > MAX_MESSAGES) {
+			removeChatLine(chatLines.get(0).getId());
+		}
+	}
+
 	public void removeChatLine(int id) {
-		ChatMessage chatLine = chatLineMap.remove(id);
+		IChatMessage chatLine = chatLineMap.remove(id);
 		chatLines.remove(chatLine);
+		managedChatLines.remove(chatLine);
 	}
 
 	@Override
 	public void clearChat() {
 		chatLineMap.clear();
 		chatLines.clear();
+		chatLines.addAll(managedChatLines);
 	}
 
 	@Override
 	public boolean hasUnreadMessages() {
-		for(ChatMessage chatLine : chatLines) {
+		for(IChatMessage chatLine : chatLines) {
 			if(BetterMinecraftChat.getChatHandler().isUnread(chatLine)) {
 				return true;
 			}
@@ -347,11 +360,6 @@ public class ChatChannel implements IChatChannel {
 	}
 
 	@Override
-	public boolean isManaged() {
-		return false;
-	}
-
-	@Override
 	public boolean isExclusive() {
 		return isExclusive;
 	}
@@ -390,4 +398,12 @@ public class ChatChannel implements IChatChannel {
 		this.name = name;
 	}
 
+	public void sortMessages() {
+		Collections.sort(chatLines, new Comparator<IChatMessage>() {
+			@Override
+			public int compare(IChatMessage o1, IChatMessage o2) {
+				return o2.getId() - o1.getId();
+			}
+		});
+	}
 }

@@ -67,7 +67,7 @@ public class CachedAPI {
 	}
 
 	public static File getCacheDirectory() {
-		File file = new File(Minecraft.getMinecraft().mcDataDir, "cache/");
+		File file = new File(Minecraft.getMinecraft().mcDataDir, "bmc/cache/");
 		//noinspection ResultOfMethodCallIgnored
 		file.mkdirs();
 		return file;
