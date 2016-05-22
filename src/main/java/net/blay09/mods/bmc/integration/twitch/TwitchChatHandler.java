@@ -49,6 +49,10 @@ public class TwitchChatHandler extends TMIAdapter {
 	}
 
 	public void onTwitchChat(String format, String channel, TwitchUser user, String message) {
+		TwitchChannel twitchChannel = TwitchIntegration.getTwitchChannel(channel);
+		if(twitchChannel != null && twitchChannel.isSubscribersOnly() && !user.isSubscriber()) {
+			return;
+		}
 		tmpEmotes.clear();
 		int index = 0;
 		StringBuilder sb = new StringBuilder();
@@ -117,7 +121,6 @@ public class TwitchChatHandler extends TMIAdapter {
 		} else {
 			chatMessage.addRGBColor(128, 128, 128);
 		}
-		TwitchChannel twitchChannel = TwitchIntegration.getTwitchChannel(channel);
 		if(twitchChannel != null) {
 			IChatChannel targetChannel = twitchChannel.getTargetChannel();
 			if (targetChannel != null) {
