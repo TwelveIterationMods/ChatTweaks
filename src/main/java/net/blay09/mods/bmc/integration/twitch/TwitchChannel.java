@@ -24,6 +24,7 @@ public class TwitchChannel {
 	private IChatChannel targetChannel;
 	private boolean subscribersOnly;
 	private DeletedMessages deletedMessages;
+	private boolean active;
 
 	public TwitchChannel(String name) {
 		this.name = name;
@@ -63,5 +64,13 @@ public class TwitchChannel {
 
 	public void setTargetChannel(IChatChannel targetChannel) {
 		this.targetChannel = targetChannel;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

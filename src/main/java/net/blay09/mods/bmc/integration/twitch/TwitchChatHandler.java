@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import net.blay09.javatmi.TMIAdapter;
 import net.blay09.javatmi.TMIClient;
+import net.blay09.javatmi.TwitchEmote;
 import net.blay09.javatmi.TwitchUser;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
@@ -12,10 +13,9 @@ import net.blay09.mods.bmc.api.IChatChannel;
 import net.blay09.mods.bmc.api.IChatMessage;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.image.IChatImage;
-import net.blay09.mods.bmc.chat.ChatChannel;
+import net.blay09.mods.bmc.chat.emotes.EmoteScanner;
 import net.blay09.mods.bmc.chat.emotes.twitch.TwitchAPI;
 import net.blay09.mods.bmc.image.ChatImageEmote;
-import net.minecraft.util.IntHashMap;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -28,6 +28,7 @@ public class TwitchChatHandler extends TMIAdapter {
 
 	private static final Pattern PATTERN_ARGUMENT = Pattern.compile("%[ucm]");
 
+	private static final EmoteScanner emoteScanner = new EmoteScanner();
 	private static final List<TwitchChannel> activeChannels = Lists.newArrayList();
 	private static final Multimap<String, IChatMessage> messages = ArrayListMultimap.create();
 
@@ -53,40 +54,50 @@ public class TwitchChatHandler extends TMIAdapter {
 		if(twitchChannel != null && twitchChannel.isSubscribersOnly() && !user.isSubscriber()) {
 			return;
 		}
+		// Apply Twitch Emotes
 		tmpEmotes.clear();
 		int index = 0;
 		StringBuilder sb = new StringBuilder();
-		for(String emoteData : user.getEmotes()) {
-			int colonIdx = emoteData.indexOf(':');
-			if(colonIdx != -1) {
-				int emoteId = Integer.parseInt(emoteData.substring(0, colonIdx));
-				IEmote emote = TwitchAPI.getEmoteById(emoteId);
-				if (emote == null) {
-					continue;
-				}
-				String[] occurences = emoteData.substring(colonIdx + 1).split(",");
-				for (String subData : occurences) {
-					int dashIdx = subData.indexOf('-');
-					if (dashIdx != -1) {
-						int start = Integer.parseInt(subData.substring(0, dashIdx));
-						if (index < start) {
-							sb.append(message.substring(index, start));
-						}
-						int imageIndex = sb.length();
-						int end = Integer.parseInt(subData.substring(dashIdx + 1));
-						for (int i = 0; i < emote.getWidthInSpaces(); i++) {
-							sb.append(' ');
-						}
-						tmpEmotes.add(new ChatImageEmote(imageIndex, emote));
-						index = end + 1;
-					}
-				}
+		for(TwitchEmote emoteData : user.getEmotes()) {
+			IEmote emote = TwitchAPI.getEmoteById(emoteData.getId());
+			if (emote == null) {
+				continue;
 			}
+			if (index < emoteData.getStart()) {
+				sb.append(message.substring(index, emoteData.getStart()));
+			}
+			int imageIndex = sb.length() + 1;
+			for (int i = 0; i < emote.getWidthInSpaces(); i++) {
+				sb.append(' ');
+			}
+			tmpEmotes.add(new ChatImageEmote(imageIndex, emote));
+			index = emoteData.getEnd() + 1;
 		}
 		if(index < message.length()) {
 			sb.append(message.substring(index));
 		}
 		message = sb.toString();
+
+		// Apply Custom Emotes
+//		index = 0;
+//		sb = new StringBuilder();
+//		for(EmoteScanner.CustomEmote emoteData : emoteScanner.scanForEmotes(message)) {
+//			if (index < emoteData.getStart()) {
+//				sb.append(message.substring(index, emoteData.getStart()));
+//			}
+//			int imageIndex = sb.length() + 1;
+//			for (int i = 0; i < emoteData.getEmote().getWidthInSpaces(); i++) {
+//				sb.append(' ');
+//			}
+//			tmpEmotes.add(new ChatImageEmote(imageIndex, emoteData.getEmote()));
+//			index = emoteData.getEnd() + 1;
+//		}
+//		if(index < message.length()) {
+//			sb.append(message.substring(index));
+//		}
+//		message = sb.toString();
+
+		// Apply Name Badges
 		tmpBadges.clear();
 		int badgeIndex = 0;
 		for(String badgeName : user.getBadges()) {
@@ -106,6 +117,8 @@ public class TwitchChatHandler extends TMIAdapter {
 				tmpBadges.add(image);
 			}
 		}
+
+		// Format Message
 		ITextComponent textComponent = formatComponent(format, channel, user, message, badgeIndex);
 		IChatMessage chatMessage = BetterMinecraftChatAPI.addChatLine(textComponent, null);
 		chatMessage.setManaged(true);
@@ -121,12 +134,15 @@ public class TwitchChatHandler extends TMIAdapter {
 		} else {
 			chatMessage.addRGBColor(128, 128, 128);
 		}
+
+		// Pipe message to tab
 		if(twitchChannel != null) {
 			IChatChannel targetChannel = twitchChannel.getTargetChannel();
 			if (targetChannel != null) {
 				targetChannel.addManagedChatLine(chatMessage);
 			}
 		}
+
 		messages.put(user.getNick(), chatMessage);
 	}
 

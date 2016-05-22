@@ -64,10 +64,8 @@ public class TwitchIntegration implements IntegrationModule {
 				channel.setSubscribersOnly(jsonChannel.has("subscribersOnly") && jsonChannel.get("subscribersOnly").getAsBoolean());
 				channel.setDeletedMessages(TwitchChannel.DeletedMessages.fromName(jsonChannel.get("deletedMessages").getAsString()));
 				channel.setTargetChannelName(jsonChannel.get("targetTab").getAsString());
+				channel.setActive(jsonChannel.has("active") && jsonChannel.get("active").getAsBoolean());
 				channels.put(channel.getName().toLowerCase(), channel);
-				if(jsonChannel.has("active") && jsonChannel.get("active").getAsBoolean()) {
-//					activeChannels.add(channel);
-				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -139,7 +137,9 @@ public class TwitchIntegration implements IntegrationModule {
 			String token = tokenPair.getToken().startsWith("oauth:") ? tokenPair.getToken() : "oauth:" + tokenPair.getToken();
 			IRCConfiguration.IRCConfigurationBuilder builder = TMIClient.defaultBuilder().debug(true).nick(tokenPair.getUsername()).password(token);
 			for(TwitchChannel channel : channels.values()) {
-				builder.autoJoinChannel("#" + channel.getName().toLowerCase());
+				if(channel.isActive()) {
+					builder.autoJoinChannel("#" + channel.getName().toLowerCase());
+				}
 			}
 			IRCConfiguration config = builder.build();
 			TMIClient connection = new TMIClient(config, new TwitchChatHandler());

@@ -55,7 +55,7 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 					emote.setCustomData(id);
 					String channel = TwitchAPI.getChannelForEmoteSet(emoteSet);
 					if(channel != null) {
-						emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmoteChannel") + channel);
+						emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmoteChannel") + " " + channel);
 					}
 					emote.setImageCacheFile("twitch-" + id);
 					group.addEmote(emote);

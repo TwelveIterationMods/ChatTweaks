@@ -14,7 +14,7 @@ import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
 import net.blay09.mods.bmc.balyware.textcomponent.MultiTextComponentTransformer;
 import net.blay09.mods.bmc.balyware.textcomponent.TextComponentTransformer;
-import net.blay09.mods.bmc.chat.emotes.EmoteScanner;
+import net.blay09.mods.bmc.chat.emotes.EmoteTransformer;
 import net.blay09.mods.bmc.chat.badges.NameTransformer;
 import net.blay09.mods.bmc.balyware.textcomponent.metadata.MetaEntry;
 import net.blay09.mods.bmc.balyware.textcomponent.StringRegion;
@@ -54,7 +54,7 @@ public class ChatChannel implements IChatChannel {
 
 	private Matcher messageMatcher = DEFAULT_PATTERN.matcher("");
 
-	private final EmoteScanner emoteScanner = new EmoteScanner() {
+	private final EmoteTransformer emoteTransformer = new EmoteTransformer() {
 		@Override
 		public void finish(ITextComponent chatComponent, ITextComponent transformedComponent) {
 			for(IChatImage image : getImages()) {
@@ -115,7 +115,7 @@ public class ChatChannel implements IChatChannel {
 		this.name = name;
 		setFilterPattern(pattern);
 		transformers.addTransformer(nameTransformer);
-		transformers.addTransformer(emoteScanner);
+		transformers.addTransformer(emoteTransformer);
 	}
 
 	public static ChatChannel fromJson(JsonObject object) {
@@ -316,7 +316,7 @@ public class ChatChannel implements IChatChannel {
 		this.showTimestamps = showTimestamps;
 		if(showTimestamps) {
 			if(!transformers.contains(timestampTransformer)) {
-				transformers.insertBefore(timestampTransformer, emoteScanner);
+				transformers.insertBefore(timestampTransformer, emoteTransformer);
 			}
 		} else {
 			transformers.removeTransformer(timestampTransformer);
@@ -402,7 +402,7 @@ public class ChatChannel implements IChatChannel {
 		Collections.sort(chatLines, new Comparator<IChatMessage>() {
 			@Override
 			public int compare(IChatMessage o1, IChatMessage o2) {
-				return o2.getId() - o1.getId();
+				return o1.getId() - o2.getId();
 			}
 		});
 	}

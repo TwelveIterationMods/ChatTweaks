@@ -12,6 +12,7 @@ import net.blay09.mods.bmc.coremod.RGBFontRenderer;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -100,7 +101,10 @@ public class RenderHandler {
 	}
 
 	@SubscribeEvent
-	public void onRenderOverlayChat(RenderGameOverlayEvent.Chat.Post event) {
+	public void onRenderOverlayChat(RenderGameOverlayEvent.Post event) {
+		if(event.getType() != RenderGameOverlayEvent.ElementType.CHAT) {
+			return;
+		}
 		EmoteRegistry.runDisposal();
 		backgroundColorAlternate = false;
 		if(hoverImage != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat) {
