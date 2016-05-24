@@ -33,7 +33,7 @@ public class EmoteTransformer extends TextComponentTransformer {
 		}
 		int index = 0;
 		StringBuilder sb = new StringBuilder();
-		for(EmoteScanner.CustomEmote emoteData : emoteScanner.scanForEmotes(text)) {
+		for(EmoteScanner.PositionedEmote emoteData : emoteScanner.scanForEmotes(text, null)) {
 			if (index < emoteData.getStart()) {
 				sb.append(text.substring(index, emoteData.getStart()));
 			}

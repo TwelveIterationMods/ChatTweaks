@@ -49,8 +49,10 @@ public class ChatChannel implements IChatChannel {
 	private String outgoingPrefix;
 	private boolean isMuted;
 	private boolean isExclusive;
+	private boolean isTemporary;
 	private boolean showTimestamps;
 	private MessageStyle messageStyle = MessageStyle.Chat;
+	private String passiveChannelName;
 
 	private Matcher messageMatcher = DEFAULT_PATTERN.matcher("");
 
@@ -396,6 +398,22 @@ public class ChatChannel implements IChatChannel {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPassiveChannelName() {
+		return passiveChannelName;
+	}
+
+	public void setPassiveChannelName(String passiveChannelName) {
+		this.passiveChannelName = passiveChannelName;
+	}
+
+	public boolean isTemporary() {
+		return isTemporary;
+	}
+
+	public void setTemporary(boolean temporary) {
+		isTemporary = temporary;
 	}
 
 	public void sortMessages() {

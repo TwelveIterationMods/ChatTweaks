@@ -1,0 +1,46 @@
+package net.blay09.mods.bmc.gui;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+
+public class GuiButtonIntegration extends GuiButton {
+
+	private final ResourceLocation iconTexture;
+	private final boolean isAvailable;
+
+	public GuiButtonIntegration(int buttonId, int x, int y, ResourceLocation iconTexture, boolean isAvailable) {
+		super(buttonId, x, y, 28, 28, "");
+		this.iconTexture = iconTexture;
+		this.isAvailable = false;
+	}
+
+	@Override
+	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+		if(!visible) {
+			return;
+		}
+		this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+		mc.getTextureManager().bindTexture(iconTexture);
+		if(isAvailable) {
+			if(hovered) {
+				GlStateManager.color(1f, 1f, 1f, 1f);
+			} else {
+				GlStateManager.color(1f, 1f, 1f, 0.7f);
+			}
+		} else {
+			if(hovered) {
+				GlStateManager.color(1f, 1f, 1f, 0.7f);
+			} else {
+				GlStateManager.color(0f, 0f, 0f, 0.7f);
+			}
+		}
+		drawModalRectWithCustomSizedTexture(xPosition, yPosition, 0, 0, width, height, 28, 28);
+	}
+
+	public boolean isAvailable() {
+		return isAvailable;
+	}
+
+}

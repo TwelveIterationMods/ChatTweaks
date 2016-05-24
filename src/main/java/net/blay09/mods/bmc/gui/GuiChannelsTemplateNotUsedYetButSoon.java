@@ -1,16 +1,14 @@
-package net.blay09.mods.bmc.integration.twitch;
+package net.blay09.mods.bmc.gui;
 
-import net.blay09.mods.bmc.gui.GuiScreenBase;
 import net.blay09.mods.bmc.gui.settings.GuiButtonAddChannel;
 import net.blay09.mods.bmc.gui.settings.GuiButtonDeleteChannel;
 import net.blay09.mods.bmc.gui.settings.GuiButtonNavigate;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
-public class GuiTwitchChannels extends GuiScreenBase {
+public class GuiChannelsTemplateNotUsedYetButSoon extends GuiScreenBase {
 
 	private GuiButtonNavigate btnNextServer;
 	private GuiButtonNavigate btnPrevServer;
@@ -18,7 +16,7 @@ public class GuiTwitchChannels extends GuiScreenBase {
 
 	private GuiButton btnServerSettings;
 
-	public GuiTwitchChannels() {
+	public GuiChannelsTemplateNotUsedYetButSoon() {
 		xSize = 250;
 		ySize = 200;
 	}

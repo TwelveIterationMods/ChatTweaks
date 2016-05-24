@@ -133,7 +133,9 @@ public class BetterMinecraftChatConfig {
 			JsonObject root = new JsonObject();
 			JsonArray channels = new JsonArray();
 			for(ChatChannel channel : BetterMinecraftChat.getChatHandler().getChannels()) {
-				channels.add(channel.toJson());
+				if(!channel.isTemporary()) {
+					channels.add(channel.toJson());
+				}
 			}
 			root.add("channels", channels);
 			gson.toJson(root, jsonWriter);

@@ -1,8 +1,10 @@
-package net.blay09.mods.bmc.integration.twitch;
+package net.blay09.mods.bmc.integration.twitch.gui;
 
 import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.balyware.gui.GuiPasswordField;
 import net.blay09.mods.bmc.gui.GuiScreenBase;
+import net.blay09.mods.bmc.integration.twitch.TwitchHelper;
+import net.blay09.mods.bmc.integration.twitch.TwitchIntegration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;

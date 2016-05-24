@@ -52,4 +52,5 @@ public class TwitchAPI {
 	public static IEmote getEmoteById(int id) {
 		return twitchEmotes.lookup(id);
 	}
+
 }

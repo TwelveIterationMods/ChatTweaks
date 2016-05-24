@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.blay09.mods.bmc.AuthManager;
+import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchWaitingForUsername;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 

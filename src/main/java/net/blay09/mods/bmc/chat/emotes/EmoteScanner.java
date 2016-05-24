@@ -1,5 +1,6 @@
 package net.blay09.mods.bmc.chat.emotes;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.api.emote.IEmote;
 
@@ -8,12 +9,12 @@ import java.util.regex.Matcher;
 
 public class EmoteScanner {
 
-	public static class CustomEmote {
+	public static class PositionedEmote {
 		private final IEmote emote;
 		private final int start;
 		private final int end;
 
-		public CustomEmote(IEmote emote, int start, int end) {
+		public PositionedEmote(IEmote emote, int start, int end) {
 			this.emote = emote;
 			this.start = start;
 			this.end = end;
@@ -32,18 +33,21 @@ public class EmoteScanner {
 		}
 	}
 
-	private final List<CustomEmote> tmpEmotes = Lists.newArrayList();
-	public List<CustomEmote> scanForEmotes(String message) {
+	private final List<PositionedEmote> tmpEmotes = Lists.newArrayList();
+	public List<PositionedEmote> scanForEmotes(String message, Predicate<IEmote> emoteFilter) {
 		tmpEmotes.clear();
 		Matcher matcher = null;
 		for(IEmote emote : EmoteRegistry.getRegexEmotes()) {
+			if(emoteFilter != null && !emoteFilter.apply(emote)) {
+				break;
+			}
 			if(matcher == null) {
 				matcher = emote.getPattern().matcher(message);
 			} else {
 				matcher.usePattern(emote.getPattern());
 			}
 			while(matcher.find()) {
-				tmpEmotes.add(new CustomEmote(emote, matcher.start(), matcher.end()));
+				tmpEmotes.add(new PositionedEmote(emote, matcher.start(), matcher.end()));
 			}
 		}
 		int lastIdx = 0;
@@ -55,8 +59,8 @@ public class EmoteScanner {
 			}
 			String word = message.substring(lastIdx, spaceIdx);
 			IEmote emote = EmoteRegistry.fromName(word);
-			if (emote != null) {
-				tmpEmotes.add(new CustomEmote(emote, lastIdx, spaceIdx - 1));
+			if (emote != null && (emoteFilter == null || emoteFilter.apply(emote))) {
+				tmpEmotes.add(new PositionedEmote(emote, lastIdx, spaceIdx - 1));
 			}
 			lastIdx = spaceIdx + 1;
 		}

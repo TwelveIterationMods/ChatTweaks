@@ -28,6 +28,7 @@ import java.util.List;
 public class BetterMinecraftChat {
 
 	public static final String MOD_ID = "betterminecraftchat";
+	public static final String TWITCH_INTEGRATION = "twitchintegration";
 
 	@Mod.Instance(MOD_ID)
     public static BetterMinecraftChat instance;

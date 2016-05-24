@@ -10,6 +10,8 @@ import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.IntegrationModule;
 import net.blay09.mods.bmc.api.event.PrintChatMessageEvent;
+import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchChannels;
+import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchConnect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 @Mod(modid = TwitchIntegration.MOD_ID, name = TwitchIntegration.NAME, dependencies = "required-after:betterminecraftchat")
@@ -42,6 +45,12 @@ public class TwitchIntegration implements IntegrationModule {
 	public static String multiMessageFormat; 
 	public static String singleEmoteFormat; 
 	public static String multiEmoteFormat;
+	public static String whisperMessageFormat;
+	public static String whisperEmoteFormat;
+
+	public static Collection<TwitchChannel> getTwitchChannels() {
+		return channels.values();
+	}
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -51,10 +60,12 @@ public class TwitchIntegration implements IntegrationModule {
 		try (FileReader reader = new FileReader(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/twitchintegration.json"))) {
 			JsonObject jsonRoot = gson.fromJson(reader, JsonObject.class);
 			JsonObject jsonFormat = jsonRoot.getAsJsonObject("format");
-			singleMessageFormat = jsonFormat.get("singleMessage").getAsString();
-			multiMessageFormat = jsonFormat.get("multiMessage").getAsString();
-			singleEmoteFormat = jsonFormat.get("singleEmote").getAsString();
-			multiEmoteFormat = jsonFormat.get("multiEmote").getAsString();
+			singleMessageFormat = jsonStringOr(jsonFormat, "singleMessage", "%u: %m");
+			multiMessageFormat = jsonStringOr(jsonFormat, "multiMessage", "[%c] %u: %m");
+			whisperMessageFormat = jsonStringOr(jsonFormat, "whisperMessage", "%u \u25b6 %r: %m");
+			singleEmoteFormat = jsonStringOr(jsonFormat, "singleEmote", "%u %m");
+			multiEmoteFormat = jsonStringOr(jsonFormat, "multiEmote", "[%c] %u %m");
+			whisperEmoteFormat = jsonStringOr(jsonFormat, "whisperEmote", "%u \u25b6 %r : %m");
 			useAnonymousLogin = jsonRoot.has("anonymousLogin") && jsonRoot.get("anonymousLogin").getAsBoolean();
 			showWhispers = jsonRoot.has("showWhispers") && jsonRoot.get("showWhispers").getAsBoolean();
 			JsonArray jsonChannels = jsonRoot.getAsJsonArray("channels");
@@ -63,13 +74,17 @@ public class TwitchIntegration implements IntegrationModule {
 				TwitchChannel channel = new TwitchChannel(jsonChannel.get("name").getAsString());
 				channel.setSubscribersOnly(jsonChannel.has("subscribersOnly") && jsonChannel.get("subscribersOnly").getAsBoolean());
 				channel.setDeletedMessages(TwitchChannel.DeletedMessages.fromName(jsonChannel.get("deletedMessages").getAsString()));
-				channel.setTargetChannelName(jsonChannel.get("targetTab").getAsString());
+				channel.setTargetChannelName(jsonStringOr(jsonChannel, "targetTab", channel.getName()));
 				channel.setActive(jsonChannel.has("active") && jsonChannel.get("active").getAsBoolean());
 				channels.put(channel.getName().toLowerCase(), channel);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String jsonStringOr(JsonObject object, String key, String defaultVal) {
+		return object.has(key) ? object.get(key).getAsString() : defaultVal;
 	}
 
 	@Mod.EventHandler

@@ -20,8 +20,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -216,10 +214,15 @@ public class ChatHandler {
 	}
 
 	public void setActiveChannel(ChatChannel channel) {
+		ChatChannel oldActiveChannel = activeChannel;
 		this.activeChannel = channel;
-		if(Minecraft.getMinecraft().ingameGUI != null && channel.getMessageStyle() == MessageStyle.Chat) { // 99% of the time the case, only not true if no chat channels available.
+		ChatChannel displayChannel = channel.getPassiveChannelName() != null ? (ChatChannel) getChannel(channel.getPassiveChannelName()) : channel;
+		if(oldActiveChannel == displayChannel) {
+			return;
+		}
+		if(Minecraft.getMinecraft().ingameGUI != null && displayChannel.getMessageStyle() == MessageStyle.Chat) {
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().chatLines.clear();
-			for (IChatMessage chatLine : channel.getChatLines()) {
+			for (IChatMessage chatLine : displayChannel.getChatLines()) {
 				markAsRead(chatLine);
 				Minecraft.getMinecraft().ingameGUI.getChatGUI().chatLines.add(0, new ChatLine(Minecraft.getMinecraft().ingameGUI.getUpdateCounter(), chatLine.getChatComponent(), chatLine.getId()));
 			}

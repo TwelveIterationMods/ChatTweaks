@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.integration.twitch;
+package net.blay09.mods.bmc.integration.twitch.gui;
 
 import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiYesNoCallback;

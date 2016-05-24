@@ -23,6 +23,8 @@ betterminecraftchat:gui.chat.tooltipEmoteChannel=Channel:
 betterminecraftchat:gui.chat.tooltipBTTVEmotes=BetterTTV
 betterminecraftchat:gui.chat.tooltipTwitchEmotes=Twitch Global
 betterminecraftchat:gui.chat.tooltipTwitchTurboEmotes=Twitch Turbo
+betterminecraftchat:gui.confirm.optionalModuleRequired=You need to install an optional module for %s functionality:
+betterminecraftchat:gui.confirm.optionalModuleInstall=Please install the additional mod and restart your game.
 
 betterminecraftchat:config.category.general=General
 betterminecraftchat:config.category.emotes=Emotes

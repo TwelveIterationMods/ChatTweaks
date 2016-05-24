@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public abstract class GuiScreenBase extends GuiScreen {
 		this.parentScreen = null;
 	}
 
-	public GuiScreenBase(GuiScreen parentScreen) {
+	public GuiScreenBase(@Nullable GuiScreen parentScreen) {
 		this.parentScreen = parentScreen;
 	}
 
