@@ -86,7 +86,7 @@ public class GuiChatHandler {
 			} else if(event.getButton() instanceof GuiButtonEmotes) {
 				GuiOverlayEmotes overlayEmotes = getOverlay(GuiOverlayEmotes.class);
 				if(overlayEmotes == null) {
-					overlayList.add(new GuiOverlayEmotes(event.getGui()));
+					addOverlay(new GuiOverlayEmotes(event.getGui()));
 				} else {
 					removeOverlay(overlayEmotes);
 				}

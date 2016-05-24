@@ -5,15 +5,15 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiButtonIntegration extends GuiButton {
+public class GuiButtonNavigation extends GuiButton {
 
 	private final ResourceLocation iconTexture;
 	private final boolean isAvailable;
 
-	public GuiButtonIntegration(int buttonId, int x, int y, ResourceLocation iconTexture, boolean isAvailable) {
+	public GuiButtonNavigation(int buttonId, int x, int y, ResourceLocation iconTexture, boolean isAvailable) {
 		super(buttonId, x, y, 28, 28, "");
 		this.iconTexture = iconTexture;
-		this.isAvailable = false;
+		this.isAvailable = isAvailable;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class GuiButtonIntegration extends GuiButton {
 		this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 		mc.getTextureManager().bindTexture(iconTexture);
 		if(isAvailable) {
-			if(hovered) {
+			if(!enabled || hovered) {
 				GlStateManager.color(1f, 1f, 1f, 1f);
 			} else {
 				GlStateManager.color(1f, 1f, 1f, 0.7f);
@@ -36,7 +36,7 @@ public class GuiButtonIntegration extends GuiButton {
 				GlStateManager.color(0f, 0f, 0f, 0.7f);
 			}
 		}
-		drawModalRectWithCustomSizedTexture(xPosition, yPosition, 0, 0, width, height, 28, 28);
+		drawModalRectWithCustomSizedTexture(xPosition + (enabled && hovered ? 2 : 0), yPosition, 0, 0, width, height, 28, 28);
 	}
 
 	public boolean isAvailable() {

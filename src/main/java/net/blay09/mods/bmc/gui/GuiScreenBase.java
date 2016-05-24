@@ -1,16 +1,26 @@
 package net.blay09.mods.bmc.gui;
 
 import com.google.common.collect.Lists;
+import net.blay09.mods.bmc.AuthManager;
+import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.balyware.BalyWare;
+import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
+import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchChannels;
+import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchAuthentication;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public abstract class GuiScreenBase extends GuiScreen {
@@ -22,6 +32,11 @@ public abstract class GuiScreenBase extends GuiScreen {
 	protected int ySize;
 	protected int guiLeft;
 	protected int guiTop;
+
+	private GuiButtonNavigation btnSettings;
+	private GuiButtonNavigation btnTwitchIntegration;
+
+	private String clickedLink;
 
 	public GuiScreenBase() {
 		this.parentScreen = null;
@@ -118,5 +133,55 @@ public abstract class GuiScreenBase extends GuiScreen {
 		drawHorizontalLine(left + 1, right - 1, bottom, color);
 		drawVerticalLine(left, top, bottom, color);
 		drawVerticalLine(right, top, bottom, color);
+	}
+
+	@Override
+	protected void actionPerformed(@Nullable GuiButton button) throws IOException {
+		if (button == btnTwitchIntegration) {
+			if (btnTwitchIntegration.isAvailable()) {
+				AuthManager.TokenPair tokenPair = AuthManager.getToken(BetterMinecraftChat.TWITCH_INTEGRATION);
+				if (tokenPair != null) {
+					mc.displayGuiScreen(new GuiTwitchChannels());
+				} else {
+					mc.displayGuiScreen(new GuiTwitchAuthentication(this));
+				}
+			} else {
+				clickedLink = "http://minecraft.curseforge.com/projects/betterminecraftchat";
+				mc.displayGuiScreen(new GuiOpenIntegrationLink(this, "Twitch", "BetterMinecraftChat - Twitch Integration", 7777));
+			}
+		} else if(button == btnSettings) {
+			mc.displayGuiScreen(new GuiTabSettings(null));
+		}
+	}
+
+	@Override
+	public void confirmClicked(boolean result, int id) {
+		super.confirmClicked(result, id);
+		if(id == 7777 && result) {
+			try {
+				BalyWare.openWebLink(new URI(clickedLink));
+			} catch (URISyntaxException ignored) {}
+		}
+		mc.displayGuiScreen(this);
+	}
+
+	protected boolean isTwitchGui() {
+		return false;
+	}
+
+	public void addNavigationBar() {
+		btnSettings = new GuiButtonNavigation(-1, guiLeft - 32, guiTop, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/settings.png"), true);
+		if(this instanceof GuiTabSettings) {
+			btnSettings.xPosition += 2;
+			btnSettings.enabled = false;
+		}
+		buttonList.add(btnSettings);
+
+		btnTwitchIntegration = new GuiButtonNavigation(-1, guiLeft - 32, guiTop + 30, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/twitch.png"), Loader.isModLoaded(BetterMinecraftChat.TWITCH_INTEGRATION));
+		if(isTwitchGui()) {
+			btnTwitchIntegration.xPosition += 2;
+			btnTwitchIntegration.enabled = false;
+		}
+		buttonList.add(btnTwitchIntegration);
 	}
 }

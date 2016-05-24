@@ -2,6 +2,8 @@ package net.blay09.mods.bmc.integration.twitch;
 
 import net.blay09.mods.bmc.api.IChatChannel;
 
+import javax.annotation.Nullable;
+
 public class TwitchChannel {
 
 	public enum DeletedMessages {
@@ -20,10 +22,10 @@ public class TwitchChannel {
 	}
 
 	private final String name;
-	private String targetChannelName;
+	private String targetChannelName = "*";
 	private IChatChannel targetChannel;
 	private boolean subscribersOnly;
-	private DeletedMessages deletedMessages;
+	private DeletedMessages deletedMessages = DeletedMessages.SHOW;
 	private boolean active;
 
 	public TwitchChannel(String name) {
@@ -58,12 +60,14 @@ public class TwitchChannel {
 		return targetChannelName;
 	}
 
+	@Nullable
 	public IChatChannel getTargetChannel() {
 		return targetChannel;
 	}
 
 	public void setTargetChannel(IChatChannel targetChannel) {
 		this.targetChannel = targetChannel;
+		this.targetChannelName = targetChannel.getName();
 	}
 
 	public boolean isActive() {

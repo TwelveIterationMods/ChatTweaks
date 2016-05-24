@@ -23,8 +23,10 @@ import net.blay09.mods.bmc.chat.emotes.twitch.TwitchSubscriberEmotes;
 import net.blay09.mods.bmc.image.ChatImageEmote;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -42,38 +44,34 @@ public class TwitchChatHandler extends TMIAdapter {
 
 	private static final Predicate<IEmote> noTwitchEmotes = new Predicate<IEmote>() {
 		@Override
-		public boolean apply(IEmote input) {
-			return !(input.getLoader() instanceof TwitchGlobalEmotes || input.getLoader() instanceof TwitchSubscriberEmotes);
+		public boolean apply(@Nullable IEmote input) {
+			return input != null && !(input.getLoader() instanceof TwitchGlobalEmotes || input.getLoader() instanceof TwitchSubscriberEmotes);
 		}
 	};
 
 	private static final Pattern PATTERN_ARGUMENT = Pattern.compile("%[ucmr]");
 
 	private static final EmoteScanner emoteScanner = new EmoteScanner();
-	private static final List<TwitchChannel> activeChannels = Lists.newArrayList();
 	private static final Multimap<String, IChatMessage> messages = ArrayListMultimap.create();
 	private static final Map<String, TwitchUser> users = Maps.newHashMap();
 
 	private static final List<IChatImage> tmpBadges = Lists.newArrayList();
 	private static final List<IChatImage> tmpEmotes = Lists.newArrayList();
 
-	private boolean isMultiMode() {
-		return activeChannels.size() > 1;
-	}
 
 	@Override
 	public void onChatMessage(TMIClient client, String channel, TwitchUser user, String message) {
-		onTwitchChat(isMultiMode() ? TwitchIntegration.multiMessageFormat : TwitchIntegration.singleMessageFormat, channel, user, message, false);
+		onTwitchChat(TwitchIntegration.isMultiMode() ? TwitchIntegration.multiMessageFormat : TwitchIntegration.singleMessageFormat, channel, user, message, false);
 	}
 
 	@Override
 	public void onActionMessage(TMIClient client, String channel, TwitchUser user, String message) {
-		onTwitchChat(isMultiMode() ? TwitchIntegration.multiEmoteFormat : TwitchIntegration.singleEmoteFormat, channel, user, message, true);
+		onTwitchChat(TwitchIntegration.isMultiMode() ? TwitchIntegration.multiActionFormat : TwitchIntegration.singleActionFormat, channel, user, message, true);
 	}
 
 	public void onTwitchChat(String format, String channel, TwitchUser user, String message, boolean isAction) {
 		TwitchChannel twitchChannel = TwitchIntegration.getTwitchChannel(channel);
-		if(twitchChannel != null && twitchChannel.isSubscribersOnly() && !user.isSubscriber()) {
+		if(twitchChannel != null && twitchChannel.isSubscribersOnly() && !user.isSubscriber() && !user.isMod()) {
 			return;
 		}
 
@@ -167,7 +165,7 @@ public class TwitchChatHandler extends TMIAdapter {
 
 	@Override
 	public void onSubscribe(TMIClient client, String channel, String username) {
-		if(isMultiMode()) {
+		if(TwitchIntegration.isMultiMode()) {
 			BetterMinecraftChatAPI.addChatLine(new TextComponentString("[" + channel + "] " + username + " has just subscribed!"), null);
 		} else {
 			BetterMinecraftChatAPI.addChatLine(new TextComponentString(username + " has just subscribed!"), null);
@@ -176,7 +174,7 @@ public class TwitchChatHandler extends TMIAdapter {
 
 	@Override
 	public void onResubscribe(TMIClient client, String channel, String username, int months) {
-		if(isMultiMode()) {
+		if(TwitchIntegration.isMultiMode()) {
 			BetterMinecraftChatAPI.addChatLine(new TextComponentString("[" + channel + "] " + username + " has subscribed for " + months + " in a row!"), null);
 		} else {
 			BetterMinecraftChatAPI.addChatLine(new TextComponentString(username + " has subscribed for " + months + " in a row!"), null);
@@ -279,7 +277,7 @@ public class TwitchChatHandler extends TMIAdapter {
 						user = new TwitchUser(new IRCUser(username, null, null));
 					}
 					for(IChatMessage message : messages.get(username)) {
-						ITextComponent removedComponent = formatComponent(isMultiMode() ? TwitchIntegration.multiMessageFormat : TwitchIntegration.singleMessageFormat, channel, user, "<message deleted>", null, null, null, false);
+						ITextComponent removedComponent = formatComponent(TwitchIntegration.isMultiMode() ? TwitchIntegration.multiMessageFormat : TwitchIntegration.singleMessageFormat, channel, user, TextFormatting.GRAY + "<message deleted>", null, null, null, false);
 						message.setChatComponent(removedComponent);
 					}
 					BetterMinecraftChatAPI.refreshChat();
@@ -296,7 +294,7 @@ public class TwitchChatHandler extends TMIAdapter {
 		BetterMinecraftChatAPI.refreshChat();
 	}
 
-	public ITextComponent formatComponent(String format, String channel, TwitchUser user, String message, List<IChatImage> nameBadges, List<IChatImage> emotes, TwitchUser whisperReceiver, boolean isAction) {
+	public ITextComponent formatComponent(String format, @Nullable String channel, TwitchUser user, String message, @Nullable List<IChatImage> nameBadges, @Nullable List<IChatImage> emotes, @Nullable TwitchUser whisperReceiver, boolean isAction) {
 		String[] parts = format.split("(?<=" + PATTERN_ARGUMENT + ")|(?=" + PATTERN_ARGUMENT + ")"); // TODO cache this
 		TextComponentString root = null;
 		for(String key : parts) {
@@ -306,7 +304,7 @@ public class TwitchChatHandler extends TMIAdapter {
 				}
 				switch(key.charAt(1)) {
 					case 'c':
-						root.appendText(channel);
+						root.appendText(channel != null ? channel : "%c");
 						break;
 					case 'u':
 						int badgeOffset = 0;
@@ -342,6 +340,9 @@ public class TwitchChatHandler extends TMIAdapter {
 					root.appendSibling(new TextComponentString(key));
 				}
 			}
+		}
+		if(root == null) {
+			root = new TextComponentString(format);
 		}
 		return root;
 	}

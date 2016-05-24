@@ -1,5 +1,6 @@
 package net.blay09.mods.bmc.integration.twitch.gui;
 
+import net.blay09.javatmi.TMIClient;
 import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.balyware.gui.GuiPasswordField;
 import net.blay09.mods.bmc.gui.GuiScreenBase;
@@ -12,7 +13,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
-public class GuiTwitchConnect extends GuiScreenBase {
+import javax.annotation.Nullable;
+import java.io.IOException;
+
+public class GuiTwitchAuthentication extends GuiScreenBase {
 
 	private static final ResourceLocation twitchLogo = new ResourceLocation(TwitchIntegration.MOD_ID, "twitch_logo.png");
 
@@ -20,7 +24,7 @@ public class GuiTwitchConnect extends GuiScreenBase {
 	private GuiPasswordField txtToken;
 	private GuiButton btnConnect;
 
-	public GuiTwitchConnect(GuiScreen parentScreen) {
+	public GuiTwitchAuthentication(GuiScreen parentScreen) {
 		super(parentScreen);
 		xSize = 250;
 		ySize = 200;
@@ -52,11 +56,16 @@ public class GuiTwitchConnect extends GuiScreenBase {
 		buttonList.add(chkAnonymous);
 
 		btnConnect = new GuiButton(3, width / 2, height / 2 + 65, 100, 20, "Connect");
+		if(TwitchIntegration.isConnected()) {
+			btnConnect.displayString = "Disconnect";
+		}
 		buttonList.add(btnConnect);
+
+		addNavigationBar();
 	}
 
 	@Override
-	public void actionPerformed(GuiButton button) {
+	public void actionPerformed(@Nullable GuiButton button) throws IOException {
 		if(button == btnConnect) {
 			AuthManager.TokenPair tokenPair = AuthManager.getToken(TwitchIntegration.MOD_ID);
 			if(tokenPair == null || !tokenPair.getToken().equals(txtToken.getText()) || tokenPair.getUsername() == null) {
@@ -69,22 +78,29 @@ public class GuiTwitchConnect extends GuiScreenBase {
 				});
 			} else {
 				mc.displayGuiScreen(null);
-				TwitchIntegration.connect();
+				if(TwitchIntegration.isConnected()) {
+					TwitchIntegration.disconnect();
+				} else {
+					TwitchIntegration.connect();
+				}
 			}
 		} else if(button == btnGetToken) {
 			mc.displayGuiScreen(new GuiTwitchOpenToken(this, 0));
+		} else {
+			super.actionPerformed(button);
 		}
 	}
 
 	@Override
 	public void confirmClicked(boolean result, int id) {
+		super.confirmClicked(result, id);
 		if(result) {
 			if(id == 0) {
 				mc.displayGuiScreen(new GuiTwitchWaitingForToken(parentScreen));
 				TwitchHelper.listenForToken(parentScreen, new Runnable() {
 					@Override
 					public void run() {
-						mc.displayGuiScreen(new GuiTwitchConnect(parentScreen));
+						mc.displayGuiScreen(new GuiTwitchAuthentication(parentScreen));
 					}
 				});
 			}
@@ -99,6 +115,11 @@ public class GuiTwitchConnect extends GuiScreenBase {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(twitchLogo);
 		drawModalRectWithCustomSizedTexture(width / 2 - 64, height / 2 - 80, 0, 0, 128, 43, 128, 43);
 		drawString(mc.fontRendererObj, "Chat Token", width / 2 - 100, height / 2 + 5, 0xFFFFFF);
+	}
+
+	@Override
+	protected boolean isTwitchGui() {
+		return true;
 	}
 
 }

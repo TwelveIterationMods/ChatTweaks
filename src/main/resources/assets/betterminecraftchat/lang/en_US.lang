@@ -29,3 +29,6 @@ betterminecraftchat:gui.confirm.optionalModuleInstall=Please install the additio
 betterminecraftchat:config.category.general=General
 betterminecraftchat:config.category.emotes=Emotes
 betterminecraftchat:config.category.theme=Theme
+
+key.betterminecraftchat.options=Open Settings
+key.category.betterminecraftchat=BetterMinecraftChat

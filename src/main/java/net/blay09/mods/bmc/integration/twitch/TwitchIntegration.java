@@ -1,5 +1,6 @@
 package net.blay09.mods.bmc.integration.twitch;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -9,13 +10,11 @@ import net.blay09.javatmi.TMIClient;
 import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.IntegrationModule;
-import net.blay09.mods.bmc.api.event.PrintChatMessageEvent;
-import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchChannels;
-import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchConnect;
-import net.minecraft.client.Minecraft;
+import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchAuthentication;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -24,13 +23,15 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-@Mod(modid = TwitchIntegration.MOD_ID, name = TwitchIntegration.NAME, dependencies = "required-after:betterminecraftchat")
+@Mod(modid = TwitchIntegration.MOD_ID, name = TwitchIntegration.NAME, clientSideOnly = true, dependencies = "required-after:betterminecraftchat")
 public class TwitchIntegration implements IntegrationModule {
 
 	public static final String MOD_ID = "twitchintegration";
@@ -39,22 +40,29 @@ public class TwitchIntegration implements IntegrationModule {
 	private static TextureAtlasSprite icon;
 
 	private static final Map<String, TwitchChannel> channels = Maps.newHashMap();
+	private static final List<TwitchChannel> activeChannels = Lists.newArrayList();
+
 	public static boolean useAnonymousLogin;
 	public static boolean showWhispers;
 	public static String singleMessageFormat;
 	public static String multiMessageFormat; 
-	public static String singleEmoteFormat; 
-	public static String multiEmoteFormat;
+	public static String singleActionFormat;
+	public static String multiActionFormat;
 	public static String whisperMessageFormat;
-	public static String whisperEmoteFormat;
+	public static String whisperActionFormat;
 
-	public static Collection<TwitchChannel> getTwitchChannels() {
-		return channels.values();
+	private static TMIClient twitchClient;
+
+	@Nullable
+	public static TMIClient getTwitchClient() {
+		return twitchClient;
 	}
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(this);
+
+		ClientCommandHandler.instance.registerCommand(new CommandTwitch());
 
 		Gson gson = new Gson();
 		try (FileReader reader = new FileReader(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/twitchintegration.json"))) {
@@ -63,9 +71,9 @@ public class TwitchIntegration implements IntegrationModule {
 			singleMessageFormat = jsonStringOr(jsonFormat, "singleMessage", "%u: %m");
 			multiMessageFormat = jsonStringOr(jsonFormat, "multiMessage", "[%c] %u: %m");
 			whisperMessageFormat = jsonStringOr(jsonFormat, "whisperMessage", "%u \u25b6 %r: %m");
-			singleEmoteFormat = jsonStringOr(jsonFormat, "singleEmote", "%u %m");
-			multiEmoteFormat = jsonStringOr(jsonFormat, "multiEmote", "[%c] %u %m");
-			whisperEmoteFormat = jsonStringOr(jsonFormat, "whisperEmote", "%u \u25b6 %r : %m");
+			singleActionFormat = jsonStringOr(jsonFormat, "singleEmote", "%u %m");
+			multiActionFormat = jsonStringOr(jsonFormat, "multiEmote", "[%c] %u %m");
+			whisperActionFormat = jsonStringOr(jsonFormat, "whisperEmote", "%u \u25b6 %r : %m");
 			useAnonymousLogin = jsonRoot.has("anonymousLogin") && jsonRoot.get("anonymousLogin").getAsBoolean();
 			showWhispers = jsonRoot.has("showWhispers") && jsonRoot.get("showWhispers").getAsBoolean();
 			JsonArray jsonChannels = jsonRoot.getAsJsonArray("channels");
@@ -105,15 +113,6 @@ public class TwitchIntegration implements IntegrationModule {
 	}
 
 	@SubscribeEvent
-	public void onWhatever(PrintChatMessageEvent event) {
-		if(event.getMessage().getFormattedText().contains("wuppa")) {
-			Minecraft.getMinecraft().displayGuiScreen(new GuiTwitchConnect(Minecraft.getMinecraft().currentScreen));
-		} else if(event.getMessage().getFormattedText().contains("moep")) {
-			Minecraft.getMinecraft().displayGuiScreen(new GuiTwitchChannels());
-		}
-	}
-
-	@SubscribeEvent
 	public void onTextureStitch(TextureStitchEvent.Pre event) {
 		icon = event.getMap().registerSprite(new ResourceLocation(MOD_ID, "icon"));
 	}
@@ -135,11 +134,50 @@ public class TwitchIntegration implements IntegrationModule {
 
 	@Override
 	public GuiScreen getConfigScreen(GuiScreen parentScreen) {
-		return new GuiTwitchConnect(parentScreen);
+		return new GuiTwitchAuthentication(parentScreen);
 	}
 
+	@Nullable
 	public static TwitchChannel getTwitchChannel(String channel) {
 		return channels.get(channel.charAt(0) == '#' ? channel.substring(1).toLowerCase() : channel.toLowerCase());
+	}
+
+	public static Collection<TwitchChannel> getTwitchChannels() {
+		return channels.values();
+	}
+
+	public static void addTwitchChannel(TwitchChannel channel) {
+		channels.put(channel.getName().toLowerCase(), channel);
+		updateChannelStates();
+	}
+
+	public static void removeTwitchChannel(TwitchChannel channel) {
+		channels.remove(channel.getName().toLowerCase());
+		if(activeChannels.remove(channel)) {
+			if(twitchClient != null) {
+				twitchClient.part("#" + channel.getName().toLowerCase());
+			}
+		}
+	}
+
+	public static void updateChannelStates() {
+		activeChannels.clear();
+		for(TwitchChannel channel : channels.values()) {
+			if(channel.isActive()) {
+				activeChannels.add(channel);
+				if(twitchClient != null) {
+					twitchClient.join("#" + channel.getName().toLowerCase());
+				}
+			} else {
+				if(twitchClient != null) {
+					twitchClient.part("#" + channel.getName().toLowerCase());
+				}
+			}
+		}
+	}
+
+	public static boolean isMultiMode() {
+		return activeChannels.size() > 1;
 	}
 
 	public static void connect() {
@@ -156,9 +194,19 @@ public class TwitchIntegration implements IntegrationModule {
 					builder.autoJoinChannel("#" + channel.getName().toLowerCase());
 				}
 			}
-			IRCConfiguration config = builder.build();
-			TMIClient connection = new TMIClient(config, new TwitchChatHandler());
-			connection.connect();
+			twitchClient = new TMIClient(builder.build(), new TwitchChatHandler());
+			twitchClient.connect();
+		}
+	}
+
+	public static boolean isConnected() {
+		return twitchClient != null && twitchClient.getIRCConnection().isConnected();
+	}
+
+	public static void disconnect() {
+		if(twitchClient != null) {
+			twitchClient.disconnect();
+			twitchClient = null;
 		}
 	}
 }

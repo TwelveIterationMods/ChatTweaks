@@ -1,27 +1,20 @@
 package net.blay09.mods.bmc.gui.settings;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
 import net.blay09.mods.bmc.api.MessageStyle;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.blay09.mods.bmc.balyware.gui.GuiUtils;
 import net.blay09.mods.bmc.chat.ChatChannel;
-import net.blay09.mods.bmc.gui.GuiButtonIntegration;
-import net.blay09.mods.bmc.gui.GuiOpenIntegrationLink;
 import net.blay09.mods.bmc.gui.GuiScreenBase;
 import net.blay09.mods.bmc.gui.chat.GuiButtonChannelTab;
-import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchChannels;
-import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchConnect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
-import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
@@ -49,9 +42,6 @@ public class GuiTabSettings extends GuiScreenBase {
 	private GuiButtonNavigate btnNextChannel;
 	private GuiButtonAddChannel btnAddChannel;
 	private GuiButtonNavigate btnPrevChannel;
-	private GuiButtonIntegration btnTwitchIntegration;
-
-	private String clickedLink;
 
 	public GuiTabSettings(@Nullable GuiScreen parentScreen) {
 		this(parentScreen, BetterMinecraftChat.getChatHandler().getActiveChannel());
@@ -118,13 +108,11 @@ public class GuiTabSettings extends GuiScreenBase {
 
 		selectChannel(activeChannel);
 
-
-		btnTwitchIntegration = new GuiButtonIntegration(-1, guiLeft - 30, guiTop, new ResourceLocation(BetterMinecraftChat.MOD_ID, "addons/twitch.png"), Loader.isModLoaded(BetterMinecraftChat.TWITCH_INTEGRATION));
-		buttonList.add(btnTwitchIntegration);
+		addNavigationBar();
 	}
 
 	@Override
-	public void actionPerformed(GuiButton button) {
+	public void actionPerformed(@Nullable GuiButton button) throws IOException {
 		if(button instanceof GuiButtonChannelTab) {
 			apply(false);
 			selectChannel(((GuiButtonChannelTab) button).getChannel());
@@ -184,30 +172,9 @@ public class GuiTabSettings extends GuiScreenBase {
 			btnDeleteChannelConfirm.visible = true;
 		} else if(button == btnDeleteChannelConfirm) {
 			BetterMinecraftChat.getChatHandler().removeChannel(activeChannel);
-		} else if(button == btnTwitchIntegration) {
-			if(btnTwitchIntegration.isAvailable()) {
-				AuthManager.TokenPair tokenPair = AuthManager.getToken(BetterMinecraftChat.TWITCH_INTEGRATION);
-				if(tokenPair != null) {
-					mc.displayGuiScreen(new GuiTwitchChannels());
-				} else {
-					mc.displayGuiScreen(new GuiTwitchConnect(this));
-				}
-			} else {
-				clickedLink = "http://minecraft.curseforge.com/projects/betterminecraftchat";
-				mc.displayGuiScreen(new GuiOpenIntegrationLink(this, "Twitch", "BetterMinecraftChat - Twitch Integration", 0));
-			}
+		} else {
+			super.actionPerformed(button);
 		}
-	}
-
-	@Override
-	public void confirmClicked(boolean result, int id) {
-		super.confirmClicked(result, id);
-		if(id == 0 && result) {
-			try {
-				BalyWare.openWebLink(new URI(clickedLink));
-			} catch (URISyntaxException ignored) {}
-		}
-		mc.displayGuiScreen(this);
 	}
 
 	@Override

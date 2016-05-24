@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -38,6 +39,7 @@ public class TwitchBadge {
 		return tooltipProvider;
 	}
 
+	@Nullable
 	public static TwitchBadge getSubscriberBadge(String channel) {
 		TwitchBadge badge = twitchBadges.get(channel);
 		if(badge == null) {
@@ -68,6 +70,7 @@ public class TwitchBadge {
 		}
 	}
 
+	@Nullable
 	public static TwitchBadge getBadge(String name) {
 		return twitchBadges.get(name);
 	}

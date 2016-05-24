@@ -69,7 +69,6 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		if(iconBTTV == null) {
 			iconBTTV = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/bttv.png"));
 		}
-		displayGroup(EmoteRegistry.getGroup(currentGroup));
 	}
 
 	@Override
@@ -91,6 +90,7 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		if(EmoteRegistry.hasGroup("BTTV")) {
 			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconBTTV, EmoteRegistry.getGroup("BTTV")));
 		}
+		displayGroup(EmoteRegistry.getGroup(currentGroup));
 	}
 
 	@Override
@@ -157,6 +157,7 @@ public class GuiOverlayEmotes extends GuiOverlay {
 				it.remove();
 			}
 		}
+		emoteButtons.clear();
 	}
 
 	@Override

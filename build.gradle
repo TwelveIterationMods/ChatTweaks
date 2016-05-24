@@ -38,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    compile "net.blay09.javatmi:JavaTMI:0.1.19"
+    compile "net.blay09.javatmi:JavaTMI:0.1.20"
     compile "net.blay09:javairc:0.0.13"
 }
 

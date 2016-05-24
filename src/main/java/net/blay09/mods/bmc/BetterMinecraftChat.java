@@ -7,16 +7,22 @@ import net.blay09.mods.bmc.api.SimpleImageURLTransformer;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
 import net.blay09.mods.bmc.chat.ChatMacros;
 import net.blay09.mods.bmc.chat.emotes.twitch.*;
+import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
 import net.blay09.mods.bmc.handler.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.io.File;
@@ -32,6 +38,8 @@ public class BetterMinecraftChat {
 
 	@Mod.Instance(MOD_ID)
     public static BetterMinecraftChat instance;
+
+	private final KeyBinding keyBindOptions = new KeyBinding("key.betterminecraftchat.options", KeyConflictContext.IN_GAME, Keyboard.KEY_I, "key.category.betterminecraftchat");
 
 	private Configuration config;
 	private int maxTextureSize;
@@ -63,6 +71,8 @@ public class BetterMinecraftChat {
 		BetterMinecraftChatAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*gyazo\\.com/[a-z0-9]+", ".png"));
 
 		ChatMacros.load(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/macros.ini"));
+
+		ClientRegistry.registerKeyBinding(keyBindOptions);
 	}
 
 	@Mod.EventHandler
@@ -85,6 +95,13 @@ public class BetterMinecraftChat {
 			config.save();
 		}
     }
+
+	@SubscribeEvent
+	public void onKeyInput(InputEvent.KeyInputEvent event) {
+		if(Keyboard.getEventKeyState() && keyBindOptions.isActiveAndMatches(Keyboard.getEventKey())) {
+			Minecraft.getMinecraft().displayGuiScreen(new GuiTabSettings(null));
+		}
+	}
 
 	@SubscribeEvent
 	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
