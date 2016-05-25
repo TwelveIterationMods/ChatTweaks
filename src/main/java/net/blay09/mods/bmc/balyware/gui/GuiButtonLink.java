@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui;
+package net.blay09.mods.bmc.balyware.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

@@ -23,10 +23,9 @@ public class ChatMessage implements IChatMessage {
 	private ChatChannel exclusiveChannel;
 	private boolean managed;
 
-	public ChatMessage(int id, ITextComponent chatComponent, NBTTagCompound customData) {
+	public ChatMessage(int id, ITextComponent chatComponent) {
         this.id = id;
         this.chatComponent = chatComponent;
-        this.customData = customData;
 		this.timestamp = System.currentTimeMillis();
     }
 
@@ -129,7 +128,7 @@ public class ChatMessage implements IChatMessage {
     }
 
 	public ChatMessage copy() {
-		ChatMessage out = new ChatMessage(id, chatComponent, customData);
+		ChatMessage out = new ChatMessage(id, chatComponent);
 		out.backgroundColor = backgroundColor;
 		if(images != null) {
 			out.images = Lists.newArrayList(images);

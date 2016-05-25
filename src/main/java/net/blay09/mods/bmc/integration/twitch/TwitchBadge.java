@@ -7,7 +7,6 @@ import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.image.ITooltipProvider;
 import net.blay09.mods.bmc.balyware.CachedAPI;
-import net.blay09.mods.bmc.chat.emotes.twitch.TwitchAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;

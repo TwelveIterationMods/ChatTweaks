@@ -266,6 +266,9 @@ public class ChatChannel implements IChatChannel {
 		chatLines.add(chatLine);
 		managedChatLines.add(chatLine);
 		chatLineMap.put(chatLine.getId(), chatLine);
+		if(BetterMinecraftChat.getChatHandler().getActiveChannel() == this) {
+			BetterMinecraftChat.getChatHandler().markAsRead(chatLine);
+		}
 		if(chatLines.size() > MAX_MESSAGES) {
 			removeChatLine(chatLines.get(0).getId());
 		}

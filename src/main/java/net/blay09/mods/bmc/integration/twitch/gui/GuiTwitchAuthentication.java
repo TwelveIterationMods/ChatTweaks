@@ -1,6 +1,5 @@
 package net.blay09.mods.bmc.integration.twitch.gui;
 
-import net.blay09.javatmi.TMIClient;
 import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.balyware.gui.GuiPasswordField;
 import net.blay09.mods.bmc.gui.GuiScreenBase;
@@ -9,6 +8,7 @@ import net.blay09.mods.bmc.integration.twitch.TwitchIntegration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
@@ -34,7 +34,7 @@ public class GuiTwitchAuthentication extends GuiScreenBase {
 	public void initGui() {
 		super.initGui();
 
-		btnGetToken = new GuiButton(0, width / 2 - 100, height / 2 - 25, 200, 20, TextFormatting.GREEN + "Generate Token");
+		btnGetToken = new GuiButton(0, width / 2 - 100, height / 2 - 25, 200, 20, TextFormatting.GREEN + I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.generateToken"));
 		buttonList.add(btnGetToken);
 
 		txtToken = new GuiPasswordField(1, mc, width / 2 - 100, height / 2 + 20, 200, 15);
@@ -45,7 +45,7 @@ public class GuiTwitchAuthentication extends GuiScreenBase {
 		txtToken.setEnabled(!TwitchIntegration.useAnonymousLogin);
 		textFieldList.add(txtToken);
 
-		GuiCheckBox chkAnonymous = new GuiCheckBox(2, width / 2 - 100, height / 2 + 45, " Anonymous Login (read-only)", TwitchIntegration.useAnonymousLogin) {
+		GuiCheckBox chkAnonymous = new GuiCheckBox(2, width / 2 - 100, height / 2 + 45, I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.anonymousLogin"), TwitchIntegration.useAnonymousLogin) {
 			@Override
 			public void setIsChecked(boolean isChecked) {
 				super.setIsChecked(isChecked);
@@ -55,9 +55,9 @@ public class GuiTwitchAuthentication extends GuiScreenBase {
 		};
 		buttonList.add(chkAnonymous);
 
-		btnConnect = new GuiButton(3, width / 2, height / 2 + 65, 100, 20, "Connect");
+		btnConnect = new GuiButton(3, width / 2, height / 2 + 65, 100, 20, I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.connect"));
 		if(TwitchIntegration.isConnected()) {
-			btnConnect.displayString = "Disconnect";
+			btnConnect.displayString = I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.disconnect");
 		}
 		buttonList.add(btnConnect);
 
@@ -114,12 +114,11 @@ public class GuiTwitchAuthentication extends GuiScreenBase {
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(twitchLogo);
 		drawModalRectWithCustomSizedTexture(width / 2 - 64, height / 2 - 80, 0, 0, 128, 43, 128, 43);
-		drawString(mc.fontRendererObj, "Chat Token", width / 2 - 100, height / 2 + 5, 0xFFFFFF);
+		drawString(mc.fontRendererObj, I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.chatToken"), width / 2 - 100, height / 2 + 5, 0xFFFFFF);
 	}
 
 	@Override
-	protected boolean isTwitchGui() {
-		return true;
+	public String getNavigationId() {
+		return TwitchIntegration.MOD_ID;
 	}
-
 }

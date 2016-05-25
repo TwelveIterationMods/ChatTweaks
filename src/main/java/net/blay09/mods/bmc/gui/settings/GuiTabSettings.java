@@ -3,6 +3,7 @@ package net.blay09.mods.bmc.gui.settings;
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
+import net.blay09.mods.bmc.api.INavigationGui;
 import net.blay09.mods.bmc.api.MessageStyle;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.blay09.mods.bmc.balyware.gui.GuiUtils;
@@ -21,9 +22,10 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 
-public class GuiTabSettings extends GuiScreenBase {
+public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 
 	private ChatChannel activeChannel;
 	private GuiButton btnRegExHelp;
@@ -224,34 +226,45 @@ public class GuiTabSettings extends GuiScreenBase {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		drawSimpleWindow();
 		List<ChatChannel> channels = BetterMinecraftChat.getChatHandler().getChannels();
-		mc.fontRendererObj.drawStringWithShadow(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.settingsFor", "[" + txtLabel.getText() + "] (" + (channels.indexOf(activeChannel) + 1) + "/" + channels.size() + ")"), guiLeft + 4, guiTop + 4, 0xFFFFFFFF);
-		mc.fontRendererObj.drawStringWithShadow(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.tabLabel"), guiLeft + 8, guiTop + 22, 0xFFFFFFFF);
-		mc.fontRendererObj.drawStringWithShadow(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.filterPattern"), guiLeft + 8, guiTop + 56, 0xFFFFFFFF);
-		mc.fontRendererObj.drawStringWithShadow(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.outgoingPrefix"), guiLeft + 118, guiTop + 22, 0xFFFFFFFF);
-		mc.fontRendererObj.drawStringWithShadow(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.messageFormat"), guiLeft + 8, guiTop + 104, 0xFFFFFFFF);
-		mc.fontRendererObj.drawStringWithShadow(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.style"), guiLeft + 174, guiTop + 104, 0xFFFFFFFF);
+		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.settingsFor", "[" + txtLabel.getText() + "] (" + (channels.indexOf(activeChannel) + 1) + "/" + channels.size() + ")"), guiLeft + 4, guiTop + 4, 0xFFFFFFFF);
+		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.tabLabel"), guiLeft + 8, guiTop + 22, 0xFFFFFFFF);
+		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.filterPattern"), guiLeft + 8, guiTop + 56, 0xFFFFFFFF);
+		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.outgoingPrefix"), guiLeft + 118, guiTop + 22, 0xFFFFFFFF);
+		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.messageFormat"), guiLeft + 8, guiTop + 104, 0xFFFFFFFF);
+		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.style"), guiLeft + 174, guiTop + 104, 0xFFFFFFFF);
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		if(btnRegExHelp.isMouseOver()) {
-			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + "Required Groups", " Sender: (?<s> ... )", " Message: (?<m> ... )", TextFormatting.YELLOW + "Open Help in Browser"), mouseX, mouseY);
+			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.requiredGroups"), " " + I18n.format("betterminecraftchat:gui.tabSettings.sender") + ": (?<s> ... )", " " + I18n.format("betterminecraftchat:gui.tabSettings.message") + ": (?<m> ... )", TextFormatting.YELLOW + I18n.format("betterminecraftchat:gui.tabSettings.openHelpInBrowser")), mouseX, mouseY);
 		} else if(btnFormatHelp.isMouseOver()) {
-			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + "Variables", " $0: Original Text", " ${s}: Sender", " ${m}: Message", " $...: Custom Groups", TextFormatting.YELLOW + "Open Help in Browser"), mouseX, mouseY);
+			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.variables"), " $0: " + I18n.format("betterminecraftchat:gui.tabSettings.originalText"), " ${s}: " + I18n.format("betterminecraftchat:gui.tabSettings.sender"), " ${m}: " + I18n.format("betterminecraftchat:gui.tabSettings.message"), " $...: " + I18n.format("betterminecraftchat:gui.tabSettings.customGroups"), TextFormatting.YELLOW + I18n.format("betterminecraftchat:gui.tabSettings.openHelpInBrowser")), mouseX, mouseY);
 		} else if(btnPrefixHelp.isMouseOver()) {
-			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + "Message Prefix", "This will be put in front", "of messages you send.", "Commands work as well."), mouseX, mouseY);
+			List<String> list = Lists.newArrayList();
+			list.add(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.messagePrefix"));
+			String[] lines = I18n.format("betterminecraftchat:gui.tabSettings.messagePrefixDesc").split("\\\\n");
+			Collections.addAll(list, lines);
+			GuiUtils.drawTooltip(list, mouseX, mouseY);
 		} else if(btnStyle.isMouseOver()) {
+			String styleLangKey = null;
 			switch(activeChannel.getMessageStyle()) {
 				case Hidden:
-					GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.AQUA + "Hidden", "Messages will not appear", "and the tab will be hidden.", TextFormatting.YELLOW + "Click to toggle"), mouseX, mouseY);
+					styleLangKey = "styleHidden";
 					break;
 				case Chat:
-					GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.AQUA + "Chat (Default)", "Messages will appear", "in Minecraft chat.", TextFormatting.YELLOW + "Click to toggle"), mouseX, mouseY);
+					styleLangKey = "styleChat";
 					break;
 				case Side:
-					GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.AQUA + "Side Bar", "Messages will appear", "on the side and fade away.", TextFormatting.YELLOW + "Click to toggle"), mouseX, mouseY);
+					styleLangKey = "styleSideBar";
 					break;
 				case Bottom:
-					GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.AQUA + "Bottom", "Messages will appear on the", "bottom and fade away.", "Only shows one message", "at a time.", TextFormatting.YELLOW + "Click to toggle"), mouseX, mouseY);
+					styleLangKey = "styleBottom";
 					break;
 			}
+			List<String> list = Lists.newArrayList();
+			list.add(TextFormatting.AQUA + I18n.format("betterminecraftchat:gui.tabSettings." + styleLangKey));
+			String[] lines = I18n.format("betterminecraftchat:gui.tabSettings." + styleLangKey + "Desc").split("\\\\n");
+			Collections.addAll(list, lines);
+			list.add(TextFormatting.YELLOW + I18n.format("betterminecraftchat:gui.tabSettings.clickToToggle"));
+			GuiUtils.drawTooltip(list, mouseX, mouseY);
 		}
 		GlStateManager.disableLighting();
 	}
@@ -273,5 +286,10 @@ public class GuiTabSettings extends GuiScreenBase {
 
 	public ChatChannel getSelectedChannel() {
 		return activeChannel;
+	}
+
+	@Override
+	public String getNavigationId() {
+		return "settings";
 	}
 }

@@ -28,7 +28,7 @@ public interface InternalMethods {
 	void loadEmoteImage(IEmote emote, InputStream in);
 	IChatImage createImage(int index, IChatRenderable image, ITooltipProvider tooltip);
 	IChatMessage getChatLine(int id);
-	IChatMessage addChatLine(ITextComponent chatComponent, NBTTagCompound data);
+	IChatMessage addChatLine(ITextComponent chatComponent, IChatChannel channel);
 	void removeChatLine(int id);
 	void registerImageURLTransformer(Function<String, String> function);
 	IChatChannel getChatChannel(String name, boolean create);

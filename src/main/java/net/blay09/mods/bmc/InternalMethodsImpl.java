@@ -15,7 +15,6 @@ import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.blay09.mods.bmc.image.ChatImageDefault;
 import net.blay09.mods.bmc.image.renderable.ImageLoader;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 
 import java.io.File;
@@ -64,8 +63,8 @@ public class InternalMethodsImpl implements InternalMethods {
 	}
 
 	@Override
-	public IChatMessage addChatLine(ITextComponent chatComponent, NBTTagCompound data) {
-		return BetterMinecraftChat.getChatHandler().addChatLine(chatComponent, data, true);
+	public IChatMessage addChatLine(ITextComponent chatComponent, IChatChannel channel) {
+		return BetterMinecraftChat.getChatHandler().addChatLine(chatComponent, channel);
 	}
 
 	@Override

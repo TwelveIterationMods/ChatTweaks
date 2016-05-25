@@ -6,6 +6,7 @@ import net.blay09.mods.bmc.integration.twitch.TwitchIntegration;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
@@ -33,13 +34,13 @@ public class GuiTwitchSettings extends GuiScreenBase {
 	public void initGui() {
 		super.initGui();
 
-		btnChannels = new GuiButton(0, width / 2 + 25, height / 2 - 94, 90, 19, "Twitch Channels");
+		btnChannels = new GuiButton(0, width / 2 + 25, height / 2 - 94, 90, 19, I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.twitchChannels"));
 		buttonList.add(btnChannels);
 
-		btnAuthentication = new GuiButton(1, width / 2 - 110, height / 2 - 45, 110, 20, "Edit Authentication");
+		btnAuthentication = new GuiButton(1, width / 2 - 110, height / 2 - 45, 110, 20, I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.editAuthentication"));
 		buttonList.add(btnAuthentication);
 
-		chkShowWhispers = new GuiCheckBox(2, width / 2 - 105, height / 2 + 25, "Display Whispers in Chat", TwitchIntegration.showWhispers);
+		chkShowWhispers = new GuiCheckBox(2, width / 2 - 105, height / 2 + 25, I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.displayWhispers"), TwitchIntegration.showWhispers);
 		buttonList.add(chkShowWhispers);
 
 		txtFormatMessage = new GuiTextField(3, fontRendererObj, width / 2 - 105, height / 2, 100, 13);
@@ -105,18 +106,13 @@ public class GuiTwitchSettings extends GuiScreenBase {
 
 		// Main Section
 		drawRoundRect(width / 2 - 115, height / 2 - 70, width / 2 + 114, height / 2 + 90, 0xDDFFFFFF);
-		drawString(fontRendererObj, TextFormatting.GRAY + "Logged in as " + TextFormatting.WHITE + loggedInAs, width / 2 - 105, height / 2 - 60, 0xFFFFFF);
+		drawString(fontRendererObj, TextFormatting.GRAY + I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.loggedInAs", TextFormatting.WHITE + loggedInAs), width / 2 - 105, height / 2 - 60, 0xFFFFFF);
 
-		drawString(fontRendererObj, "Message Format", width / 2 - 105, height / 2 - 15, 0xFFFFFF);
-		drawString(fontRendererObj, "Action Format", width / 2 + 5, height / 2 - 15, 0xFFFFFF);
+		drawString(fontRendererObj, I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.messageFormat"), width / 2 - 105, height / 2 - 15, 0xFFFFFF);
+		drawString(fontRendererObj, I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.actionFormat"), width / 2 + 5, height / 2 - 15, 0xFFFFFF);
 
-		drawString(fontRendererObj, "Whisper Format", width / 2 - 105, height / 2 + 45, 0xFFFFFF);
-		drawString(fontRendererObj, "Whisper Action", width / 2 + 5, height / 2 + 45, 0xFFFFFF);
-	}
-
-	@Override
-	protected boolean isTwitchGui() {
-		return true;
+		drawString(fontRendererObj, I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.whisperFormat"), width / 2 - 105, height / 2 + 45, 0xFFFFFF);
+		drawString(fontRendererObj, I18n.format(TwitchIntegration.MOD_ID + ":gui.settings.whisperAction"), width / 2 + 5, height / 2 + 45, 0xFFFFFF);
 	}
 
 	private void apply() {
@@ -130,5 +126,12 @@ public class GuiTwitchSettings extends GuiScreenBase {
 		}
 		TwitchIntegration.whisperMessageFormat = txtFormatWhisperMessage.getText();
 		TwitchIntegration.whisperActionFormat = txtFormatWhisperAction.getText();
+		TwitchIntegration.saveConfig();
 	}
+
+	@Override
+	public String getNavigationId() {
+		return TwitchIntegration.MOD_ID;
+	}
+
 }

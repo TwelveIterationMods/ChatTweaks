@@ -23,11 +23,11 @@ public class GuiTwitchChannelCheckbox extends GuiCheckBox {
 
 	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-		hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + BOX_WIDTH && mouseY < yPosition + height;
+		hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 		if(parentScreen.getSelectedChannel() == channel) {
 			packedFGColour = 0xFFFFFF;
 		} else {
-			packedFGColour = hovered ? 0xEEEEEE : 0xAAAAAA;
+			packedFGColour = hovered ? 0xEEEEEE : 0x777777;
 		}
 		super.drawButton(mc, mouseX, mouseY);
 		setIsChecked(channel.isActive());

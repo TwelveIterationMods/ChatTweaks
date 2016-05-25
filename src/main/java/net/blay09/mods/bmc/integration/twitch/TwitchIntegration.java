@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonWriter;
 import net.blay09.javairc.IRCConfiguration;
 import net.blay09.javatmi.TMIClient;
 import net.blay09.mods.bmc.AuthManager;
@@ -26,6 +27,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +43,8 @@ public class TwitchIntegration implements IntegrationModule {
 
 	private static final Map<String, TwitchChannel> channels = Maps.newHashMap();
 	private static final List<TwitchChannel> activeChannels = Lists.newArrayList();
+
+	private static File configFile;
 
 	public static boolean useAnonymousLogin;
 	public static boolean showWhispers;
@@ -64,8 +68,10 @@ public class TwitchIntegration implements IntegrationModule {
 
 		ClientCommandHandler.instance.registerCommand(new CommandTwitch());
 
+		configFile = new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/twitchintegration.json");
+
 		Gson gson = new Gson();
-		try (FileReader reader = new FileReader(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/twitchintegration.json"))) {
+		try (FileReader reader = new FileReader(configFile)) {
 			JsonObject jsonRoot = gson.fromJson(reader, JsonObject.class);
 			JsonObject jsonFormat = jsonRoot.getAsJsonObject("format");
 			singleMessageFormat = jsonStringOr(jsonFormat, "singleMessage", "%u: %m");
@@ -93,6 +99,38 @@ public class TwitchIntegration implements IntegrationModule {
 
 	private static String jsonStringOr(JsonObject object, String key, String defaultVal) {
 		return object.has(key) ? object.get(key).getAsString() : defaultVal;
+	}
+
+	public static void saveConfig() {
+		Gson gson = new Gson();
+		JsonObject jsonRoot = new JsonObject();
+		JsonObject jsonFormat = new JsonObject();
+		jsonFormat.addProperty("singleMessage", singleMessageFormat);
+		jsonFormat.addProperty("multiMessage", multiMessageFormat);
+		jsonFormat.addProperty("whisperMessage", whisperMessageFormat);
+		jsonFormat.addProperty("singleEmote", singleActionFormat);
+		jsonFormat.addProperty("multiEmote", multiActionFormat);
+		jsonFormat.addProperty("whisperEmote", whisperActionFormat);
+		jsonRoot.add("format", jsonFormat);
+		jsonRoot.addProperty("anonymousLogin", useAnonymousLogin);
+		jsonRoot.addProperty("showWhispers", showWhispers);
+		JsonArray jsonChannels = new JsonArray();
+		for(TwitchChannel channel : channels.values()) {
+			JsonObject jsonChannel = new JsonObject();
+			jsonChannel.addProperty("name", channel.getName());
+			jsonChannel.addProperty("subscribersOnly", channel.isSubscribersOnly());
+			jsonChannel.addProperty("deletedMessages", channel.getDeletedMessages().name().toLowerCase());
+			jsonChannel.addProperty("targetTab", channel.getTargetChannelName());
+			jsonChannel.addProperty("active", channel.isActive());
+			jsonChannels.add(jsonChannel);
+		}
+		jsonRoot.add("channels", jsonChannels);
+		try (JsonWriter writer = new JsonWriter(new FileWriter(configFile))) {
+			writer.setIndent("  ");
+			gson.toJson(jsonRoot, writer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Mod.EventHandler
@@ -149,6 +187,7 @@ public class TwitchIntegration implements IntegrationModule {
 	public static void addTwitchChannel(TwitchChannel channel) {
 		channels.put(channel.getName().toLowerCase(), channel);
 		updateChannelStates();
+		saveConfig();
 	}
 
 	public static void removeTwitchChannel(TwitchChannel channel) {
@@ -158,6 +197,7 @@ public class TwitchIntegration implements IntegrationModule {
 				twitchClient.part("#" + channel.getName().toLowerCase());
 			}
 		}
+		saveConfig();
 	}
 
 	public static void updateChannelStates() {

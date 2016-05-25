@@ -23,6 +23,7 @@ import net.blay09.mods.bmc.chat.emotes.twitch.TwitchSubscriberEmotes;
 import net.blay09.mods.bmc.image.ChatImageEmote;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.StringUtils;
 
@@ -126,9 +127,11 @@ public class TwitchChatHandler extends TMIAdapter {
 			}
 		}
 
+		IChatChannel targetChannel = twitchChannel != null ? twitchChannel.getTargetChannel() : null;
+
 		// Format Message
 		ITextComponent textComponent = formatComponent(format, channel, user, message, tmpBadges, tmpEmotes, null, isAction);
-		IChatMessage chatMessage = BetterMinecraftChatAPI.addChatLine(textComponent, null);
+		IChatMessage chatMessage = BetterMinecraftChatAPI.addChatLine(textComponent, targetChannel);
 		chatMessage.setManaged(true);
 		for(IChatImage chatImage : tmpBadges) {
 			chatMessage.addImage(chatImage);
@@ -152,11 +155,8 @@ public class TwitchChatHandler extends TMIAdapter {
 		}
 
 		// Pipe message to tab
-		if(twitchChannel != null) {
-			IChatChannel targetChannel = twitchChannel.getTargetChannel();
-			if (targetChannel != null) {
-				targetChannel.addManagedChatLine(chatMessage);
-			}
+		if (targetChannel != null) {
+			targetChannel.addManagedChatLine(chatMessage);
 		}
 
 		messages.put(user.getNick(), chatMessage);
@@ -165,19 +165,21 @@ public class TwitchChatHandler extends TMIAdapter {
 
 	@Override
 	public void onSubscribe(TMIClient client, String channel, String username) {
+		TwitchChannel twitchChannel = TwitchIntegration.getTwitchChannel(channel);
 		if(TwitchIntegration.isMultiMode()) {
-			BetterMinecraftChatAPI.addChatLine(new TextComponentString("[" + channel + "] " + username + " has just subscribed!"), null);
+			BetterMinecraftChatAPI.addChatLine(new TextComponentTranslation(TwitchIntegration.MOD_ID + ":chat.subscribeMulti", channel, username), twitchChannel != null ? twitchChannel.getTargetChannel() : null);
 		} else {
-			BetterMinecraftChatAPI.addChatLine(new TextComponentString(username + " has just subscribed!"), null);
+			BetterMinecraftChatAPI.addChatLine(new TextComponentTranslation(TwitchIntegration.MOD_ID + ":chat.subscribe", username), twitchChannel != null ? twitchChannel.getTargetChannel() : null);
 		}
 	}
 
 	@Override
 	public void onResubscribe(TMIClient client, String channel, String username, int months) {
+		TwitchChannel twitchChannel = TwitchIntegration.getTwitchChannel(channel);
 		if(TwitchIntegration.isMultiMode()) {
-			BetterMinecraftChatAPI.addChatLine(new TextComponentString("[" + channel + "] " + username + " has subscribed for " + months + " in a row!"), null);
+			BetterMinecraftChatAPI.addChatLine(new TextComponentTranslation(TwitchIntegration.MOD_ID + ":chat.resubscribeMulti", channel, username, months), twitchChannel != null ? twitchChannel.getTargetChannel() : null);
 		} else {
-			BetterMinecraftChatAPI.addChatLine(new TextComponentString(username + " has subscribed for " + months + " in a row!"), null);
+			BetterMinecraftChatAPI.addChatLine(new TextComponentTranslation(TwitchIntegration.MOD_ID + ":chat.resubscribeMulti", username, months), twitchChannel != null ? twitchChannel.getTargetChannel() : null);
 		}
 	}
 

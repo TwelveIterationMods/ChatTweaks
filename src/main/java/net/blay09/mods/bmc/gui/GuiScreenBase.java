@@ -3,6 +3,7 @@ package net.blay09.mods.bmc.gui;
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.api.INavigationGui;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
 import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchChannels;
@@ -23,7 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public abstract class GuiScreenBase extends GuiScreen {
+public abstract class GuiScreenBase extends GuiScreen implements INavigationGui {
 
 	protected final GuiScreen parentScreen;
 	protected final List<GuiTextField> textFieldList = Lists.newArrayList();
@@ -165,20 +166,16 @@ public abstract class GuiScreenBase extends GuiScreen {
 		mc.displayGuiScreen(this);
 	}
 
-	protected boolean isTwitchGui() {
-		return false;
-	}
-
 	public void addNavigationBar() {
-		btnSettings = new GuiButtonNavigation(-1, guiLeft - 32, guiTop, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/settings.png"), true);
-		if(this instanceof GuiTabSettings) {
+		btnSettings = new GuiButtonNavigation(-1, guiLeft - 32, guiTop, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/settings.png"), true, "settings");
+		if(getNavigationId().equals("settings")) {
 			btnSettings.xPosition += 2;
 			btnSettings.enabled = false;
 		}
 		buttonList.add(btnSettings);
 
-		btnTwitchIntegration = new GuiButtonNavigation(-1, guiLeft - 32, guiTop + 30, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/twitch.png"), Loader.isModLoaded(BetterMinecraftChat.TWITCH_INTEGRATION));
-		if(isTwitchGui()) {
+		btnTwitchIntegration = new GuiButtonNavigation(-1, guiLeft - 32, guiTop + 30, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/twitch.png"), Loader.isModLoaded(BetterMinecraftChat.TWITCH_INTEGRATION), BetterMinecraftChat.TWITCH_INTEGRATION);
+		if(getNavigationId().equals(BetterMinecraftChat.TWITCH_INTEGRATION)) {
 			btnTwitchIntegration.xPosition += 2;
 			btnTwitchIntegration.enabled = false;
 		}

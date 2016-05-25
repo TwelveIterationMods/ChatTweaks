@@ -1,10 +1,9 @@
 package net.blay09.mods.bmc.integration.twitch.gui;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
-import net.blay09.mods.bmc.gui.GuiButtonLink;
-import net.blay09.mods.bmc.gui.GuiOptionGroup;
+import net.blay09.mods.bmc.balyware.gui.GuiButtonLink;
+import net.blay09.mods.bmc.balyware.gui.GuiOptionGroup;
 import net.blay09.mods.bmc.gui.GuiScreenBase;
 import net.blay09.mods.bmc.gui.settings.GuiButtonDeleteChannel;
 import net.blay09.mods.bmc.gui.settings.GuiButtonDeleteChannelConfirm;
@@ -14,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
@@ -44,32 +44,31 @@ public class GuiTwitchChannels extends GuiScreenBase {
 	public GuiTwitchChannels() {
 		xSize = 250;
 		ySize = 200;
-		selectedChannel = TwitchIntegration.getTwitchChannels().iterator().next();
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
 
-		btnServerSettings = new GuiButton(0, width / 2 + 25, height / 2 - 94, 90, 19, "Twitch Settings");
+		btnServerSettings = new GuiButton(0, width / 2 + 25, height / 2 - 94, 90, 19, I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.twitchSettings"));
 		buttonList.add(btnServerSettings);
 
-		chkActive = new GuiCheckBox(1, width / 2 - 12, height / 2 - 65, " is Active", false);
+		chkActive = new GuiCheckBox(1, width / 2 - 12, height / 2 - 65, I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.isActive"), false);
 		buttonList.add(chkActive);
 
-		chkSubscribersOnly = new GuiCheckBox(2, width / 2 - 12, height / 2 - 45, " Subscribers only", false);
+		chkSubscribersOnly = new GuiCheckBox(2, width / 2 - 12, height / 2 - 45, I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.subscribersOnly"), false);
 		buttonList.add(chkSubscribersOnly);
 
-		chkDeletedMessagesShow = new GuiCheckBox(3, width / 2 - 2, height / 2 - 10, " Show normally", false);
+		chkDeletedMessagesShow = new GuiCheckBox(3, width / 2 - 2, height / 2 - 10, I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.deletedMessages.showNormally"), false);
 		buttonList.add(chkDeletedMessagesShow);
 
-		chkDeletedMessagesStrikethrough = new GuiCheckBox(4, width / 2 - 2, height / 2 + 5, TextFormatting.STRIKETHROUGH + " Strikethrough", false);
+		chkDeletedMessagesStrikethrough = new GuiCheckBox(4, width / 2 - 2, height / 2 + 5, TextFormatting.STRIKETHROUGH + I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.deletedMessages.strikethrough"), false);
 		buttonList.add(chkDeletedMessagesStrikethrough);
 
-		chkDeletedMessagesReplace = new GuiCheckBox(5, width / 2 - 2, height / 2 + 20, TextFormatting.ITALIC + " <message deleted>", false);
+		chkDeletedMessagesReplace = new GuiCheckBox(5, width / 2 - 2, height / 2 + 20, TextFormatting.ITALIC + I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.deletedMessages.messageDeleted"), false);
 		buttonList.add(chkDeletedMessagesReplace);
 
-		chkDeletedMessagesHide = new GuiCheckBox(6, width / 2 - 2, height / 2 + 35, " Remove completely", false);
+		chkDeletedMessagesHide = new GuiCheckBox(6, width / 2 - 2, height / 2 + 35, I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.deletedMessages.removeCompletely"), false);
 		buttonList.add(chkDeletedMessagesHide);
 
 		groupDeletedMessages = new GuiOptionGroup(chkDeletedMessagesHide, chkDeletedMessagesReplace, chkDeletedMessagesStrikethrough, chkDeletedMessagesShow);
@@ -81,14 +80,17 @@ public class GuiTwitchChannels extends GuiScreenBase {
 		btnDeleteChannelConfirm.visible = false;
 		buttonList.add(btnDeleteChannelConfirm);
 
-		btnNewChannel = new GuiButtonLink(0, width / 2 - 97, 0, fontRendererObj, "<new>");
+		btnNewChannel = new GuiButtonLink(0, width / 2 - 97, 0, fontRendererObj, I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.new"));
 		buttonList.add(btnNewChannel);
 
-		txtNewChannelName = new GuiTextField(0, fontRendererObj, width / 2 - 97, 10, 50, 10);
+		txtNewChannelName = new GuiTextField(0, fontRendererObj, width / 2 - 97, 10, 65, 10);
 		textFieldList.add(txtNewChannelName);
 
 		updateChannelList();
 
+		if(channelButtons.size() > 0) {
+			selectedChannel = channelButtons.get(0).getChannel();
+		}
 		setSelectedChannel(selectedChannel);
 
 		addNavigationBar();
@@ -110,7 +112,7 @@ public class GuiTwitchChannels extends GuiScreenBase {
 				TwitchIntegration.removeTwitchChannel(selectedChannel);
 				updateChannelList();
 			}
-			setSelectedChannel(TwitchIntegration.getTwitchChannels().iterator().next());
+			setSelectedChannel(channelButtons.size() > 0 ? channelButtons.get(0).getChannel() : null);
 			btnDeleteChannelConfirm.visible = false;
 		} else if(button == btnServerSettings) {
 			mc.displayGuiScreen(new GuiTwitchSettings());
@@ -144,9 +146,9 @@ public class GuiTwitchChannels extends GuiScreenBase {
 	@Override
 	public void onLostFocus(GuiTextField lostFocus) {
 		if(lostFocus == txtNewChannelName && txtNewChannelName.getVisible()) {
-			setSelectedChannel(TwitchIntegration.getTwitchChannels().iterator().next());
+			setSelectedChannel(channelButtons.size() > 0 ? channelButtons.get(0).getChannel() : null);
 			String channelName = txtNewChannelName.getText();
-			if(channelName.charAt(0) == '#') {
+			if(channelName.startsWith("#")) {
 				channelName = channelName.substring(1);
 			}
 			if(!channelName.isEmpty()) {
@@ -179,7 +181,7 @@ public class GuiTwitchChannels extends GuiScreenBase {
 		// Settings
 		drawRoundRect(width / 2 - 17, height / 2 - 70, width / 2 + 114, height / 2 + 90, 0xDDFFFFFF);
 		drawHorizontalLine(width / 2 - 10, width / 2 + 107, height / 2 - 50, 0xDDFFFFFF);
-		drawString(fontRendererObj, "Deleted messages", width / 2 - 10, height / 2 - 25, 0xFFFFFF);
+		drawString(fontRendererObj, I18n.format(TwitchIntegration.MOD_ID + ":gui.channels.deletedMessages"), width / 2 - 10, height / 2 - 25, 0xFFFFFF);
 	}
 
 	public void setSelectedChannel(@Nullable TwitchChannel channel) {
@@ -218,6 +220,7 @@ public class GuiTwitchChannels extends GuiScreenBase {
 			if (selectedChannel.isActive() != oldActive) {
 				TwitchIntegration.updateChannelStates();
 			}
+			TwitchIntegration.saveConfig();
 		}
 	}
 
@@ -226,7 +229,7 @@ public class GuiTwitchChannels extends GuiScreenBase {
 	}
 
 	@Override
-	protected boolean isTwitchGui() {
-		return true;
+	public String getNavigationId() {
+		return TwitchIntegration.MOD_ID;
 	}
 }

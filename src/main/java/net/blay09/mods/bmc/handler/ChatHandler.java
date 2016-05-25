@@ -12,7 +12,6 @@ import net.blay09.mods.bmc.chat.ChatChannel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ChatLine;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -54,7 +53,7 @@ public class ChatHandler {
 			return;
 		}
 
-		ChatMessage chatLine = addChatLine(event.getMessage(), null, false);
+		ChatMessage chatLine = addChatLine(event.getMessage(), null);
 		event.setChatLineId(chatLine.getId());
 
 		if(chatLine.getTimestamp() - lastMessageCleanup >= MESSAGE_CLEANUP_TIME) {
@@ -85,7 +84,7 @@ public class ChatHandler {
 			}
 			switch(channel.getMessageStyle()) {
 				case Chat:
-					isActiveChannelMessage = true;
+					isActiveChannelMessage = channel == activeChannel;
 					break;
 				case Side:
 					BetterMinecraftChat.getSideChatHandler().addMessage(newChatLine);
@@ -170,10 +169,10 @@ public class ChatHandler {
 		}
 	}
 
-	public ChatMessage addChatLine(ITextComponent chatComponent, NBTTagCompound data, boolean printMessage) {
+	public ChatMessage addChatLine(ITextComponent chatComponent, IChatChannel channel) {
 		int id = chatLineCounter.incrementAndGet();
-		ChatMessage chatLine = new ChatMessage(id, chatComponent, data);
-		if (printMessage) {
+		ChatMessage chatLine = new ChatMessage(id, chatComponent);
+		if (channel != null && channel == getActiveChannel()) {
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(chatComponent, id);
 		}
 		chatLines.put(id, chatLine);
@@ -285,7 +284,7 @@ public class ChatHandler {
 	}
 
 	public ChatChannel getNextChatChannel(ChatChannel currentChannel) {
-		int index = channels.size();
+		int index = -1;
 		if(currentChannel != null) {
 			index = channels.indexOf(currentChannel);
 		}

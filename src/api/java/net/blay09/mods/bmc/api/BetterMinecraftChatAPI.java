@@ -7,7 +7,6 @@ import net.blay09.mods.bmc.api.emote.IEmoteLoader;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.image.ITooltipProvider;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.EnumHelper;
@@ -63,8 +62,8 @@ public class BetterMinecraftChatAPI {
 		return internalMethods.getChatLine(id);
 	}
 
-	public static IChatMessage addChatLine(ITextComponent component, NBTTagCompound data) {
-		return internalMethods.addChatLine(component, data);
+	public static IChatMessage addChatLine(ITextComponent component, IChatChannel channel) {
+		return internalMethods.addChatLine(component, channel);
 	}
 
 	public static void removeChatLine(int id) {
