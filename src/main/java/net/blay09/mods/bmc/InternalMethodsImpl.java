@@ -9,11 +9,13 @@ import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 import net.blay09.mods.bmc.api.emote.IEmoteLoader;
 import net.blay09.mods.bmc.api.InternalMethods;
+import net.blay09.mods.bmc.api.emote.IEmoteScanner;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.image.ITooltipProvider;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
+import net.blay09.mods.bmc.chat.emotes.EmoteScanner;
 import net.blay09.mods.bmc.image.ChatImageDefault;
 import net.blay09.mods.bmc.image.renderable.ImageLoader;
 import net.minecraft.util.text.ITextComponent;
@@ -130,6 +132,11 @@ public class InternalMethodsImpl implements InternalMethods {
 	@Override
 	public IAuthManager getAuthManager() {
 		return BetterMinecraftChat.getAuthManager();
+	}
+
+	@Override
+	public IEmoteScanner createEmoteScanner() {
+		return new EmoteScanner();
 	}
 
 	@Override

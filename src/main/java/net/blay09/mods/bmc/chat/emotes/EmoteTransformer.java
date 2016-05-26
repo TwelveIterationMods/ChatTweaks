@@ -1,6 +1,7 @@
 package net.blay09.mods.bmc.chat.emotes;
 
 import com.google.common.collect.Lists;
+import net.blay09.mods.bmc.api.emote.PositionedEmote;
 import net.blay09.mods.bmc.balyware.textcomponent.TextComponentTransformer;
 import net.blay09.mods.bmc.image.ChatImage;
 import net.blay09.mods.bmc.image.ChatImageEmote;
@@ -33,7 +34,7 @@ public class EmoteTransformer extends TextComponentTransformer {
 		}
 		int index = 0;
 		StringBuilder sb = new StringBuilder();
-		for(EmoteScanner.PositionedEmote emoteData : emoteScanner.scanForEmotes(text, null)) {
+		for(PositionedEmote emoteData : emoteScanner.scanForEmotes(text, null)) {
 			if (index < emoteData.getStart()) {
 				sb.append(text.substring(index, emoteData.getStart()));
 			}
