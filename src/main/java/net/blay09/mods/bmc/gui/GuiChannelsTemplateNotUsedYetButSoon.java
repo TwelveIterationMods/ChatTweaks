@@ -74,4 +74,8 @@ public class GuiChannelsTemplateNotUsedYetButSoon extends GuiScreenBase {
 		drawString(fontRendererObj, "Deleted messages", width / 2 - 10, height / 2 - 25, 0xFFFFFF);
 	}
 
+	@Override
+	public String getNavigationId() {
+		return "";
+	}
 }

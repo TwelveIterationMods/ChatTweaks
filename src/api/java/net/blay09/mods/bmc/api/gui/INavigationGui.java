@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.api;
+package net.blay09.mods.bmc.api.gui;
 
 public interface INavigationGui {
 

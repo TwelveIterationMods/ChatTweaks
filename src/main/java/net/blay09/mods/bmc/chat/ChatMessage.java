@@ -2,7 +2,7 @@ package net.blay09.mods.bmc.chat;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.api.image.IChatImage;
-import net.blay09.mods.bmc.api.IChatMessage;
+import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.image.ITooltipProvider;
 import net.blay09.mods.bmc.image.ChatImageDefault;
@@ -84,15 +84,14 @@ public class ChatMessage implements IChatMessage {
 
 	@Override
 	public void addRGBColor(int red, int green, int blue) {
-		addRGBColor((red & 255) << 16 | (green & 255) << 8 | blue & 255, (((red / 4) & 255) << 16 | ((green / 4) & 255) << 8 | (blue / 4) & 255));
+		addRGBColor((red & 255) << 16 | (green & 255) << 8 | blue & 255);
 	}
 
-	private void addRGBColor(int color, int shadow) {
+	private void addRGBColor(int color) {
 		if(rgbBuffer == null) {
 			rgbBuffer = Lists.newArrayList();
 		}
 		rgbBuffer.add(color);
-		rgbBuffer.add(shadow);
 	}
 
 	public List<Integer> getRGBBuffer() {
@@ -121,6 +120,11 @@ public class ChatMessage implements IChatMessage {
 	@Override
 	public boolean isManaged() {
 		return managed;
+	}
+
+	@Override
+	public void clearImages() {
+		images = null;
 	}
 
 	public List<IChatImage> getImages() {

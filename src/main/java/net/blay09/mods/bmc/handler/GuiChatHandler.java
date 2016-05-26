@@ -5,7 +5,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
-import net.blay09.mods.bmc.api.IGuiOverlay;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
+import net.blay09.mods.bmc.api.gui.IGuiOverlay;
 import net.blay09.mods.bmc.api.event.ChatComponentClickEvent;
 import net.blay09.mods.bmc.api.event.TabCompletionEvent;
 import net.blay09.mods.bmc.chat.ChatChannel;
@@ -124,9 +125,9 @@ public class GuiChatHandler {
 			if (Keyboard.getEventKeyState()) {
 				int keyCode = Keyboard.getEventKey();
 				if ((Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) && keyCode == Keyboard.KEY_TAB) {
-					ChatChannel channel = BetterMinecraftChat.getChatHandler().getNextChatChannel(BetterMinecraftChat.getChatHandler().getActiveChannel());
+					IChatChannel channel = BetterMinecraftChat.getChatHandler().getNextChatChannel(BetterMinecraftChat.getChatHandler().getActiveChannel(), true);
 					if(channel != null) {
-						BetterMinecraftChat.getChatHandler().setActiveChannel(channel);
+						BetterMinecraftChat.getChatHandler().setActiveChannel((ChatChannel) channel);
 					}
 					event.setCanceled(true);
 				} else if (keyCode >= Keyboard.KEY_F5 && keyCode <= Keyboard.KEY_F8) {

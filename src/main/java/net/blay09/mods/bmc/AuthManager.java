@@ -1,42 +1,28 @@
 package net.blay09.mods.bmc;
 
 import com.google.common.collect.Maps;
+import net.blay09.mods.bmc.api.IAuthManager;
+import net.blay09.mods.bmc.api.TokenPair;
 
 import java.io.*;
 import java.util.Map;
 
-public class AuthManager {
+public class AuthManager implements IAuthManager {
 
-	public static class TokenPair {
-		private final String username;
-		private final String token;
+	private Map<String, TokenPair> tokenMap = Maps.newHashMap();
 
-		public TokenPair(String username, String token) {
-			this.username = username;
-			this.token = token;
-		}
-
-		public String getUsername() {
-			return username;
-		}
-
-		public String getToken() {
-			return token;
-		}
-	}
-
-	private static Map<String, TokenPair> tokenMap = Maps.newHashMap();
-
-	public static TokenPair getToken(String id) {
+	@Override
+	public TokenPair getToken(String id) {
 		return tokenMap.get(id);
 	}
 
-	public static void storeToken(String id, String username, String token) {
+	@Override
+	public void storeToken(String id, String username, String token) {
 		tokenMap.put(id, new TokenPair(username, token));
 		save();
 	}
 
-	public static void load() {
+	public void load() {
 		File userHome = new File(System.getProperty("user.home"));
 		try(DataInputStream in = new DataInputStream(new FileInputStream(new File(userHome, ".bmc-auth.dat")))) {
 			int count = in.readByte();
@@ -48,14 +34,14 @@ public class AuthManager {
 		}
 	}
 
-	private static void save() {
+	private void save() {
 		File userHome = new File(System.getProperty("user.home"));
 		try(DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(userHome, ".bmc-auth.dat")))) {
 			out.writeByte(tokenMap.size());
 			for(Map.Entry<String, TokenPair> entry : tokenMap.entrySet()) {
 				out.writeUTF(entry.getKey());
-				out.writeUTF(entry.getValue().username);
-				out.writeUTF(entry.getValue().token);
+				out.writeUTF(entry.getValue().getUsername());
+				out.writeUTF(entry.getValue().getToken());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

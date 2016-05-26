@@ -7,9 +7,10 @@ import com.google.common.collect.TreeMultimap;
 import com.google.gson.JsonObject;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
-import net.blay09.mods.bmc.api.IChatChannel;
-import net.blay09.mods.bmc.api.IChatMessage;
-import net.blay09.mods.bmc.api.MessageStyle;
+import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
+import net.blay09.mods.bmc.api.chat.IChatMessage;
+import net.blay09.mods.bmc.api.chat.MessageStyle;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
 import net.blay09.mods.bmc.balyware.textcomponent.MultiTextComponentTransformer;
@@ -23,6 +24,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -328,6 +330,7 @@ public class ChatChannel implements IChatChannel {
 		}
 	}
 
+	@Override
 	public boolean isShowTimestamp() {
 		return showTimestamps;
 	}
@@ -403,18 +406,22 @@ public class ChatChannel implements IChatChannel {
 		this.name = name;
 	}
 
-	public String getPassiveChannelName() {
-		return passiveChannelName;
+	@Nullable
+	public IChatChannel getDisplayChannel() {
+		return passiveChannelName != null ? BetterMinecraftChatAPI.getChatChannel(passiveChannelName, false) : null;
 	}
 
-	public void setPassiveChannelName(String passiveChannelName) {
-		this.passiveChannelName = passiveChannelName;
+	@Override
+	public void setDisplayChannel(@Nullable IChatChannel passiveChannel) {
+		this.passiveChannelName = passiveChannel != null ? passiveChannel.getName() : null;
 	}
 
+	@Override
 	public boolean isTemporary() {
 		return isTemporary;
 	}
 
+	@Override
 	public void setTemporary(boolean temporary) {
 		isTemporary = temporary;
 	}

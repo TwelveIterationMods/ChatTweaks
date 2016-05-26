@@ -1,7 +1,7 @@
 package net.blay09.mods.bmc.gui;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.api.IGuiOverlay;
+import net.blay09.mods.bmc.api.gui.IGuiOverlay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import org.lwjgl.input.Keyboard;

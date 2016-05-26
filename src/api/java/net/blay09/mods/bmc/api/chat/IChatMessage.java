@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.api;
+package net.blay09.mods.bmc.api.chat;
 
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
@@ -31,6 +31,8 @@ public interface IChatMessage {
 	void addRGBColor(int red, int green, int blue);
 
 	boolean hasImages();
+
+	void clearImages();
 
 	long getTimestamp();
 

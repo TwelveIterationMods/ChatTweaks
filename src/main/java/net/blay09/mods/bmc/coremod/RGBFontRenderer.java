@@ -4,40 +4,34 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class RGBFontRenderer {
 
-	private static int[] colors = new int[8];
-	private static int[] shadows = new int[8];
 	private static int index;
-
-	public static void pushColor(int color, int shadow) {
-		if(index >= colors.length) {
-			if(colors.length >= 64) { // just in case something or someone messes up, let's not go overboard
-				throw new RuntimeException("RGB Font Renderer max buffer size exceeded");
-			}
-			colors = Arrays.copyOf(colors, colors.length * 2);
-			shadows = Arrays.copyOf(shadows, shadows.length * 2);
-		}
-		colors[index] = color;
-		shadows[index]= shadow;
-		index++;
-	}
+	private static List<Integer> buffer;
+	private static boolean lastShadow;
 
 	public static void popColor(FontRenderer fontRenderer, boolean shadow) {
-		index--;
-		if(index < 0) {
-			index = 0;
+		if(shadow != lastShadow) {
+			index = -1;
+			lastShadow = shadow;
 		}
+		index++;
+		if(buffer == null || index < 0 || index >= buffer.size()) {
+			return;
+		}
+		int color = buffer.get(index);
 		if(shadow) {
-			GlStateManager.color((shadows[index] >> 16) / 255.0F, (float) (shadows[index] >> 8 & 255) / 255.0F, (float) (shadows[index] & 255) / 255.0F, fontRenderer.alpha);
+			GlStateManager.color((color >> 16) / 255f / 4, (float) (color >> 8 & 255) / 255f / 4, (float) (color & 255) / 255f / 4, fontRenderer.alpha);
 		} else {
-			GlStateManager.color((colors[index] >> 16) / 255.0F, (float) (colors[index] >> 8 & 255) / 255.0F, (float) (colors[index] & 255) / 255.0F, fontRenderer.alpha);
+			GlStateManager.color((color >> 16) / 255f, (float) (color >> 8 & 255) / 255f, (float) (color & 255) / 255f, fontRenderer.alpha);
 		}
 	}
 
-	public static void reset() {
-		index = 0;
+	public static void setBuffer(List<Integer> buffer) {
+		index = -1;
+		RGBFontRenderer.buffer = buffer;
 	}
 
 }

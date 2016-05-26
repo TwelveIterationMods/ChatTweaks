@@ -1,9 +1,11 @@
 package net.blay09.mods.bmc.integration.twitch.gui;
 
-import net.blay09.mods.bmc.AuthManager;
+import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
+import net.blay09.mods.bmc.api.TokenPair;
 import net.blay09.mods.bmc.balyware.gui.GuiPasswordField;
 import net.blay09.mods.bmc.gui.GuiScreenBase;
-import net.blay09.mods.bmc.integration.twitch.TwitchHelper;
+import net.blay09.mods.bmc.integration.twitch.TwitchIntegrationConfig;
+import net.blay09.mods.bmc.integration.twitch.util.TwitchHelper;
 import net.blay09.mods.bmc.integration.twitch.TwitchIntegration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -38,25 +40,25 @@ public class GuiTwitchAuthentication extends GuiScreenBase {
 		buttonList.add(btnGetToken);
 
 		txtToken = new GuiPasswordField(1, mc, width / 2 - 100, height / 2 + 20, 200, 15);
-		AuthManager.TokenPair tokenPair = AuthManager.getToken(TwitchIntegration.MOD_ID);
+		TokenPair tokenPair = BetterMinecraftChatAPI.getAuthManager().getToken(TwitchIntegration.MOD_ID);
 		if(tokenPair != null) {
 			txtToken.setText(tokenPair.getToken());
 		}
-		txtToken.setEnabled(!TwitchIntegration.useAnonymousLogin);
+		txtToken.setEnabled(!TwitchIntegrationConfig.useAnonymousLogin);
 		textFieldList.add(txtToken);
 
-		GuiCheckBox chkAnonymous = new GuiCheckBox(2, width / 2 - 100, height / 2 + 45, I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.anonymousLogin"), TwitchIntegration.useAnonymousLogin) {
+		GuiCheckBox chkAnonymous = new GuiCheckBox(2, width / 2 - 100, height / 2 + 45, I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.anonymousLogin"), TwitchIntegrationConfig.useAnonymousLogin) {
 			@Override
 			public void setIsChecked(boolean isChecked) {
 				super.setIsChecked(isChecked);
 				txtToken.setEnabled(isChecked);
-				TwitchIntegration.useAnonymousLogin = isChecked;
+				TwitchIntegrationConfig.useAnonymousLogin = isChecked;
 			}
 		};
 		buttonList.add(chkAnonymous);
 
 		btnConnect = new GuiButton(3, width / 2, height / 2 + 65, 100, 20, I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.connect"));
-		if(TwitchIntegration.isConnected()) {
+		if(TwitchIntegration.getTwitchManager().isConnected()) {
 			btnConnect.displayString = I18n.format(TwitchIntegration.MOD_ID + ":gui.authentication.disconnect");
 		}
 		buttonList.add(btnConnect);
@@ -67,21 +69,21 @@ public class GuiTwitchAuthentication extends GuiScreenBase {
 	@Override
 	public void actionPerformed(@Nullable GuiButton button) throws IOException {
 		if(button == btnConnect) {
-			AuthManager.TokenPair tokenPair = AuthManager.getToken(TwitchIntegration.MOD_ID);
+			TokenPair tokenPair = BetterMinecraftChatAPI.getAuthManager().getToken(TwitchIntegration.MOD_ID);
 			if(tokenPair == null || !tokenPair.getToken().equals(txtToken.getText()) || tokenPair.getUsername() == null) {
 				mc.displayGuiScreen(new GuiTwitchWaitingForUsername(parentScreen));
 				TwitchHelper.requestUsername(txtToken.getText(), new Runnable() {
 					@Override
 					public void run() {
-						TwitchIntegration.connect();
+						TwitchIntegration.getTwitchManager().connect();
 					}
 				});
 			} else {
 				mc.displayGuiScreen(null);
-				if(TwitchIntegration.isConnected()) {
-					TwitchIntegration.disconnect();
+				if(TwitchIntegration.getTwitchManager().isConnected()) {
+					TwitchIntegration.getTwitchManager().disconnect();
 				} else {
-					TwitchIntegration.connect();
+					TwitchIntegration.getTwitchManager().connect();
 				}
 			}
 		} else if(button == btnGetToken) {

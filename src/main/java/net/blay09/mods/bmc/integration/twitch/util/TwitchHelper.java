@@ -1,9 +1,10 @@
-package net.blay09.mods.bmc.integration.twitch;
+package net.blay09.mods.bmc.integration.twitch.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.blay09.mods.bmc.AuthManager;
+import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
+import net.blay09.mods.bmc.integration.twitch.TwitchIntegration;
 import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchWaitingForUsername;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -60,7 +61,7 @@ public class TwitchHelper {
 							Gson gson = new Gson();
 							JsonObject root = gson.fromJson(reader, JsonObject.class);
 							String username = root.getAsJsonObject("token").get("user_name").getAsString();
-							AuthManager.storeToken(TwitchIntegration.MOD_ID, username, token);
+							BetterMinecraftChatAPI.getAuthManager().storeToken(TwitchIntegration.MOD_ID, username, token);
 							Minecraft.getMinecraft().addScheduledTask(callback);
 						} catch (JsonParseException e) {
 							e.printStackTrace();

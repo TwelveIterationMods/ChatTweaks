@@ -2,7 +2,7 @@ package net.blay09.mods.bmc.gui.emotes;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.BetterMinecraftChat;
-import net.blay09.mods.bmc.api.IGuiOverlay;
+import net.blay09.mods.bmc.api.gui.IGuiOverlay;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 import net.blay09.mods.bmc.api.image.IChatRenderable;

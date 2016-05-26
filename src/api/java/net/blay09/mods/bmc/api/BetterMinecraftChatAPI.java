@@ -1,9 +1,12 @@
 package net.blay09.mods.bmc.api;
 
 import com.google.common.base.Function;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
+import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 import net.blay09.mods.bmc.api.emote.IEmoteLoader;
+import net.blay09.mods.bmc.api.emote.IEmoteScanner;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.image.ITooltipProvider;
@@ -58,6 +61,10 @@ public class BetterMinecraftChatAPI {
 		internalMethods.loadEmoteImage(emote, in);
 	}
 
+	public static IEmoteScanner createEmoteScanner() {
+		return internalMethods.createEmoteScanner();
+	}
+
 	public static IChatMessage getChatLine(int id) {
 		return internalMethods.getChatLine(id);
 	}
@@ -82,6 +89,10 @@ public class BetterMinecraftChatAPI {
 		return internalMethods.getChatChannel(name, create);
 	}
 
+	public static void saveChannels() {
+		internalMethods.saveChannels();
+	}
+
 	public static void clearChat() {
 		internalMethods.clearChat();
 	}
@@ -90,7 +101,15 @@ public class BetterMinecraftChatAPI {
 		internalMethods.refreshChat();
 	}
 
+	public static IAuthManager getAuthManager() {
+		return internalMethods.getAuthManager();
+	}
+
 	public static void registerIntegration(IntegrationModule module) {
 
+	}
+
+	public static void removeChannel(IChatChannel channel) {
+		internalMethods.removeChannel(channel);
 	}
 }

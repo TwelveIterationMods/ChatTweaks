@@ -1,6 +1,7 @@
-package net.blay09.mods.bmc.integration.twitch;
+package net.blay09.mods.bmc.integration.twitch.handler;
 
-import net.blay09.mods.bmc.api.IChatChannel;
+import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
 
 import javax.annotation.Nullable;
 
@@ -22,7 +23,7 @@ public class TwitchChannel {
 	}
 
 	private final String name;
-	private String targetChannelName = "*";
+	private String targetChannelName;
 	private IChatChannel targetChannel;
 	private boolean subscribersOnly;
 	private DeletedMessages deletedMessages = DeletedMessages.SHOW;
@@ -30,6 +31,7 @@ public class TwitchChannel {
 
 	public TwitchChannel(String name) {
 		this.name = name;
+		targetChannelName = name;
 	}
 
 	public String getName() {
@@ -52,22 +54,23 @@ public class TwitchChannel {
 		this.deletedMessages = deletedMessages;
 	}
 
-	public void setTargetChannelName(String targetChannelName) {
+	public void setTargetTabName(String targetChannelName) {
 		this.targetChannelName = targetChannelName;
+		this.targetChannel = BetterMinecraftChatAPI.getChatChannel(targetChannelName, false);
 	}
 
-	public String getTargetChannelName() {
+	public String getTargetTabName() {
 		return targetChannelName;
 	}
 
 	@Nullable
-	public IChatChannel getTargetChannel() {
+	public IChatChannel getTargetTab() {
 		return targetChannel;
 	}
 
-	public void setTargetChannel(IChatChannel targetChannel) {
+	public void setTargetTab(@Nullable IChatChannel targetChannel) {
 		this.targetChannel = targetChannel;
-		this.targetChannelName = targetChannel.getName();
+		this.targetChannelName = targetChannel != null ? targetChannel.getName() : name;
 	}
 
 	public boolean isActive() {

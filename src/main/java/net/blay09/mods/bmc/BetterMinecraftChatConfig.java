@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
-import net.blay09.mods.bmc.api.MessageStyle;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
+import net.blay09.mods.bmc.api.chat.MessageStyle;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.emotes.DefaultEmotes;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
@@ -99,11 +100,11 @@ public class BetterMinecraftChatConfig {
 			createDefaultChannels();
 		}
 
-		ChatChannel defaultChannel = BetterMinecraftChat.getChatHandler().getNextChatChannel(null);
+		IChatChannel defaultChannel = BetterMinecraftChat.getChatHandler().getNextChatChannel(null, false);
 		if(defaultChannel == null) {
 			defaultChannel = BetterMinecraftChat.getChatHandler().getChannels().get(0);
 		}
-		BetterMinecraftChat.getChatHandler().setActiveChannel(defaultChannel);
+		BetterMinecraftChat.getChatHandler().setActiveChannel((ChatChannel) defaultChannel);
 	}
 
 	private static void createDefaultChannels() {

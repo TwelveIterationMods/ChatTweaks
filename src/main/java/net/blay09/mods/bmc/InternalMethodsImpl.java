@@ -2,8 +2,9 @@ package net.blay09.mods.bmc;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-import net.blay09.mods.bmc.api.IChatChannel;
-import net.blay09.mods.bmc.api.IChatMessage;
+import net.blay09.mods.bmc.api.IAuthManager;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
+import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 import net.blay09.mods.bmc.api.emote.IEmoteLoader;
@@ -87,6 +88,7 @@ public class InternalMethodsImpl implements InternalMethods {
 		IChatChannel channel = BetterMinecraftChat.getChatHandler().getChannel(name);
 		if(channel == null && create) {
 			channel = new ChatChannel(name);
+			BetterMinecraftChat.getChatHandler().addChannel((ChatChannel) channel);
 		}
 		return channel;
 	}
@@ -118,6 +120,21 @@ public class InternalMethodsImpl implements InternalMethods {
 	@Override
 	public void refreshChat() {
 		BetterMinecraftChat.getChatHandler().setActiveChannel(BetterMinecraftChat.getChatHandler().getActiveChannel());
+	}
+
+	@Override
+	public void removeChannel(IChatChannel channel) {
+		BetterMinecraftChat.getChatHandler().removeChannel(channel);
+	}
+
+	@Override
+	public IAuthManager getAuthManager() {
+		return BetterMinecraftChat.getAuthManager();
+	}
+
+	@Override
+	public void saveChannels() {
+		BetterMinecraftChatConfig.saveChannels();
 	}
 
 	private boolean loadEmoteImageFromCache(IEmote emote) {

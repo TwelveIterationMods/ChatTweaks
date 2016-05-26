@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.integration.twitch;
+package net.blay09.mods.bmc.integration.twitch.handler;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
@@ -7,6 +7,7 @@ import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.image.ITooltipProvider;
 import net.blay09.mods.bmc.balyware.CachedAPI;
+import net.blay09.mods.bmc.integration.twitch.TwitchIntegration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;

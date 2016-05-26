@@ -3,8 +3,9 @@ package net.blay09.mods.bmc.gui.settings;
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
-import net.blay09.mods.bmc.api.INavigationGui;
-import net.blay09.mods.bmc.api.MessageStyle;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
+import net.blay09.mods.bmc.api.gui.INavigationGui;
+import net.blay09.mods.bmc.api.chat.MessageStyle;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.blay09.mods.bmc.balyware.gui.GuiUtils;
 import net.blay09.mods.bmc.chat.ChatChannel;
@@ -46,7 +47,7 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 	private GuiButtonNavigate btnPrevChannel;
 
 	public GuiTabSettings(@Nullable GuiScreen parentScreen) {
-		this(parentScreen, BetterMinecraftChat.getChatHandler().getActiveChannel());
+		this(parentScreen, (ChatChannel) BetterMinecraftChat.getChatHandler().getNextChatChannel(null, true));
 	}
 
 	public GuiTabSettings(@Nullable GuiScreen parentScreen, ChatChannel selectedChannel) {
@@ -140,9 +141,9 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 			btnStyle.displayString = newStyle.name();
 			if(oldStyle == MessageStyle.Chat || newStyle == MessageStyle.Chat) {
 				if(BetterMinecraftChat.getChatHandler().getActiveChannel() == activeChannel) {
-					ChatChannel channel = BetterMinecraftChat.getChatHandler().getNextChatChannel(activeChannel);
+					IChatChannel channel = BetterMinecraftChat.getChatHandler().getNextChatChannel(activeChannel, true);
 					if(channel != null) {
-						BetterMinecraftChat.getChatHandler().setActiveChannel(channel);
+						BetterMinecraftChat.getChatHandler().setActiveChannel((ChatChannel) channel);
 					}
 				}
 			}
@@ -174,17 +175,16 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 			btnDeleteChannelConfirm.visible = true;
 		} else if(button == btnDeleteChannelConfirm) {
 			BetterMinecraftChat.getChatHandler().removeChannel(activeChannel);
+			selectChannel((ChatChannel) BetterMinecraftChat.getChatHandler().getNextChatChannel(null, true));
 		} else {
 			super.actionPerformed(button);
 		}
 	}
 
 	@Override
-	public void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
-		super.mouseClicked(mouseX, mouseY, button);
-		if(btnDeleteChannelConfirm.visible && !btnDeleteChannelConfirm.isMouseOver()) {
-			btnDeleteChannelConfirm.visible = false;
-		}
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		apply(true);
 	}
 
 	@Override
@@ -210,6 +210,7 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		activeChannel.setName(txtLabel.getText());
 		activeChannel.setFormat(txtFormat.getText());
 		activeChannel.setFilterPattern(txtPattern.getText());
+		activeChannel.setOutgoingPrefix(txtPrefix.getText());
 		activeChannel.setShowTimestamps(chkTimestamps.isChecked());
 		activeChannel.setMuted(chkMuted.isChecked());
 		activeChannel.setExclusive(chkExclusive.isChecked());
@@ -271,12 +272,14 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 
 	public void selectChannel(ChatChannel channel) {
 		this.activeChannel = channel;
+		btnDeleteChannelConfirm.visible = false;
 		txtLabel.setText(activeChannel.getName());
 		txtPattern.setText(activeChannel.getFilterPattern());
 		if(activeChannel.getOutgoingPrefix() != null) {
 			txtPrefix.setText(activeChannel.getOutgoingPrefix());
 		}
 		txtFormat.setText(activeChannel.getFormat());
+		txtPrefix.setText(activeChannel.getOutgoingPrefix() != null ? activeChannel.getOutgoingPrefix() : "");
 		btnStyle.displayString = activeChannel.getMessageStyle().name();
 		chkTimestamps.setIsChecked(activeChannel.isShowTimestamp());
 		chkMuted.setIsChecked(activeChannel.isMuted());

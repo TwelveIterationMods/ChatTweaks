@@ -1,17 +1,11 @@
 package net.blay09.mods.bmc.integration.twitch;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
-import net.blay09.javairc.IRCConfiguration;
-import net.blay09.javatmi.TMIClient;
-import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.IntegrationModule;
 import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchAuthentication;
+import net.blay09.mods.bmc.integration.twitch.handler.TwitchBadge;
+import net.blay09.mods.bmc.integration.twitch.handler.TwitchChatHandler;
+import net.blay09.mods.bmc.integration.twitch.handler.TwitchManager;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
@@ -24,14 +18,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
-import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 @Mod(modid = TwitchIntegration.MOD_ID, name = TwitchIntegration.NAME, clientSideOnly = true, dependencies = "required-after:betterminecraftchat")
 public class TwitchIntegration implements IntegrationModule {
@@ -39,28 +26,13 @@ public class TwitchIntegration implements IntegrationModule {
 	public static final String MOD_ID = "twitchintegration";
 	public static final String NAME = "Twitch Integration";
 
-	private static TextureAtlasSprite icon;
+	@Mod.Instance(MOD_ID)
+	public static TwitchIntegration instance;
 
-	private static final Map<String, TwitchChannel> channels = Maps.newHashMap();
-	private static final List<TwitchChannel> activeChannels = Lists.newArrayList();
+	private TextureAtlasSprite icon;
 
-	private static File configFile;
-
-	public static boolean useAnonymousLogin;
-	public static boolean showWhispers;
-	public static String singleMessageFormat;
-	public static String multiMessageFormat; 
-	public static String singleActionFormat;
-	public static String multiActionFormat;
-	public static String whisperMessageFormat;
-	public static String whisperActionFormat;
-
-	private static TMIClient twitchClient;
-
-	@Nullable
-	public static TMIClient getTwitchClient() {
-		return twitchClient;
-	}
+	private final TwitchManager twitchManager = new TwitchManager();
+	private final TwitchChatHandler twitchChatHandler = new TwitchChatHandler(twitchManager);
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -68,69 +40,7 @@ public class TwitchIntegration implements IntegrationModule {
 
 		ClientCommandHandler.instance.registerCommand(new CommandTwitch());
 
-		configFile = new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/twitchintegration.json");
-
-		Gson gson = new Gson();
-		try (FileReader reader = new FileReader(configFile)) {
-			JsonObject jsonRoot = gson.fromJson(reader, JsonObject.class);
-			JsonObject jsonFormat = jsonRoot.getAsJsonObject("format");
-			singleMessageFormat = jsonStringOr(jsonFormat, "singleMessage", "%u: %m");
-			multiMessageFormat = jsonStringOr(jsonFormat, "multiMessage", "[%c] %u: %m");
-			whisperMessageFormat = jsonStringOr(jsonFormat, "whisperMessage", "%u \u25b6 %r: %m");
-			singleActionFormat = jsonStringOr(jsonFormat, "singleEmote", "%u %m");
-			multiActionFormat = jsonStringOr(jsonFormat, "multiEmote", "[%c] %u %m");
-			whisperActionFormat = jsonStringOr(jsonFormat, "whisperEmote", "%u \u25b6 %r : %m");
-			useAnonymousLogin = jsonRoot.has("anonymousLogin") && jsonRoot.get("anonymousLogin").getAsBoolean();
-			showWhispers = jsonRoot.has("showWhispers") && jsonRoot.get("showWhispers").getAsBoolean();
-			JsonArray jsonChannels = jsonRoot.getAsJsonArray("channels");
-			for(int i = 0; i < jsonChannels.size(); i++) {
-				JsonObject jsonChannel = jsonChannels.get(i).getAsJsonObject();
-				TwitchChannel channel = new TwitchChannel(jsonChannel.get("name").getAsString());
-				channel.setSubscribersOnly(jsonChannel.has("subscribersOnly") && jsonChannel.get("subscribersOnly").getAsBoolean());
-				channel.setDeletedMessages(TwitchChannel.DeletedMessages.fromName(jsonChannel.get("deletedMessages").getAsString()));
-				channel.setTargetChannelName(jsonStringOr(jsonChannel, "targetTab", channel.getName()));
-				channel.setActive(jsonChannel.has("active") && jsonChannel.get("active").getAsBoolean());
-				channels.put(channel.getName().toLowerCase(), channel);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static String jsonStringOr(JsonObject object, String key, String defaultVal) {
-		return object.has(key) ? object.get(key).getAsString() : defaultVal;
-	}
-
-	public static void saveConfig() {
-		Gson gson = new Gson();
-		JsonObject jsonRoot = new JsonObject();
-		JsonObject jsonFormat = new JsonObject();
-		jsonFormat.addProperty("singleMessage", singleMessageFormat);
-		jsonFormat.addProperty("multiMessage", multiMessageFormat);
-		jsonFormat.addProperty("whisperMessage", whisperMessageFormat);
-		jsonFormat.addProperty("singleEmote", singleActionFormat);
-		jsonFormat.addProperty("multiEmote", multiActionFormat);
-		jsonFormat.addProperty("whisperEmote", whisperActionFormat);
-		jsonRoot.add("format", jsonFormat);
-		jsonRoot.addProperty("anonymousLogin", useAnonymousLogin);
-		jsonRoot.addProperty("showWhispers", showWhispers);
-		JsonArray jsonChannels = new JsonArray();
-		for(TwitchChannel channel : channels.values()) {
-			JsonObject jsonChannel = new JsonObject();
-			jsonChannel.addProperty("name", channel.getName());
-			jsonChannel.addProperty("subscribersOnly", channel.isSubscribersOnly());
-			jsonChannel.addProperty("deletedMessages", channel.getDeletedMessages().name().toLowerCase());
-			jsonChannel.addProperty("targetTab", channel.getTargetChannelName());
-			jsonChannel.addProperty("active", channel.isActive());
-			jsonChannels.add(jsonChannel);
-		}
-		jsonRoot.add("channels", jsonChannels);
-		try (JsonWriter writer = new JsonWriter(new FileWriter(configFile))) {
-			writer.setIndent("  ");
-			gson.toJson(jsonRoot, writer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		TwitchIntegrationConfig.load(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/twitchintegration.json"));
 	}
 
 	@Mod.EventHandler
@@ -146,13 +56,13 @@ public class TwitchIntegration implements IntegrationModule {
 	}
 
 	@SubscribeEvent
-	public void onWorldJoined(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-		connect();
+	public void onTextureStitch(TextureStitchEvent.Pre event) {
+		icon = event.getMap().registerSprite(new ResourceLocation(MOD_ID, "icon"));
 	}
 
 	@SubscribeEvent
-	public void onTextureStitch(TextureStitchEvent.Pre event) {
-		icon = event.getMap().registerSprite(new ResourceLocation(MOD_ID, "icon"));
+	public void onWorldJoined(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+		twitchManager.connect();
 	}
 
 	@Override
@@ -175,78 +85,11 @@ public class TwitchIntegration implements IntegrationModule {
 		return new GuiTwitchAuthentication(parentScreen);
 	}
 
-	@Nullable
-	public static TwitchChannel getTwitchChannel(String channel) {
-		return channels.get(channel.charAt(0) == '#' ? channel.substring(1).toLowerCase() : channel.toLowerCase());
+	public static TwitchChatHandler getTwitchChatHandler() {
+		return instance.twitchChatHandler;
 	}
 
-	public static Collection<TwitchChannel> getTwitchChannels() {
-		return channels.values();
-	}
-
-	public static void addTwitchChannel(TwitchChannel channel) {
-		channels.put(channel.getName().toLowerCase(), channel);
-		updateChannelStates();
-		saveConfig();
-	}
-
-	public static void removeTwitchChannel(TwitchChannel channel) {
-		channels.remove(channel.getName().toLowerCase());
-		if(activeChannels.remove(channel)) {
-			if(twitchClient != null) {
-				twitchClient.part("#" + channel.getName().toLowerCase());
-			}
-		}
-		saveConfig();
-	}
-
-	public static void updateChannelStates() {
-		activeChannels.clear();
-		for(TwitchChannel channel : channels.values()) {
-			if(channel.isActive()) {
-				activeChannels.add(channel);
-				if(twitchClient != null) {
-					twitchClient.join("#" + channel.getName().toLowerCase());
-				}
-			} else {
-				if(twitchClient != null) {
-					twitchClient.part("#" + channel.getName().toLowerCase());
-				}
-			}
-		}
-	}
-
-	public static boolean isMultiMode() {
-		return activeChannels.size() > 1;
-	}
-
-	public static void connect() {
-		for(TwitchChannel channel : channels.values()) {
-			channel.setTargetChannel(BetterMinecraftChatAPI.getChatChannel(channel.getTargetChannelName(), false));
-		}
-
-		AuthManager.TokenPair tokenPair = AuthManager.getToken(TwitchIntegration.MOD_ID);
-		if(tokenPair != null) {
-			String token = tokenPair.getToken().startsWith("oauth:") ? tokenPair.getToken() : "oauth:" + tokenPair.getToken();
-			IRCConfiguration.IRCConfigurationBuilder builder = TMIClient.defaultBuilder().debug(true).nick(tokenPair.getUsername()).password(token);
-			for(TwitchChannel channel : channels.values()) {
-				if(channel.isActive()) {
-					builder.autoJoinChannel("#" + channel.getName().toLowerCase());
-				}
-			}
-			twitchClient = new TMIClient(builder.build(), new TwitchChatHandler());
-			twitchClient.connect();
-		}
-	}
-
-	public static boolean isConnected() {
-		return twitchClient != null && twitchClient.getIRCConnection().isConnected();
-	}
-
-	public static void disconnect() {
-		if(twitchClient != null) {
-			twitchClient.disconnect();
-			twitchClient = null;
-		}
+	public static TwitchManager getTwitchManager() {
+		return instance.twitchManager;
 	}
 }

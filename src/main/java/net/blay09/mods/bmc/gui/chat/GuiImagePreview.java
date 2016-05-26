@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class GuiImagePreview extends GuiScreen {
 	private float textureWidth;
 	private float textureHeight;
 
-	public GuiImagePreview(GuiScreen parentScreen, URL url, URL directURL) {
+	public GuiImagePreview(@Nullable GuiScreen parentScreen, URL url, URL directURL) {
 		this.parentScreen = parentScreen;
 		this.url = url;
 		this.directURL = directURL;

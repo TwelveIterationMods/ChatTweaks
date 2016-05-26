@@ -3,10 +3,10 @@ package net.blay09.mods.bmc.handler;
 import com.google.common.collect.*;
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
-import net.blay09.mods.bmc.api.IChatMessage;
-import net.blay09.mods.bmc.api.MessageStyle;
+import net.blay09.mods.bmc.api.chat.IChatMessage;
+import net.blay09.mods.bmc.api.chat.MessageStyle;
 import net.blay09.mods.bmc.chat.ChatMessage;
-import net.blay09.mods.bmc.api.IChatChannel;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.event.*;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.minecraft.client.Minecraft;
@@ -84,7 +84,7 @@ public class ChatHandler {
 			}
 			switch(channel.getMessageStyle()) {
 				case Chat:
-					isActiveChannelMessage = channel == activeChannel;
+					isActiveChannelMessage = isActiveChannelMessage || channel == activeChannel || activeChannel.getDisplayChannel() == channel;
 					break;
 				case Side:
 					BetterMinecraftChat.getSideChatHandler().addMessage(newChatLine);
@@ -172,11 +172,12 @@ public class ChatHandler {
 	public ChatMessage addChatLine(ITextComponent chatComponent, IChatChannel channel) {
 		int id = chatLineCounter.incrementAndGet();
 		ChatMessage chatLine = new ChatMessage(id, chatComponent);
-		if (channel != null && channel == getActiveChannel()) {
+		if (channel != null && (channel == activeChannel || (activeChannel != null && activeChannel.getDisplayChannel() == channel))) {
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(chatComponent, id);
+		} else {
+			unreadMessages.add(id);
 		}
 		chatLines.put(id, chatLine);
-		unreadMessages.add(id);
 		return chatLine;
 	}
 
@@ -215,9 +216,9 @@ public class ChatHandler {
 	public void setActiveChannel(ChatChannel channel) {
 		ChatChannel oldActiveChannel = activeChannel;
 		this.activeChannel = channel;
-		ChatChannel displayChannel = channel.getPassiveChannelName() != null ? (ChatChannel) getChannel(channel.getPassiveChannelName()) : channel;
-		if(oldActiveChannel == displayChannel) {
-			return;
+		ChatChannel displayChannel = (ChatChannel) channel.getDisplayChannel();
+		if(displayChannel == null) {
+			displayChannel = channel;
 		}
 		if(Minecraft.getMinecraft().ingameGUI != null && displayChannel.getMessageStyle() == MessageStyle.Chat) {
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().chatLines.clear();
@@ -264,41 +265,69 @@ public class ChatHandler {
 		channels.add(channel);
 	}
 
-	public boolean removeChannel(ChatChannel channel) {
+	public boolean removeChannel(IChatChannel channel) {
 		if(channels.size() == 1) {
 			// Can't delete the last channel.
 			return false;
 		}
+		//noinspection SuspiciousMethodCalls /// not suspicious at all
 		int index = channels.indexOf(channel);
 		if(index != -1) {
 			if(channel == activeChannel) {
-				ChatChannel nextChannel = getNextChatChannel(channel);
+				IChatChannel nextChannel = getNextChatChannel(channel, true);
 				if(nextChannel == null) {
 					nextChannel = channels.get(0);
 				}
-				setActiveChannel(nextChannel);
+				setActiveChannel((ChatChannel) nextChannel);
 			}
 			channels.remove(index);
 		}
 		return true;
 	}
 
-	public ChatChannel getNextChatChannel(ChatChannel currentChannel) {
+	public IChatChannel getNextChatChannel(IChatChannel currentChannel, boolean rollover) {
 		int index = -1;
 		if(currentChannel != null) {
+			//noinspection SuspiciousMethodCalls /// THIS IS NOT SUSPICIOUS AT ALL INTELLIJ. CHATCHANNEL IMPLEMENTS ICHATCHANNEL. YOU SILLY
 			index = channels.indexOf(currentChannel);
 		}
-		ChatChannel nextChannel = null;
-		for(int i = index - 1; i >= 0; i--) {
-			ChatChannel candidate = channels.get(i);
+		IChatChannel nextChannel = null;
+		for(int i = index + 1; i < channels.size(); i++) {
+			IChatChannel candidate = channels.get(i);
 			if(candidate.getMessageStyle() == MessageStyle.Chat) {
 				nextChannel = candidate;
 				break;
 			}
 		}
-		if(nextChannel == null) {
-			for(int i = index + 1; i < channels.size(); i++) {
-				ChatChannel candidate = channels.get(i);
+		if(nextChannel == null && rollover) {
+			for(int i = 0; i < index; i++) {
+				IChatChannel candidate = channels.get(i);
+				if(candidate.getMessageStyle() == MessageStyle.Chat) {
+					nextChannel = candidate;
+					break;
+				}
+			}
+		}
+		return nextChannel;
+	}
+
+	public IChatChannel getPrevChatChannel(IChatChannel currentChannel, boolean rollover) {
+		int index = -1;
+		if(currentChannel != null) {
+			//noinspection SuspiciousMethodCalls /// THIS IS NOT SUSPICIOUS AT ALL INTELLIJ. CHATCHANNEL IMPLEMENTS ICHATCHANNEL. YOU SILLY
+			index = channels.indexOf(currentChannel);
+		}
+		IChatChannel nextChannel = null;
+		for(int i = index - 1; i >= 0; i--) {
+			IChatChannel candidate = channels.get(i);
+			if(candidate.getMessageStyle() == MessageStyle.Chat) {
+				nextChannel = candidate;
+				break;
+			}
+		}
+		if(nextChannel == null && (rollover || currentChannel == null)) {
+			for(int i = channels.size() - 1; i > index; i--) {
+				IChatChannel candidate = channels.get(i);
 				if(candidate.getMessageStyle() == MessageStyle.Chat) {
 					nextChannel = candidate;
 					break;

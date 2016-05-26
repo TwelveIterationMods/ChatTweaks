@@ -3,6 +3,7 @@ package net.blay09.mods.bmc;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
+import net.blay09.mods.bmc.api.IAuthManager;
 import net.blay09.mods.bmc.api.SimpleImageURLTransformer;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
 import net.blay09.mods.bmc.chat.ChatMacros;
@@ -48,6 +49,7 @@ public class BetterMinecraftChat {
 	private RenderHandler renderHandler;
 	private SideChatHandler sideChatHandler;
 	private BottomChatHandler bottomChatHandler;
+	private AuthManager authManager;
 	private List<Function<String, String>> imageURLTransformers = Lists.newArrayList();
 
 	@Mod.EventHandler
@@ -62,7 +64,8 @@ public class BetterMinecraftChat {
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
 		BetterMinecraftChatConfig.preInitLoad(config);
-		AuthManager.load();
+		authManager = new AuthManager();
+		authManager.load();
 
 		BetterMinecraftChatAPI._internal_setupAPI(new InternalMethodsImpl());
 
@@ -139,6 +142,10 @@ public class BetterMinecraftChat {
 
 	public static Configuration getConfig() {
 		return instance.config;
+	}
+
+	public static AuthManager getAuthManager() {
+		return instance.authManager;
 	}
 
 	public static Collection<Function<String, String>> getImageURLTransformers() {

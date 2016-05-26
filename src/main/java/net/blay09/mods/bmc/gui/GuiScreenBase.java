@@ -1,9 +1,10 @@
 package net.blay09.mods.bmc.gui;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.AuthManager;
 import net.blay09.mods.bmc.BetterMinecraftChat;
-import net.blay09.mods.bmc.api.INavigationGui;
+import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
+import net.blay09.mods.bmc.api.TokenPair;
+import net.blay09.mods.bmc.api.gui.INavigationGui;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
 import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchChannels;
@@ -50,7 +51,13 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 	@Override
 	public void setWorldAndResolution(Minecraft mc, int width, int height) {
 		textFieldList.clear();
+		Keyboard.enableRepeatEvents(true);
 		super.setWorldAndResolution(mc, width, height);
+	}
+
+	@Override
+	public void onGuiClosed() {
+		Keyboard.enableRepeatEvents(false);
 	}
 
 	@Override
@@ -140,7 +147,7 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 	protected void actionPerformed(@Nullable GuiButton button) throws IOException {
 		if (button == btnTwitchIntegration) {
 			if (btnTwitchIntegration.isAvailable()) {
-				AuthManager.TokenPair tokenPair = AuthManager.getToken(BetterMinecraftChat.TWITCH_INTEGRATION);
+				TokenPair tokenPair = BetterMinecraftChatAPI.getAuthManager().getToken(BetterMinecraftChat.TWITCH_INTEGRATION);
 				if (tokenPair != null) {
 					mc.displayGuiScreen(new GuiTwitchChannels());
 				} else {

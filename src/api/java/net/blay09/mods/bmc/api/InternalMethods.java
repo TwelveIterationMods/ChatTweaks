@@ -1,13 +1,15 @@
 package net.blay09.mods.bmc.api;
 
 import com.google.common.base.Function;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
+import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 import net.blay09.mods.bmc.api.emote.IEmoteLoader;
+import net.blay09.mods.bmc.api.emote.IEmoteScanner;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.blay09.mods.bmc.api.image.ITooltipProvider;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 
 import java.io.File;
@@ -34,4 +36,9 @@ public interface InternalMethods {
 	IChatChannel getChatChannel(String name, boolean create);
 	void clearChat();
 	void refreshChat();
+	void saveChannels();
+	void removeChannel(IChatChannel channel);
+	IAuthManager getAuthManager();
+	IEmoteScanner createEmoteScanner();
+
 }

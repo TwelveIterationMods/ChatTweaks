@@ -25,10 +25,14 @@ public class GuiChatExt extends GuiChat {
 	}
 
 	@Override
-	public void sendChatMessage(String msg, boolean addToChat) {
-		msg = CoremodHelper.onClientChat(msg);
-		if(!Strings.isNullOrEmpty(msg)) {
-			super.sendChatMessage(msg, addToChat);
+	public void sendChatMessage(String message, boolean addToSentMessages) {
+		String newMessage = CoremodHelper.onClientChat(message);
+		if(!Strings.isNullOrEmpty(newMessage)) {
+			if(addToSentMessages) {
+				// Store the originally typed message, not the potentially prefixed one.
+				mc.ingameGUI.getChatGUI().addToSentMessages(message);
+			}
+			super.sendChatMessage(newMessage, false);
 		}
 	}
 

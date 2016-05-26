@@ -2,7 +2,7 @@ package net.blay09.mods.bmc.handler;
 
 import net.blay09.mods.bmc.BetterMinecraftChat;
 import net.blay09.mods.bmc.BetterMinecraftChatConfig;
-import net.blay09.mods.bmc.api.MessageStyle;
+import net.blay09.mods.bmc.api.chat.MessageStyle;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.balyware.gui.GuiUtils;
 import net.blay09.mods.bmc.chat.ChatMessage;
@@ -12,7 +12,6 @@ import net.blay09.mods.bmc.coremod.RGBFontRenderer;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -43,10 +42,7 @@ public class RenderHandler {
 				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), (backgroundColorAlternate ? BetterMinecraftChatConfig.backgroundColor1 : BetterMinecraftChatConfig.backgroundColor2) | ((event.getAlpha() / 2) << 24));
 			}
 			if(chatLine.hasRGBColors()) {
-				RGBFontRenderer.reset();
-				for (int i = 0; i < chatLine.getRGBBuffer().size(); i += 2) {
-					RGBFontRenderer.pushColor(chatLine.getRGBBuffer().get(i), chatLine.getRGBBuffer().get(i + 1));
-				}
+				RGBFontRenderer.setBuffer(chatLine.getRGBBuffer());
 			}
 		}
 	}

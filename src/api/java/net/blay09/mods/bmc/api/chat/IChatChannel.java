@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.api;
+package net.blay09.mods.bmc.api.chat;
 
 public interface IChatChannel {
 
@@ -30,11 +30,21 @@ public interface IChatChannel {
 
 	void setExclusive(boolean exclusive);
 
+	boolean isShowTimestamp();
+
 	MessageStyle getMessageStyle();
 
 	void setMessageStyle(MessageStyle messageStyle);
 
 	void setFormat(String format);
+
+	IChatChannel getDisplayChannel();
+
+	void setDisplayChannel(IChatChannel channel);
+
+	boolean isTemporary();
+
+	void setTemporary(boolean temporary);
 
 	void disableDefaultNameTransformer();
 }

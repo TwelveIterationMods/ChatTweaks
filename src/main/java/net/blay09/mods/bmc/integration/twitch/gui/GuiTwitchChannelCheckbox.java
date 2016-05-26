@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.integration.twitch.gui;
 
-import net.blay09.mods.bmc.integration.twitch.TwitchChannel;
+import net.blay09.mods.bmc.integration.twitch.handler.TwitchChannel;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
