@@ -3,6 +3,7 @@ package net.blay09.mods.bmc;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import net.blay09.mods.bmc.api.IAuthManager;
+import net.blay09.mods.bmc.api.IntegrationModule;
 import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.api.emote.IEmote;
@@ -154,5 +155,10 @@ public class InternalMethodsImpl implements InternalMethods {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void registerIntegration(IntegrationModule module) {
+		BetterMinecraftChat.registerIntegration(module);
 	}
 }

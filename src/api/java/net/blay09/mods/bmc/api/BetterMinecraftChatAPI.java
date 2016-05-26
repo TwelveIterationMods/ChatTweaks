@@ -106,7 +106,7 @@ public class BetterMinecraftChatAPI {
 	}
 
 	public static void registerIntegration(IntegrationModule module) {
-
+		internalMethods.registerIntegration(module);
 	}
 
 	public static void removeChannel(IChatChannel channel) {

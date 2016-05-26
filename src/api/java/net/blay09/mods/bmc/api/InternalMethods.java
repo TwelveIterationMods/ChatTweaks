@@ -40,5 +40,5 @@ public interface InternalMethods {
 	void removeChannel(IChatChannel channel);
 	IAuthManager getAuthManager();
 	IEmoteScanner createEmoteScanner();
-
+	void registerIntegration(IntegrationModule module);
 }

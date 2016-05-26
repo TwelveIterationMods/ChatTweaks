@@ -35,7 +35,7 @@ public class GuiButtonNavigation extends GuiButton {
 			if(hovered) {
 				GlStateManager.color(1f, 1f, 1f, 0.7f);
 			} else {
-				GlStateManager.color(0f, 0f, 0f, 0.7f);
+				GlStateManager.color(0.25f, 0.25f, 0.25f, 1f);
 			}
 		}
 		GlStateManager.enableBlend();

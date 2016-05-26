@@ -2,13 +2,10 @@ package net.blay09.mods.bmc.gui;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.BetterMinecraftChat;
-import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
-import net.blay09.mods.bmc.api.TokenPair;
+import net.blay09.mods.bmc.api.IntegrationModule;
 import net.blay09.mods.bmc.api.gui.INavigationGui;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
-import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchChannels;
-import net.blay09.mods.bmc.integration.twitch.gui.GuiTwitchAuthentication;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
@@ -146,13 +143,9 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 	@Override
 	protected void actionPerformed(@Nullable GuiButton button) throws IOException {
 		if (button == btnTwitchIntegration) {
+			IntegrationModule module = BetterMinecraftChat.getModule(BetterMinecraftChat.TWITCH_INTEGRATION);
 			if (btnTwitchIntegration.isAvailable()) {
-				TokenPair tokenPair = BetterMinecraftChatAPI.getAuthManager().getToken(BetterMinecraftChat.TWITCH_INTEGRATION);
-				if (tokenPair != null) {
-					mc.displayGuiScreen(new GuiTwitchChannels());
-				} else {
-					mc.displayGuiScreen(new GuiTwitchAuthentication(this));
-				}
+				mc.displayGuiScreen(module.getConfigScreen(this));
 			} else {
 				clickedLink = "http://minecraft.curseforge.com/projects/betterminecraftchat";
 				mc.displayGuiScreen(new GuiOpenIntegrationLink(this, "Twitch", "BetterMinecraftChat - Twitch Integration", 7777));

@@ -2,8 +2,10 @@ package net.blay09.mods.bmc;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.IAuthManager;
+import net.blay09.mods.bmc.api.IntegrationModule;
 import net.blay09.mods.bmc.api.SimpleImageURLTransformer;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
 import net.blay09.mods.bmc.chat.ChatMacros;
@@ -29,6 +31,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Mod(modid = BetterMinecraftChat.MOD_ID, name = "BetterMinecraftChat", clientSideOnly = true, guiFactory = "net.blay09.mods.bmc.gui.GuiFactory",
 	updateJSON = "http://balyware.com/new/forge_update.php?modid=" + BetterMinecraftChat.MOD_ID)
@@ -51,6 +54,7 @@ public class BetterMinecraftChat {
 	private BottomChatHandler bottomChatHandler;
 	private AuthManager authManager;
 	private List<Function<String, String>> imageURLTransformers = Lists.newArrayList();
+	private Map<String, IntegrationModule> moduleMap = Maps.newHashMap();
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -158,5 +162,13 @@ public class BetterMinecraftChat {
 
 	public static int colorFromHex(String hex) {
 		return Integer.parseInt(hex.startsWith("#") ? hex.substring(1) : hex, 16);
+	}
+
+	public static IntegrationModule getModule(String id) {
+		return instance.moduleMap.get(id);
+	}
+
+	public static void registerIntegration(IntegrationModule module) {
+		instance.moduleMap.put(module.getModId(), module);
 	}
 }
