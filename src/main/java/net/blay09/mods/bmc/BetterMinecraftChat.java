@@ -77,6 +77,9 @@ public class BetterMinecraftChat {
 		BetterMinecraftChatAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*imgur\\.com/[A-Za-z]+", ".png"));
 		BetterMinecraftChatAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*gyazo\\.com/[a-z0-9]+", ".png"));
 
+		//noinspection ResultOfMethodCallIgnored
+		new File(event.getModConfigurationDirectory(), "BetterMinecraftChat").mkdirs();
+
 		ChatMacros.load(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/macros.ini"));
 
 		ClientRegistry.registerKeyBinding(keyBindOptions);

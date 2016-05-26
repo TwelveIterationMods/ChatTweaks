@@ -34,7 +34,7 @@ public class BTTVChannelEmotes implements IEmoteLoader {
 				String code = entry.get("code").getAsString();
 				IEmote emote = BetterMinecraftChatAPI.registerEmote(code, this);
 				emote.setCustomData(entry.get("id").getAsString());
-				emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmoteChannel") + " " entry.get("channel").getAsString());
+				emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmoteChannel") + " " + entry.get("channel").getAsString());
 				emote.setImageCacheFile("bttv-" + entry.get("id").getAsString());
 				group.addEmote(emote);
 			}
