@@ -82,7 +82,7 @@ public class BetterMinecraftChatConfig {
 		new LocalEmotes(new File(Minecraft.getMinecraft().mcDataDir, "bmc/emotes/"));
 
 		Gson gson = new Gson();
-		try(FileReader reader = new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "bmc/channels.json"))) {
+		try(FileReader reader = new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/BetterMinecraftChat/channels.json"))) {
 			JsonObject root = gson.fromJson(reader, JsonObject.class);
 			JsonArray channels = root.getAsJsonArray("channels");
 			for(int i = 0; i < channels.size(); i++) {
@@ -128,7 +128,7 @@ public class BetterMinecraftChatConfig {
 
 	public static void saveChannels() {
 		Gson gson = new Gson();
-		try(FileWriter writer = new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "bmc/channels.json"))) {
+		try(FileWriter writer = new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/BetterMinecraftChat/channels.json"))) {
 			JsonWriter jsonWriter = new JsonWriter(writer);
 			jsonWriter.setIndent("  ");
 			JsonObject root = new JsonObject();
