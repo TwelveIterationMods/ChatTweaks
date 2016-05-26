@@ -147,7 +147,7 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 			if (btnTwitchIntegration.isAvailable()) {
 				mc.displayGuiScreen(module.getConfigScreen(this));
 			} else {
-				clickedLink = "http://minecraft.curseforge.com/projects/betterminecraftchat";
+				clickedLink = "http://minecraft.curseforge.com/projects/twitch-integration";
 				mc.displayGuiScreen(new GuiOpenIntegrationLink(this, "Twitch", "BetterMinecraftChat - Twitch Integration", 7777));
 			}
 		} else if(button == btnSettings) {
