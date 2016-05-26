@@ -122,13 +122,13 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		} else if(button == chkMuted || button == chkTimestamps) {
 			apply(true);
 		} else if(button == btnRegExHelp) {
-			try {
-				BalyWare.openWebLink(new URI("http://regexr.com/"));
-			} catch (URISyntaxException ignored) {}
+//			try {
+//				BalyWare.openWebLink(new URI("http://regexr.com/"));
+//			} catch (URISyntaxException ignored) {}
 		} else if(button == btnFormatHelp) {
-			try {
-				BalyWare.openWebLink(new URI("http://balyware.com/"));
-			} catch (URISyntaxException ignored) {}
+//			try {
+//				BalyWare.openWebLink(new URI("http://balyware.com/"));
+//			} catch (URISyntaxException ignored) {}
 		} else if(button == btnStyle) {
 			MessageStyle oldStyle = activeChannel.getMessageStyle();
 			int id = oldStyle.ordinal();
@@ -235,9 +235,9 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.style"), guiLeft + 174, guiTop + 104, 0xFFFFFFFF);
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		if(btnRegExHelp.isMouseOver()) {
-			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.requiredGroups"), " " + I18n.format("betterminecraftchat:gui.tabSettings.sender") + ": (?<s> ... )", " " + I18n.format("betterminecraftchat:gui.tabSettings.message") + ": (?<m> ... )", TextFormatting.YELLOW + I18n.format("betterminecraftchat:gui.tabSettings.openHelpInBrowser")), mouseX, mouseY);
+			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.requiredGroups"), " " + I18n.format("betterminecraftchat:gui.tabSettings.sender") + ": (?<s> ... )", " " + I18n.format("betterminecraftchat:gui.tabSettings.message") + ": (?<m> ... )"/*, TextFormatting.YELLOW + I18n.format("betterminecraftchat:gui.tabSettings.openHelpInBrowser")*/), mouseX, mouseY);
 		} else if(btnFormatHelp.isMouseOver()) {
-			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.variables"), " $0: " + I18n.format("betterminecraftchat:gui.tabSettings.originalText"), " ${s}: " + I18n.format("betterminecraftchat:gui.tabSettings.sender"), " ${m}: " + I18n.format("betterminecraftchat:gui.tabSettings.message"), " $...: " + I18n.format("betterminecraftchat:gui.tabSettings.customGroups"), TextFormatting.YELLOW + I18n.format("betterminecraftchat:gui.tabSettings.openHelpInBrowser")), mouseX, mouseY);
+			GuiUtils.drawTooltip(Lists.newArrayList(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.variables"), " $0: " + I18n.format("betterminecraftchat:gui.tabSettings.originalText"), " ${s}: " + I18n.format("betterminecraftchat:gui.tabSettings.sender"), " ${m}: " + I18n.format("betterminecraftchat:gui.tabSettings.message"), " $...: " + I18n.format("betterminecraftchat:gui.tabSettings.customGroups")/*, TextFormatting.YELLOW + I18n.format("betterminecraftchat:gui.tabSettings.openHelpInBrowser")*/), mouseX, mouseY);
 		} else if(btnPrefixHelp.isMouseOver()) {
 			List<String> list = Lists.newArrayList();
 			list.add(TextFormatting.GOLD + I18n.format("betterminecraftchat:gui.tabSettings.messagePrefix"));

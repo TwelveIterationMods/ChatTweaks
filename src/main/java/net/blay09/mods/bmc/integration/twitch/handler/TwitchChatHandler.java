@@ -382,6 +382,15 @@ public class TwitchChatHandler extends TMIAdapter {
 		BetterMinecraftChatAPI.refreshChat();
 	}
 
+	@Override
+	public void onUnhandledException(TMIClient client, Exception e) {
+		e.printStackTrace();
+		if(Minecraft.getMinecraft().thePlayer != null) {
+			Minecraft.getMinecraft().thePlayer.addChatMessage(new TextComponentString(TextFormatting.RED + "Twitch Integration encountered an unhandled exception. The connection has been terminated. Please review your log files and let the mod developer know."));
+		}
+		twitchManager.disconnect();
+	}
+
 	public static ITextComponent formatComponent(String format, @Nullable String channel, TwitchUser user, String message, @Nullable List<IChatImage> nameBadges, @Nullable List<IChatImage> emotes, @Nullable TwitchUser whisperReceiver, boolean isAction) {
 		String[] parts = format.split("(?<=" + PATTERN_ARGUMENT + ")|(?=" + PATTERN_ARGUMENT + ")"); // TODO cache this
 		TextComponentString root = null;
