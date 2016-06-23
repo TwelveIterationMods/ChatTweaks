@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class TwitchAPI {
 
+	public static final String CLIENT_ID = "gdhi94otnk7c7746syjv7gkr6bizq4w";
+
 	public static final int EMOTESET_GLOBAL = 0;
 	public static final int EMOTESET_TURBO = 457;
 
@@ -38,9 +40,9 @@ public class TwitchAPI {
 			}
 			sb.append(emoteset);
 		}
-		String url = "https://api.twitch.tv/kraken/chat/emoticon_images";
+		String url = "https://api.twitch.tv/kraken/chat/emoticon_images?client_id=" + CLIENT_ID;
 		if(emotesets.length > 0) {
-			url += "?emotesets=" + sb.toString();
+			url += "&emotesets=" + sb.toString();
 		}
 		return CachedAPI.loadCachedAPI(url, "twitch_emotes" + (sb.length() > 0 ? "-" + sb.toString() : "") + ".json");
 	}
