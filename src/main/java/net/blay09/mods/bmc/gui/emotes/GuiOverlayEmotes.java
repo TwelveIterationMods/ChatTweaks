@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Iterator;
@@ -57,6 +58,10 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		this.height = 60;
 		this.x = parentScreen.width - width - 2;
 		this.y = parentScreen.height - height - 14;
+		// TODO temp workaround for quark's emote button
+		if(Loader.isModLoaded("Quark")) {
+			this.x -= 100;
+		}
 		if(iconDefault == null) {
 			iconDefault = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/default.png"));
 		}
