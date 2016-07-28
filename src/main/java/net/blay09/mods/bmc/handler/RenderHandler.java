@@ -54,6 +54,9 @@ public class RenderHandler {
 		int thisOffset = 0;
 		int wrappedLinesBefore = 0;
 		for(int i = thisIndex + 1; i < wrappedChatLines.size(); i++) {
+			if(wrappedChatLines.get(i) == null || event.getChatLine() == null) {
+				continue; // wth
+			}
 			if(wrappedChatLines.get(i).getChatLineID() != event.getChatLine().getChatLineID()) {
 				break;
 			}

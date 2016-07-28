@@ -275,7 +275,7 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		btnDeleteChannelConfirm.visible = false;
 		txtLabel.setText(activeChannel.getName());
 		txtPattern.setText(activeChannel.getFilterPattern());
-		if(activeChannel.getOutgoingPrefix() != null) {
+		if (activeChannel.getOutgoingPrefix() != null) {
 			txtPrefix.setText(activeChannel.getOutgoingPrefix());
 		}
 		txtFormat.setText(activeChannel.getFormat());
@@ -284,7 +284,6 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		chkTimestamps.setIsChecked(activeChannel.isShowTimestamp());
 		chkMuted.setIsChecked(activeChannel.isMuted());
 		chkExclusive.setIsChecked(activeChannel.isExclusive());
-
 	}
 
 	public ChatChannel getSelectedChannel() {
