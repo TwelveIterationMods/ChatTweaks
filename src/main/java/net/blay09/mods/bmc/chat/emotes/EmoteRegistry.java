@@ -38,6 +38,10 @@ public class EmoteRegistry {
 		return group;
 	}
 
+	public static IEmoteGroup getFirstGroup() {
+		return groupMap.values().iterator().next();
+	}
+
 	public static IEmoteGroup getGroup(String name) {
 		return groupMap.get(name);
 	}

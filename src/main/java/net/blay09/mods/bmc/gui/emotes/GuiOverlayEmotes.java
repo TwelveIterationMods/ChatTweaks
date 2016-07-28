@@ -90,7 +90,15 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		if(EmoteRegistry.hasGroup("BTTV")) {
 			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconBTTV, EmoteRegistry.getGroup("BTTV")));
 		}
-		displayGroup(EmoteRegistry.getGroup(currentGroup));
+		IEmoteGroup group = EmoteRegistry.getGroup(currentGroup);
+		if(group != null) {
+			displayGroup(group);
+		} else {
+			group = EmoteRegistry.getFirstGroup();
+			if(group != null) {
+				displayGroup(group);
+			}
+		}
 	}
 
 	@Override
@@ -105,8 +113,8 @@ public class GuiOverlayEmotes extends GuiOverlay {
 
 	public void displayGroup(IEmoteGroup group) {
 		clearEmotes();
-		for(IEmote emote : group.getEmotes()) {
-			if(!emote.isRegex() && !ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
+		for (IEmote emote : group.getEmotes()) {
+			if (!emote.isRegex() && !ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
 				GuiButtonEmote button = new GuiButtonEmote(-1, x, y, emote);
 				emoteButtons.add(button);
 				addButton(button);
