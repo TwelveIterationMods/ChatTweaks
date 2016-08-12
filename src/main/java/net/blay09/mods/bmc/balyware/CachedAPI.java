@@ -39,7 +39,7 @@ public class CachedAPI {
 	}
 
 	private static JsonObject loadLocal(File file, boolean force, long maxCacheTime) {
-		if(file.exists() && (force || file.lastModified() - System.currentTimeMillis() < maxCacheTime)) {
+		if(file.exists() && (force || System.currentTimeMillis() - file.lastModified() < maxCacheTime)) {
 			try(FileReader reader = new FileReader(file)) {
 				return gson.fromJson(reader, JsonObject.class);
 			} catch (IOException e) {

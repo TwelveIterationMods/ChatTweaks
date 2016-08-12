@@ -308,6 +308,9 @@ public class ChatHandler {
 				}
 			}
 		}
+		if(nextChannel == null) { // Everything is burning, retreat to just whatever channel is left
+			nextChannel = channels.get(0);
+		}
 		return nextChannel;
 	}
 
@@ -333,6 +336,9 @@ public class ChatHandler {
 					break;
 				}
 			}
+		}
+		if(nextChannel == null) { // Everything is burning, retreat to just whatever channel is left
+			nextChannel = channels.get(0);
 		}
 		return nextChannel;
 	}

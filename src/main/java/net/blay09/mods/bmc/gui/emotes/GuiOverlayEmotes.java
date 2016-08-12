@@ -25,7 +25,7 @@ public class GuiOverlayEmotes extends GuiOverlay {
 	 * Twitch Emotes with white backgrounds or white borders that they refuse to fix for "Nostalgia"'s sake. They make everything look horrible, no need to have them in our beautiful menu.
 	 * No one uses these anyways (apart from the DansGame one)
 	 */
-	private static final String[] BANNED_EMOTES = new String[] {
+	private static final String[] BANNED_EMOTES = new String[]{
 			"JKanStyle",
 			"OptimizePrime",
 			"StoneLightning",
@@ -57,16 +57,16 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		this.height = 60;
 		this.x = parentScreen.width - width - 2;
 		this.y = parentScreen.height - height - 14;
-		if(iconDefault == null) {
+		if (iconDefault == null) {
 			iconDefault = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/default.png"));
 		}
-		if(iconPatreon == null) {
+		if (iconPatreon == null) {
 			iconPatreon = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/patreon.png"));
 		}
-		if(iconTwitch == null) {
+		if (iconTwitch == null) {
 			iconTwitch = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/twitch.png"));
 		}
-		if(iconBTTV == null) {
+		if (iconBTTV == null) {
 			iconBTTV = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/bttv.png"));
 		}
 	}
@@ -75,38 +75,46 @@ public class GuiOverlayEmotes extends GuiOverlay {
 	public void initGui() {
 		super.initGui();
 		int groupY = y + 2;
-		if(EmoteRegistry.hasGroup("Default")) {
+		if (EmoteRegistry.hasGroup("Default")) {
 			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconDefault, EmoteRegistry.getGroup("Default")));
 			groupY += 14;
 		}
-		if(EmoteRegistry.hasGroup("Patreon")) {
+		if (EmoteRegistry.hasGroup("Patreon")) {
 			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconPatreon, EmoteRegistry.getGroup("Patreon")));
 			groupY += 14;
 		}
-		if(EmoteRegistry.hasGroup("TwitchGlobal")) {
+		if (EmoteRegistry.hasGroup("TwitchGlobal")) {
 			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconTwitch, EmoteRegistry.getGroup("TwitchGlobal")));
 			groupY += 14;
 		}
-		if(EmoteRegistry.hasGroup("BTTV")) {
+		if (EmoteRegistry.hasGroup("BTTV")) {
 			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconBTTV, EmoteRegistry.getGroup("BTTV")));
 		}
-		displayGroup(EmoteRegistry.getGroup(currentGroup));
+		IEmoteGroup group = EmoteRegistry.getGroup(currentGroup);
+		if (group != null) {
+			displayGroup(group);
+		} else {
+			group = EmoteRegistry.getFirstGroup();
+			if (group != null) {
+				displayGroup(group);
+			}
+		}
 	}
 
 	@Override
 	public void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
-		if(button instanceof GuiButtonEmoteGroup) {
+		if (button instanceof GuiButtonEmoteGroup) {
 			displayGroup(((GuiButtonEmoteGroup) button).getEmoteGroup());
-		} else if(button instanceof GuiButtonEmote) {
+		} else if (button instanceof GuiButtonEmote) {
 			((GuiChat) parentScreen).inputField.writeText(" " + ((GuiButtonEmote) button).getEmote().getCode() + " ");
 		}
 	}
 
 	public void displayGroup(IEmoteGroup group) {
 		clearEmotes();
-		for(IEmote emote : group.getEmotes()) {
-			if(!emote.isRegex() && !ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
+		for (IEmote emote : group.getEmotes()) {
+			if (!emote.isRegex() && !ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
 				GuiButtonEmote button = new GuiButtonEmote(-1, x, y, emote);
 				emoteButtons.add(button);
 				addButton(button);
@@ -120,9 +128,9 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		int index = 0;
 		int buttonX = x + 16;
 		int buttonY = y + 2;
-		for(GuiButtonEmote button : emoteButtons) {
+		for (GuiButtonEmote button : emoteButtons) {
 			index++;
-			if(index >= scrollOffset) {
+			if (index >= scrollOffset) {
 				if (buttonX + button.width > x + width - 2) {
 					buttonX = x + 16;
 					buttonY += 14;
@@ -152,8 +160,8 @@ public class GuiOverlayEmotes extends GuiOverlay {
 
 	private void clearEmotes() {
 		Iterator<GuiButton> it = parentScreen.buttonList.iterator();
-		while(it.hasNext()) {
-			if(it.next() instanceof GuiButtonEmote) {
+		while (it.hasNext()) {
+			if (it.next() instanceof GuiButtonEmote) {
 				it.remove();
 			}
 		}
@@ -162,7 +170,7 @@ public class GuiOverlayEmotes extends GuiOverlay {
 
 	@Override
 	public void mouseScrolled(int delta) {
-		if(delta > 0) {
+		if (delta > 0) {
 			scrollOffset = Math.max(0, scrollOffset - 4);
 		} else {
 			scrollOffset = Math.min(emoteButtons.size() - 16, scrollOffset + 4);

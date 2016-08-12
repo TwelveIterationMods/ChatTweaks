@@ -13,6 +13,8 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -22,13 +24,21 @@ import java.util.Locale;
 
 public class ImageLoader {
 
+	private static final int MAX_CACHE_TIME = 1000 * 60 * 60 * 24 * 7;
+
 	public static IChatRenderable loadImage(URI uri, File saveToFile) throws MalformedURLException {
-		try(InputStream in = uri.toURL().openStream()) {
-			return loadImageInternal(in, saveToFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		if(saveToFile.exists() && saveToFile.lastModified() - System.currentTimeMillis() <= MAX_CACHE_TIME) {
+			try {
+				return loadImageInternal(new FileInputStream(saveToFile), null);
+			} catch (FileNotFoundException ignored) {}
+		} else {
+			try (InputStream in = uri.toURL().openStream()) {
+				return loadImageInternal(in, saveToFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		return null;
 	}
 
 	public static IChatRenderable loadImage(ResourceLocation resourceLocation) {
