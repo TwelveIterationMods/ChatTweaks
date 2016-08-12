@@ -12,6 +12,7 @@ import net.blay09.mods.bmc.coremod.RGBFontRenderer;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -80,15 +81,16 @@ public class RenderHandler {
 					String beforeText = formattedText.substring(0, offset);
 					int renderOffset = Minecraft.getMinecraft().fontRendererObj.getStringWidth(beforeText);
 					int spaceWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth(' ') * image.getSpaces();
-					GL11.glPushMatrix();
+					GlStateManager.pushMatrix();
 					float scale = image.getScale();
-					GL11.glScalef(scale, scale, 1f);
+//					scale = 1f;
+					GlStateManager.scale(scale, scale, 1f);
 					int renderWidth = (int) (image.getWidth() * scale);
 					int renderHeight = (int) (image.getHeight() * scale);
 					int renderX = event.getX() + renderOffset + spaceWidth / 2 - renderWidth / 2;
 					int renderY = event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2 - renderHeight / 2;
 					image.draw((int) (renderX / scale), (int) (renderY / scale), event.getAlpha());
-					GL11.glPopMatrix();
+					GlStateManager.popMatrix();
 					float offsetX = 2;
 					float offsetY = (scaledResolution.getScaledHeight() - 48) + 20f;
 					if(mouseX >= (offsetX + renderX) && mouseX < offsetX + renderX + renderWidth && invMouseY >= offsetY + renderY - renderHeight && invMouseY < offsetY + renderY) {

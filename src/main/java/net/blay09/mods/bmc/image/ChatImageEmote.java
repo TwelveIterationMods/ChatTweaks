@@ -35,6 +35,7 @@ public class ChatImageEmote extends ChatImage {
 		if(emote.getImage() instanceof IAnimatedChatRenderable) {
 			((IAnimatedChatRenderable) emote.getImage()).updateAnimation();
 		}
+		//Gui.drawScaledCustomSizeModalRect(0, 0, image.getTexCoordX(), image.getTexCoordY(), image.getWidth(), image.getHeight(), (int) (image.getWidth() * image.getScale()), (int) (image.getHeight() * image.getScale()), image.getSheetWidth(), image.getSheetHeight());
 		Gui.drawModalRectWithCustomSizedTexture(0, 0, image.getTexCoordX(), image.getTexCoordY(), image.getWidth(), image.getHeight(), image.getSheetWidth(), image.getSheetHeight());
 		GlStateManager.popMatrix();
 	}
