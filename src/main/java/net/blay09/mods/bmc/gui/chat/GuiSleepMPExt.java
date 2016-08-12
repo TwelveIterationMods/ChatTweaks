@@ -2,9 +2,12 @@ package net.blay09.mods.bmc.gui.chat;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSleepMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraftforge.fml.client.FMLClientHandler;
 
 import java.io.IOException;
 
@@ -18,6 +21,15 @@ public class GuiSleepMPExt extends GuiChatExt {
 	public void initGui() {
 		super.initGui();
 		buttonList.add(new GuiButton(1, width / 2 - 100, height - 40, I18n.format("multiplayer.stopSleeping")));
+	}
+
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+
+		if (!FMLClientHandler.instance().getClientPlayerEntity().isPlayerSleeping()) {
+			Minecraft.getMinecraft().displayGuiScreen(null);
+		}
 	}
 
 	@Override

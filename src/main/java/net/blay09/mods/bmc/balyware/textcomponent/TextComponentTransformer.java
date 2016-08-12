@@ -66,35 +66,38 @@ public abstract class TextComponentTransformer {
 		int currentArg = 0;
 		for(String key : splitKey) {
 			MATCHER_ARGUMENT.reset(key);
-			if(MATCHER_ARGUMENT.matches()) {
-				if(root == null) {
+			if (MATCHER_ARGUMENT.matches()) {
+				if (root == null) {
 					root = new TextComponentString("");
 					root.setStyle(chatComponent.getStyle().createShallowCopy());
 				}
 				int thisArg = currentArg;
-				if(MATCHER_ARGUMENT.group(1) != null) {
+				if (MATCHER_ARGUMENT.group(1) != null) {
 					thisArg = Integer.parseInt(MATCHER_ARGUMENT.group(1)) - 1;
 				}
-				if(args.length > thisArg) {
-					if(args[thisArg] instanceof TextComponentString) {
+				if (args.length > thisArg) {
+					if (args[thisArg] instanceof TextComponentString) {
 						root.appendSibling(((TextComponentString) args[thisArg]).createCopy());
-					} else if(args[thisArg] instanceof TextComponentTranslation) {
+					} else if (args[thisArg] instanceof TextComponentTranslation) {
 						root.appendSibling(convertTranslationComponent((TextComponentTranslation) args[thisArg]));
 					} else {
 						root.appendText(args[thisArg] == null ? "null" : String.valueOf(args[thisArg]));
 					}
-					if(thisArg == currentArg) {
+					if (thisArg == currentArg) {
 						currentArg++;
 					}
 				}
 			} else {
-				if(root == null) {
+				if (root == null) {
 					root = new TextComponentString(key);
 					root.setStyle(chatComponent.getStyle().createShallowCopy());
 				} else {
 					root.appendSibling(new TextComponentString(key));
 				}
 			}
+		}
+		for(ITextComponent sibling : chatComponent.getSiblings()) {
+			root.appendSibling(sibling);
 		}
 		return root;
 	}
