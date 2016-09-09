@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 public class StaticChatRenderable implements IChatRenderable {
 
     private static final float MAX_WIDTH = 128;
-    private static final float MAX_HEIGHT = 12;
+    private static final float MAX_HEIGHT = 14;
     private static final float MAX_HEIGHT_SMALL = 8;
 
     private int textureId = -1;
