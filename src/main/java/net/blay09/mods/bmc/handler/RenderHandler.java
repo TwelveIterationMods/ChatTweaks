@@ -77,7 +77,7 @@ public class RenderHandler {
 			String formattedText = event.getChatLine().getChatComponent().getFormattedText();
 			for(IChatImage image : chatLine.getImages()) {
 				if(image.getIndex() >= thisOffset && image.getIndex() < thisOffset + formattedText.length()) {
-					int offset = image.getIndex() - thisOffset + (wrappedLinesBefore * 2) + 1;
+					int offset = Math.min(formattedText.length(), image.getIndex() - thisOffset + (wrappedLinesBefore * 2) + 1);
 					String beforeText = formattedText.substring(0, offset);
 					int renderOffset = Minecraft.getMinecraft().fontRendererObj.getStringWidth(beforeText);
 					int spaceWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth(' ') * image.getSpaces();
