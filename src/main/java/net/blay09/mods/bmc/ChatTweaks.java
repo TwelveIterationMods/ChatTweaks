@@ -4,15 +4,16 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
-import net.blay09.mods.bmc.api.IAuthManager;
 import net.blay09.mods.bmc.api.IntegrationModule;
 import net.blay09.mods.bmc.api.SimpleImageURLTransformer;
 import net.blay09.mods.bmc.chat.badges.PatronBadges;
 import net.blay09.mods.bmc.chat.ChatMacros;
 import net.blay09.mods.bmc.chat.emotes.twitch.*;
+import net.blay09.mods.bmc.gui.chat.GuiNewChatExt;
 import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
 import net.blay09.mods.bmc.handler.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
@@ -25,29 +26,27 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = BetterMinecraftChat.MOD_ID, name = "BetterMinecraftChat", clientSideOnly = true, guiFactory = "net.blay09.mods.bmc.gui.GuiFactory",
-	updateJSON = "http://balyware.com/new/forge_update.php?modid=" + BetterMinecraftChat.MOD_ID)
-public class BetterMinecraftChat {
+@Mod(modid = ChatTweaks.MOD_ID, name = "Chat Tweaks", clientSideOnly = true, guiFactory = "net.blay09.mods.bmc.gui.GuiFactory")
+public class ChatTweaks {
 
 	public static final String MOD_ID = "betterminecraftchat";
 	public static final String TWITCH_INTEGRATION = "twitchintegration";
 
 	@Mod.Instance(MOD_ID)
-    public static BetterMinecraftChat instance;
+    public static ChatTweaks instance;
 
-	private final KeyBinding keyBindOptions = new KeyBinding("key.betterminecraftchat.options", KeyConflictContext.IN_GAME, Keyboard.KEY_I, "key.category.betterminecraftchat");
+	private final KeyBinding keyBindOptions = new KeyBinding("key.chattweaks.options", KeyConflictContext.IN_GAME, Keyboard.KEY_I, "key.category.chattweaks");
 
 	private Configuration config;
-	private int maxTextureSize;
-	private ChatHandler chatHandler;
+	private GuiNewChatExt chatHandler;
 	private GuiChatHandler guiChatHandler;
 	private RenderHandler renderHandler;
 	private SideChatHandler sideChatHandler;
@@ -59,7 +58,6 @@ public class BetterMinecraftChat {
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register((chatHandler = new ChatHandler()));
 		MinecraftForge.EVENT_BUS.register((renderHandler = new RenderHandler()));
 		MinecraftForge.EVENT_BUS.register((guiChatHandler = new GuiChatHandler()));
 		MinecraftForge.EVENT_BUS.register((sideChatHandler = new SideChatHandler()));
@@ -67,7 +65,7 @@ public class BetterMinecraftChat {
 
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
-		BetterMinecraftChatConfig.preInitLoad(config);
+		ChatTweaksConfig.preInitLoad(config);
 		authManager = new AuthManager();
 		authManager.load();
 
@@ -78,9 +76,9 @@ public class BetterMinecraftChat {
 		BetterMinecraftChatAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*gyazo\\.com/[a-z0-9]+", ".png"));
 
 		//noinspection ResultOfMethodCallIgnored
-		new File(event.getModConfigurationDirectory(), "BetterMinecraftChat").mkdirs();
+		new File(event.getModConfigurationDirectory(), "ChatTweaks").mkdirs();
 
-		ChatMacros.load(new File(event.getModConfigurationDirectory(), "BetterMinecraftChat/macros.ini"));
+		ChatMacros.load(new File(event.getModConfigurationDirectory(), "ChatTweaks/macros.ini"));
 
 		ClientRegistry.registerKeyBinding(keyBindOptions);
 	}
@@ -89,22 +87,27 @@ public class BetterMinecraftChat {
 	public void init(FMLInitializationEvent event) {
 		//noinspection ResultOfMethodCallIgnored
 		new File(Minecraft.getMinecraft().mcDataDir, "bmc/cache/").mkdirs();
+
+		chatHandler = new GuiNewChatExt(Minecraft.getMinecraft());
 	}
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        maxTextureSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
-
 		TwitchAPI.init();
 
 		PatronBadges.init();
 
-		BetterMinecraftChatConfig.postInitLoad(config);
+		ChatTweaksConfig.postInitLoad(config);
 
 		if(config.hasChanged()) {
 			config.save();
 		}
     }
+
+	@SubscribeEvent
+	public void onConnectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+		Minecraft.getMinecraft().ingameGUI.persistantChatGUI = chatHandler;
+	}
 
 	@SubscribeEvent
 	public void onKeyInput(InputEvent.KeyInputEvent event) {
@@ -117,17 +120,13 @@ public class BetterMinecraftChat {
 	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 		if(event.getModID().equals(MOD_ID)) {
 			if(event.getConfigID().equals("config")) {
-				BetterMinecraftChatConfig.preInitLoad(config);
-				BetterMinecraftChatConfig.postInitLoad(config);
+				ChatTweaksConfig.preInitLoad(config);
+				ChatTweaksConfig.postInitLoad(config);
 			}
 		}
 	}
 
-    public static int getMaxTextureSize() {
-        return instance.maxTextureSize;
-    }
-
-	public static ChatHandler getChatHandler() {
+	public static GuiNewChatExt getChatHandler() {
 		return instance.chatHandler;
 	}
 

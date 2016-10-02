@@ -1,6 +1,7 @@
 package net.blay09.mods.bmc.chat;
 
 import com.google.common.collect.Lists;
+import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
@@ -17,10 +18,10 @@ public class ChatMessage implements IChatMessage {
     private ITextComponent chatComponent;
     private int backgroundColor;
     private List<IChatImage> images;
-	private List<Integer> rgbBuffer;
+	private int[] rgbColors;
     private NBTTagCompound customData;
 	private long timestamp;
-	private ChatChannel exclusiveChannel;
+	private IChatChannel exclusiveChannel;
 	private boolean managed;
 
 	public ChatMessage(int id, ITextComponent chatComponent) {
@@ -83,23 +84,31 @@ public class ChatMessage implements IChatMessage {
     }
 
 	@Override
-	public void addRGBColor(int red, int green, int blue) {
-		addRGBColor((red & 255) << 16 | (green & 255) << 8 | blue & 255);
-	}
-
-	private void addRGBColor(int color) {
-		if(rgbBuffer == null) {
-			rgbBuffer = Lists.newArrayList();
+	public IChatMessage withRGB(int count) {
+		rgbColors = new int[count];
+		for(int i = 0; i < rgbColors.length; i++) {
+			rgbColors[i] = 0xFFFFFF;
 		}
-		rgbBuffer.add(color);
+		return this;
 	}
 
-	public List<Integer> getRGBBuffer() {
-		return rgbBuffer;
+	@Override
+	public void setRGBColor(int index, int color) {
+		if(index >= 0 && index < rgbColors.length) {
+			rgbColors[index] = color;
+		}
+	}
+
+	@Override
+	public int getRGBColor(int index) {
+		if(rgbColors == null || index < 0 || index >= rgbColors.length) {
+			return 0xFFFFFF;
+		}
+		return rgbColors[index];
 	}
 
 	public boolean hasRGBColors() {
-		return rgbBuffer != null;
+		return rgbColors != null;
 	}
 
 	@Override
@@ -138,13 +147,13 @@ public class ChatMessage implements IChatMessage {
 			out.images = Lists.newArrayList(images);
 		}
 		if(customData != null) {
-			out.customData = (NBTTagCompound) customData.copy();
+			out.customData = customData.copy();
 		}
 		out.timestamp = timestamp;
 		return out;
 	}
 
-	public void setExclusiveChannel(ChatChannel exclusiveChannel) {
+	public void setExclusiveChannel(IChatChannel exclusiveChannel) {
 		this.exclusiveChannel = exclusiveChannel;
 	}
 
@@ -152,7 +161,7 @@ public class ChatMessage implements IChatMessage {
 		return exclusiveChannel != null;
 	}
 
-	public ChatChannel getExclusiveChannel() {
+	public IChatChannel getExclusiveChannel() {
 		return exclusiveChannel;
 	}
 }

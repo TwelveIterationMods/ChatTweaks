@@ -3,8 +3,8 @@ package net.blay09.mods.bmc.handler;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.BetterMinecraftChat;
-import net.blay09.mods.bmc.BetterMinecraftChatConfig;
+import net.blay09.mods.bmc.ChatTweaks;
+import net.blay09.mods.bmc.ChatTweaksConfig;
 import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.gui.IGuiOverlay;
 import net.blay09.mods.bmc.api.event.ChatComponentClickEvent;
@@ -55,7 +55,7 @@ public class GuiChatHandler {
 	@SubscribeEvent
 	public void onTabComplete(TabCompletionEvent event) {
 		if (event.getSide() == Side.CLIENT) {
-			if (BetterMinecraftChatConfig.emoteTabCompletion) {
+			if (ChatTweaksConfig.emoteTabCompletion) {
 				event.getCompletions().addAll(CommandBase.getListOfStringsMatchingLastWord(new String[]{event.getInput()}, EmoteRegistry.getEmoteCodes()));
 			}
 		}
@@ -83,7 +83,7 @@ public class GuiChatHandler {
 	public void onActionPerformedGuiChat(GuiScreenEvent.ActionPerformedEvent.Post event) {
 		if (event.getGui() instanceof GuiChat) {
 			if(event.getButton() instanceof GuiButtonChannelTab) {
-				BetterMinecraftChat.getChatHandler().setActiveChannel(((GuiButtonChannelTab) event.getButton()).getChannel());
+				ChatTweaks.getChatHandler().setActiveChannel(((GuiButtonChannelTab) event.getButton()).getChannel());
 			} else if(event.getButton() instanceof GuiButtonEmotes) {
 				GuiOverlayEmotes overlayEmotes = getOverlay(GuiOverlayEmotes.class);
 				if(overlayEmotes == null) {
@@ -125,9 +125,9 @@ public class GuiChatHandler {
 			if (Keyboard.getEventKeyState()) {
 				int keyCode = Keyboard.getEventKey();
 				if ((Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) && keyCode == Keyboard.KEY_TAB) {
-					IChatChannel channel = BetterMinecraftChat.getChatHandler().getNextChatChannel(BetterMinecraftChat.getChatHandler().getActiveChannel(), true);
+					IChatChannel channel = ChatTweaks.getChatHandler().getNextChatChannel(ChatTweaks.getChatHandler().getActiveChannel(), true);
 					if(channel != null) {
-						BetterMinecraftChat.getChatHandler().setActiveChannel((ChatChannel) channel);
+						ChatTweaks.getChatHandler().setActiveChannel((ChatChannel) channel);
 					}
 					event.setCanceled(true);
 				} else if (keyCode >= Keyboard.KEY_F5 && keyCode <= Keyboard.KEY_F8) {
@@ -136,7 +136,7 @@ public class GuiChatHandler {
 					if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
 						if(!inputField.getText().isEmpty()) {
 							ChatMacros.setChatMacro(index, inputField.getText());
-							ITextComponent result = new TextComponentTranslation(BetterMinecraftChat.MOD_ID + ":gui.chat.textStoredInMacro", index + 1);
+							ITextComponent result = new TextComponentTranslation(ChatTweaks.MOD_ID + ":gui.chat.textStoredInMacro", index + 1);
 							result.getStyle().setColor(TextFormatting.AQUA);
 							Minecraft.getMinecraft().thePlayer.addChatComponentMessage(result);
 							inputField.setText("");
@@ -187,7 +187,7 @@ public class GuiChatHandler {
 			if (clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
 				String url = clickEvent.getValue();
 				String directURL = null;
-				for(Function<String, String> function : BetterMinecraftChat.getImageURLTransformers()) {
+				for(Function<String, String> function : ChatTweaks.getImageURLTransformers()) {
 					directURL = function.apply(url);
 					if(directURL != null) {
 						break;
@@ -215,7 +215,7 @@ public class GuiChatHandler {
 		}
 		int x = 2;
 		int y = gui.height - 25;
-		for (ChatChannel channel : BetterMinecraftChat.getChatHandler().getChannels()) {
+		for (ChatChannel channel : ChatTweaks.getChatHandler().getChannels()) {
 			if(channel.isHidden()) {
 				continue;
 			}

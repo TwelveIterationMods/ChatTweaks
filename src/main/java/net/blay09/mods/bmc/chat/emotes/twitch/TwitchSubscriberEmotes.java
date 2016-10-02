@@ -3,7 +3,7 @@ package net.blay09.mods.bmc.chat.emotes.twitch;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
@@ -55,7 +55,7 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 					emote.setCustomData(id);
 					String channel = TwitchAPI.getChannelForEmoteSet(emoteSet);
 					if(channel != null) {
-						emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmoteChannel") + " " + channel);
+						emote.addTooltip(TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipEmoteChannel") + " " + channel);
 					}
 					emote.setImageCacheFile("twitch-" + id);
 					group.addEmote(emote);

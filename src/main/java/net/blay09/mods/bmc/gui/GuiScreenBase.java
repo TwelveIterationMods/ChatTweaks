@@ -1,7 +1,7 @@
 package net.blay09.mods.bmc.gui;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.IntegrationModule;
 import net.blay09.mods.bmc.api.gui.INavigationGui;
 import net.blay09.mods.bmc.balyware.BalyWare;
@@ -143,7 +143,7 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 	@Override
 	protected void actionPerformed(@Nullable GuiButton button) throws IOException {
 		if (button == btnTwitchIntegration) {
-			IntegrationModule module = BetterMinecraftChat.getModule(BetterMinecraftChat.TWITCH_INTEGRATION);
+			IntegrationModule module = ChatTweaks.getModule(ChatTweaks.TWITCH_INTEGRATION);
 			if (btnTwitchIntegration.isAvailable()) {
 				mc.displayGuiScreen(module.getConfigScreen(this));
 			} else {
@@ -167,15 +167,15 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 	}
 
 	public void addNavigationBar() {
-		btnSettings = new GuiButtonNavigation(-1, guiLeft - 32, guiTop, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/settings.png"), true, "settings");
+		btnSettings = new GuiButtonNavigation(-1, guiLeft - 32, guiTop, new ResourceLocation(ChatTweaks.MOD_ID, "icons/settings.png"), true, "settings");
 		if(getNavigationId().equals("settings")) {
 			btnSettings.xPosition += 2;
 			btnSettings.enabled = false;
 		}
 		buttonList.add(btnSettings);
 
-		btnTwitchIntegration = new GuiButtonNavigation(-1, guiLeft - 32, guiTop + 30, new ResourceLocation(BetterMinecraftChat.MOD_ID, "icons/twitch.png"), Loader.isModLoaded(BetterMinecraftChat.TWITCH_INTEGRATION), BetterMinecraftChat.TWITCH_INTEGRATION);
-		if(getNavigationId().equals(BetterMinecraftChat.TWITCH_INTEGRATION)) {
+		btnTwitchIntegration = new GuiButtonNavigation(-1, guiLeft - 32, guiTop + 30, new ResourceLocation(ChatTweaks.MOD_ID, "icons/twitch.png"), Loader.isModLoaded(ChatTweaks.TWITCH_INTEGRATION), ChatTweaks.TWITCH_INTEGRATION);
+		if(getNavigationId().equals(ChatTweaks.TWITCH_INTEGRATION)) {
 			btnTwitchIntegration.xPosition += 2;
 			btnTwitchIntegration.enabled = false;
 		}

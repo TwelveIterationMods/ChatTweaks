@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.image.renderable;
 
-import net.blay09.mods.bmc.BetterMinecraftChatConfig;
+import net.blay09.mods.bmc.ChatTweaksConfig;
 import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -37,7 +37,7 @@ public class StaticChatRenderable implements IChatRenderable {
 			renderWidth *= factor;
 			renderHeight *= factor;
 		}
-		final float maxHeight = BetterMinecraftChatConfig.smallerEmotes ? MAX_HEIGHT_SMALL : MAX_HEIGHT;
+		final float maxHeight = ChatTweaksConfig.smallerEmotes ? MAX_HEIGHT_SMALL : MAX_HEIGHT;
 		if(renderHeight > maxHeight) {
 			float factor = maxHeight / renderHeight;
 			renderWidth *= factor;

@@ -1,12 +1,20 @@
 package net.blay09.mods.bmc.gui.chat;
 
 import com.google.common.base.Strings;
-import net.blay09.mods.bmc.coremod.CoremodHelper;
+import net.blay09.mods.bmc.api.event.ClientChatEvent;
+import net.blay09.mods.bmc.api.event.TabCompletionEvent;
 import net.blay09.mods.bmc.api.event.ChatComponentClickEvent;
 import net.blay09.mods.bmc.api.event.ChatComponentHoverEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GuiChatExt extends GuiChat {
 
@@ -26,7 +34,13 @@ public class GuiChatExt extends GuiChat {
 
 	@Override
 	public void sendChatMessage(String message, boolean addToSentMessages) {
-		String newMessage = CoremodHelper.onClientChat(message);
+		ClientChatEvent event = new ClientChatEvent(message);
+		String newMessage;
+		if(MinecraftForge.EVENT_BUS.post(event)) {
+			newMessage = null;
+		} else {
+			newMessage = event.getMessage();
+		}
 		if(!Strings.isNullOrEmpty(newMessage)) {
 			if(addToSentMessages) {
 				// Store the originally typed message, not the potentially prefixed one.
@@ -38,7 +52,12 @@ public class GuiChatExt extends GuiChat {
 
 	@Override
 	public void setCompletions(String... newCompletions) {
-		super.setCompletions(CoremodHelper.addTabCompletions(inputField, tabCompleter, newCompletions));
+		String input = inputField.getText().substring(0, inputField.getCursorPosition());
+		BlockPos pos = tabCompleter.getTargetBlockPos();
+		List<String> list = new ArrayList<>();
+		Collections.addAll(list, newCompletions);
+		MinecraftForge.EVENT_BUS.post(new TabCompletionEvent(Side.CLIENT, Minecraft.getMinecraft().thePlayer, input.split(" ")[0], pos, pos != null, list));
+		super.setCompletions(list.toArray(new String[list.size()]));
 	}
 
 	@Override

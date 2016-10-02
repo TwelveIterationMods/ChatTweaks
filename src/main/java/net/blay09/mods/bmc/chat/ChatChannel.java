@@ -5,8 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
 import com.google.gson.JsonObject;
-import net.blay09.mods.bmc.BetterMinecraftChat;
-import net.blay09.mods.bmc.BetterMinecraftChatConfig;
+import net.blay09.mods.bmc.ChatTweaks;
+import net.blay09.mods.bmc.ChatTweaksConfig;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.chat.IChatMessage;
@@ -73,10 +73,10 @@ public class ChatChannel implements IChatChannel {
 			super.begin(chatComponent);
 			senderName = tryGroup(messageMatcher, "s", null);
 			if(senderName != null) {
-				if(BetterMinecraftChatConfig.enableNameBadges) {
+				if(ChatTweaksConfig.enableNameBadges) {
 					nameBadge = PatronBadges.getBadgeForPlayer(senderName);
 				}
-				if(BetterMinecraftChatConfig.randomNameColors) {
+				if(ChatTweaksConfig.randomNameColors) {
 					nameColor = RandomNameColors.getRandomNameColor(senderName);
 				}
 			}
@@ -163,7 +163,7 @@ public class ChatChannel implements IChatChannel {
 
 		String sender = tryGroup(messageMatcher, "s", null);
 		String message = tryGroup(messageMatcher, "m", null);
-		BetterMinecraftChat.getChatHandler().checkHighlights(chatLine, sender, message);
+		ChatTweaks.getChatHandler().checkHighlights(chatLine, sender, message);
 
 		ITextComponent textComponent = chatLine.getChatComponent();
 		if(!format.equals("$0")) {
@@ -246,7 +246,8 @@ public class ChatChannel implements IChatChannel {
 		return new TextComponentString(outputMessage);
 	}
 
-	private String tryGroup(Matcher matcher, String name, String defaultVal) {
+	@Nullable
+	private String tryGroup(Matcher matcher, String name, @Nullable String defaultVal) {
 		try {
 			return matcher.group(name);
 		} catch (IllegalArgumentException e) {
@@ -268,8 +269,8 @@ public class ChatChannel implements IChatChannel {
 		chatLines.add(chatLine);
 		managedChatLines.add(chatLine);
 		chatLineMap.put(chatLine.getId(), chatLine);
-		if(BetterMinecraftChat.getChatHandler().getActiveChannel() == this) {
-			BetterMinecraftChat.getChatHandler().markAsRead(chatLine);
+		if(ChatTweaks.getChatHandler().getActiveChannel() == this) {
+			ChatTweaks.getChatHandler().markAsRead(chatLine);
 		}
 		if(chatLines.size() > MAX_MESSAGES) {
 			removeChatLine(chatLines.get(0).getId());
@@ -292,7 +293,7 @@ public class ChatChannel implements IChatChannel {
 	@Override
 	public boolean hasUnreadMessages() {
 		for(IChatMessage chatLine : chatLines) {
-			if(BetterMinecraftChat.getChatHandler().isUnread(chatLine)) {
+			if(ChatTweaks.getChatHandler().isUnread(chatLine)) {
 				return true;
 			}
 		}

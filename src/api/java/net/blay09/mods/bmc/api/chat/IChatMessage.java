@@ -28,7 +28,11 @@ public interface IChatMessage {
 
 	void addImage(IChatImage image);
 
-	void addRGBColor(int red, int green, int blue);
+	IChatMessage withRGB(int count);
+
+	int getRGBColor(int index);
+
+	void setRGBColor(int index, int color);
 
 	boolean hasImages();
 

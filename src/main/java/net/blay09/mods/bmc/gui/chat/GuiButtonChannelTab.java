@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.gui.chat;
 
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,7 +21,7 @@ public class GuiButtonChannelTab extends GuiButton {
 			FontRenderer fondRenderer = mc.fontRendererObj;
 			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			mouseDragged(mc, mouseX, mouseY);
-			boolean isActiveChannel = (channel == BetterMinecraftChat.getChatHandler().getActiveChannel());
+			boolean isActiveChannel = (channel == ChatTweaks.getChatHandler().getActiveChannel());
 			boolean hasNewMessages = channel.hasUnreadMessages();
 			int hoverState = getHoverState(hovered);
 			int textColor = isActiveChannel ? 0xFFFFFFFF : 0xFF999999;

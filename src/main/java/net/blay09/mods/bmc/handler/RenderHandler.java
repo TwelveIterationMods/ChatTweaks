@@ -1,14 +1,13 @@
 package net.blay09.mods.bmc.handler;
 
-import net.blay09.mods.bmc.BetterMinecraftChat;
-import net.blay09.mods.bmc.BetterMinecraftChatConfig;
+import net.blay09.mods.bmc.ChatTweaks;
+import net.blay09.mods.bmc.ChatTweaksConfig;
 import net.blay09.mods.bmc.api.chat.MessageStyle;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.balyware.gui.GuiUtils;
 import net.blay09.mods.bmc.chat.ChatMessage;
 import net.blay09.mods.bmc.api.event.DrawChatMessageEvent;
 import net.blay09.mods.bmc.chat.ChatChannel;
-import net.blay09.mods.bmc.coremod.RGBFontRenderer;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -17,7 +16,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
@@ -35,15 +33,12 @@ public class RenderHandler {
 		}
 		lastChatLine = event.getChatLine().getChatLineID();
 		int chatWidth = (int) (Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatWidth() / Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatScale());
-		ChatMessage chatLine = (ChatMessage) BetterMinecraftChat.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
+		ChatMessage chatLine = (ChatMessage) ChatTweaks.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
 		if (chatLine != null) {
 			if(chatLine.hasBackgroundColor()) {
 				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), chatLine.getBackgroundColor() | ((event.getAlpha() / 2) << 24));
 			} else {
-				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), (backgroundColorAlternate ? BetterMinecraftChatConfig.backgroundColor1 : BetterMinecraftChatConfig.backgroundColor2) | ((event.getAlpha() / 2) << 24));
-			}
-			if(chatLine.hasRGBColors()) {
-				RGBFontRenderer.setBuffer(chatLine.getRGBBuffer());
+				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), (backgroundColorAlternate ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) | ((event.getAlpha() / 2) << 24));
 			}
 		}
 	}
@@ -72,7 +67,7 @@ public class RenderHandler {
 		int invMouseY = scaledResolution.getScaledHeight() - mouseY;
 		mouseX = MathHelper.floor_float((float) mouseX / chatScale);
 		invMouseY = MathHelper.floor_float((float) invMouseY / chatScale);
-		ChatMessage chatLine = (ChatMessage) BetterMinecraftChat.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
+		ChatMessage chatLine = (ChatMessage) ChatTweaks.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
 		if (chatLine != null && chatLine.hasImages()) {
 			String formattedText = event.getChatLine().getChatComponent().getFormattedText();
 			for(IChatImage image : chatLine.getImages()) {
@@ -121,11 +116,11 @@ public class RenderHandler {
 			int invMouseY = resolution.getScaledHeight() - Mouse.getEventY() / resolution.getScaleFactor();
 			int x = 2;
 			int y = event.getResolution().getScaledHeight() - 25 + 1;
-			for (ChatChannel channel : BetterMinecraftChat.getChatHandler().getChannels()) {
+			for (ChatChannel channel : ChatTweaks.getChatHandler().getChannels()) {
 				if (channel.isHidden()) {
 					continue;
 				}
-				boolean isActiveChannel = (channel == BetterMinecraftChat.getChatHandler().getActiveChannel());
+				boolean isActiveChannel = (channel == ChatTweaks.getChatHandler().getActiveChannel());
 				boolean hasNewMessages = channel.hasUnreadMessages();
 				int tabHeight = 10;
 				int tabWidth = mc.fontRendererObj.getStringWidth("[" + channel.getName() + "]");

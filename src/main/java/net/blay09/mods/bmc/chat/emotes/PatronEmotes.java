@@ -1,7 +1,7 @@
 package net.blay09.mods.bmc.chat.emotes;
 
 import com.google.gson.*;
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
@@ -28,7 +28,7 @@ public class PatronEmotes implements IEmoteLoader {
 				JsonObject entry = jsonArray.get(i).getAsJsonObject();
 				IEmote emote = BetterMinecraftChatAPI.registerEmote(entry.get("code").getAsString(), this);
 				emote.setCustomData(entry.get("id").getAsInt());
-				emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipEmotePatron") + entry.get("owner").getAsString());
+				emote.addTooltip(TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipEmotePatron") + entry.get("owner").getAsString());
 				emote.setImageCacheFile("patron-" + entry.get("id").getAsInt());
 				group.addEmote(emote);
 			}

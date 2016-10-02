@@ -1,7 +1,8 @@
 package net.blay09.mods.bmc.image.renderable;
 
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.image.IAnimatedChatRenderable;
+import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -52,11 +53,12 @@ public class AnimatedChatRenderable extends StaticChatRenderable implements IAni
 		calculateScale();
 		spriteSheetWidth = width * images.length;
 		spriteSheetHeight = height;
-		if(spriteSheetWidth > BetterMinecraftChat.getMaxTextureSize()) {
-			int overflowX = (BetterMinecraftChat.getMaxTextureSize() % width);
-			spriteSheetWidth = BetterMinecraftChat.getMaxTextureSize() - overflowX;
-			spriteSheetHeight = (int) (height * (Math.ceil(overflowX / BetterMinecraftChat.getMaxTextureSize()) + 1));
-			if(spriteSheetHeight > BetterMinecraftChat.getMaxTextureSize()) {
+		int maxTextureSize = Minecraft.getGLMaximumTextureSize();
+		if(spriteSheetWidth > maxTextureSize) {
+			int overflowX = (maxTextureSize % width);
+			spriteSheetWidth = maxTextureSize - overflowX;
+			spriteSheetHeight = (int) (height * (Math.ceil(overflowX / maxTextureSize) + 1));
+			if(spriteSheetHeight > maxTextureSize) {
 				loadBuffer = images[0];
 				return;
 			}

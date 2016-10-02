@@ -2,7 +2,7 @@ package net.blay09.mods.bmc.chat.emotes.twitch;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
@@ -21,8 +21,8 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 	public TwitchGlobalEmotes(boolean includeTurbo, boolean includeSmileys) {
 		JsonObject root = includeTurbo ? TwitchAPI.loadEmotes(TwitchAPI.EMOTESET_GLOBAL, TwitchAPI.EMOTESET_TURBO) : TwitchAPI.loadEmotes(TwitchAPI.EMOTESET_GLOBAL);
 		if(root != null) {
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_GLOBAL)), TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipTwitchEmotes"), includeSmileys, BetterMinecraftChatAPI.registerEmoteGroup("TwitchGlobal"));
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_TURBO)), TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipTwitchTurboEmotes"), includeSmileys, BetterMinecraftChatAPI.registerEmoteGroup("TwitchTurbo"));
+			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_GLOBAL)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchEmotes"), includeSmileys, BetterMinecraftChatAPI.registerEmoteGroup("TwitchGlobal"));
+			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_TURBO)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchTurboEmotes"), includeSmileys, BetterMinecraftChatAPI.registerEmoteGroup("TwitchTurbo"));
 		}
 	}
 

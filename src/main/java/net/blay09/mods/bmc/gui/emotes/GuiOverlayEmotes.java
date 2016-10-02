@@ -1,7 +1,7 @@
 package net.blay09.mods.bmc.gui.emotes;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.gui.IGuiOverlay;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
@@ -58,16 +58,16 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		this.x = parentScreen.width - width - 2;
 		this.y = parentScreen.height - height - 14;
 		if (iconDefault == null) {
-			iconDefault = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/default.png"));
+			iconDefault = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/default.png"));
 		}
 		if (iconPatreon == null) {
-			iconPatreon = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/patreon.png"));
+			iconPatreon = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/patreon.png"));
 		}
 		if (iconTwitch == null) {
-			iconTwitch = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/twitch.png"));
+			iconTwitch = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/twitch.png"));
 		}
 		if (iconBTTV == null) {
-			iconBTTV = ImageLoader.loadImage(new ResourceLocation(BetterMinecraftChat.MOD_ID, "groups/bttv.png"));
+			iconBTTV = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/bttv.png"));
 		}
 	}
 

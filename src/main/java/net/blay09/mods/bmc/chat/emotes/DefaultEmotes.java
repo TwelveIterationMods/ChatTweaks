@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.chat.emotes;
 
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
@@ -19,7 +19,7 @@ public class DefaultEmotes implements IEmoteLoader {
 		for(String code : emotes) {
 			IEmote emote = BetterMinecraftChatAPI.registerEmote(code, this);
 			emote.addTooltip(TextFormatting.GRAY + "Default Emotes");
-			emote.setCustomData(new ResourceLocation(BetterMinecraftChat.MOD_ID, "emotes/" + code + ".png"));
+			emote.setCustomData(new ResourceLocation(ChatTweaks.MOD_ID, "emotes/" + code + ".png"));
 			group.addEmote(emote);
 		}
 	}

@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.gui.settings;
 
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -10,7 +10,7 @@ import net.minecraft.util.text.TextFormatting;
 public class  GuiButtonDeleteChannelConfirm extends GuiButton {
 
 	public GuiButtonDeleteChannelConfirm(int buttonId, int x, int y, FontRenderer fontRenderer) {
-		super(buttonId, x, y, fontRenderer.getStringWidth(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.button.deleteConfirm")), fontRenderer.FONT_HEIGHT, TextFormatting.UNDERLINE + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.button.deleteConfirm"));
+		super(buttonId, x, y, fontRenderer.getStringWidth(I18n.format(ChatTweaks.MOD_ID + ":gui.button.deleteConfirm")), fontRenderer.FONT_HEIGHT, TextFormatting.UNDERLINE + I18n.format(ChatTweaks.MOD_ID + ":gui.button.deleteConfirm"));
 	}
 
 	@Override

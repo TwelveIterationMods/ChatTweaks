@@ -20,7 +20,7 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.*;
 
-public class BetterMinecraftChatConfig {
+public class ChatTweaksConfig {
 
 	private static Configuration config;
 	public static boolean smallerEmotes = false;
@@ -34,10 +34,10 @@ public class BetterMinecraftChatConfig {
 	public static boolean enableNameBadges;
 
 	public static void preInitLoad(Configuration config) {
-		BetterMinecraftChatConfig.config = config;
-		backgroundColor1 = BetterMinecraftChat.colorFromHex(config.getString("Background Color 1", "theme", "000000", "The background color to use for even line numbers in HEX."));
-		backgroundColor2 = BetterMinecraftChat.colorFromHex(config.getString("Background Color 2", "theme", "111111", "The background color to use for uneven line numbers in HEX."));
-		backgroundColorHighlight = BetterMinecraftChat.colorFromHex(config.getString("Highlight Color", "theme", "FF0000", "The background color to use for highlighted lines in HEX."));
+		ChatTweaksConfig.config = config;
+		backgroundColor1 = ChatTweaks.colorFromHex(config.getString("Background Color 1", "theme", "000000", "The background color to use for even line numbers in HEX."));
+		backgroundColor2 = ChatTweaks.colorFromHex(config.getString("Background Color 2", "theme", "111111", "The background color to use for uneven line numbers in HEX."));
+		backgroundColorHighlight = ChatTweaks.colorFromHex(config.getString("Highlight Color", "theme", "FF0000", "The background color to use for highlighted lines in HEX."));
 		highlightName = config.getBoolean("Highlight Name", "highlights", true, "If set to true, mentions of your Minecraft IGN will be highlighted in chat.");
 		highlightStrings = config.getStringList("Highlighted Words", "highlights", new String[0], "List of words that are highlighted in chat.");
 		emoteTabCompletion = config.getBoolean("Tab Completion for Emotes", "general", false, "Should Tab completion be enabled for emotes?");
@@ -89,41 +89,41 @@ public class BetterMinecraftChatConfig {
 				JsonObject channel = channels.get(i).getAsJsonObject();
 				ChatChannel chatChannel = ChatChannel.fromJson(channel);
 				if(chatChannel != null) {
-					BetterMinecraftChat.getChatHandler().addChannel(chatChannel);
+					ChatTweaks.getChatHandler().addChannel(chatChannel);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		if(BetterMinecraftChat.getChatHandler().getChannels().isEmpty()) {
+		if(ChatTweaks.getChatHandler().getChannels().isEmpty()) {
 			createDefaultChannels();
 		}
 
-		IChatChannel defaultChannel = BetterMinecraftChat.getChatHandler().getNextChatChannel(null, false);
+		IChatChannel defaultChannel = ChatTweaks.getChatHandler().getNextChatChannel(null, false);
 		if(defaultChannel == null) {
-			defaultChannel = BetterMinecraftChat.getChatHandler().getChannels().get(0);
+			defaultChannel = ChatTweaks.getChatHandler().getChannels().get(0);
 		}
-		BetterMinecraftChat.getChatHandler().setActiveChannel((ChatChannel) defaultChannel);
+		ChatTweaks.getChatHandler().setActiveChannel((ChatChannel) defaultChannel);
 	}
 
 	private static void createDefaultChannels() {
 		ChatChannel defaultChannel = new ChatChannel("*");
 		defaultChannel.setShowTimestamps(true);
-		BetterMinecraftChat.getChatHandler().addChannel(defaultChannel);
+		ChatTweaks.getChatHandler().addChannel(defaultChannel);
 
 		ChatChannel bedSpamChannel = new ChatChannel("Bed Message");
 		bedSpamChannel.setFilterPattern("You can only sleep at night");
 		bedSpamChannel.setFormat("~c$0");
 		bedSpamChannel.setMessageStyle(MessageStyle.Bottom);
 		bedSpamChannel.setExclusive(true);
-		BetterMinecraftChat.getChatHandler().addChannel(bedSpamChannel);
+		ChatTweaks.getChatHandler().addChannel(bedSpamChannel);
 
 		ChatChannel commandChannel = new ChatChannel("Common Commands");
 		commandChannel.setFilterPattern("(Set the time to [0-9]+|Toggled downfall|Given \\[.+\\] \\* [0-9]+ to .+)");
 		commandChannel.setMessageStyle(MessageStyle.Side);
 		commandChannel.setExclusive(true);
-		BetterMinecraftChat.getChatHandler().addChannel(commandChannel);
+		ChatTweaks.getChatHandler().addChannel(commandChannel);
 	}
 
 	public static void saveChannels() {
@@ -133,7 +133,7 @@ public class BetterMinecraftChatConfig {
 			jsonWriter.setIndent("  ");
 			JsonObject root = new JsonObject();
 			JsonArray channels = new JsonArray();
-			for(ChatChannel channel : BetterMinecraftChat.getChatHandler().getChannels()) {
+			for(ChatChannel channel : ChatTweaks.getChatHandler().getChannels()) {
 				if(!channel.isTemporary()) {
 					channels.add(channel.toJson());
 				}

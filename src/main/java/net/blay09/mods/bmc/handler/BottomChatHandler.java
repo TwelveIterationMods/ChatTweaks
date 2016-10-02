@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.handler;
 
-import net.blay09.mods.bmc.chat.ChatMessage;
+import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -13,10 +13,10 @@ public class BottomChatHandler {
 	private static final float MESSAGE_TIME = 80;
 	private static final float SCALE = 0.8f;
 
-	private ChatMessage chatMessage;
+	private IChatMessage chatMessage;
 	private float timeLeft;
 
-	public void setMessage(ChatMessage chatMessage) {
+	public void setMessage(IChatMessage chatMessage) {
 		this.chatMessage = chatMessage;
 		this.timeLeft = MESSAGE_TIME;
 	}

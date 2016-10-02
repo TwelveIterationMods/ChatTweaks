@@ -2,7 +2,7 @@ package net.blay09.mods.bmc.chat.emotes.twitch;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
 import net.blay09.mods.bmc.api.emote.IEmote;
 import net.blay09.mods.bmc.api.emote.IEmoteGroup;
@@ -34,7 +34,7 @@ public class BTTVEmotes implements IEmoteLoader {
 				String code = entry.get("code").getAsString();
 				IEmote emote = BetterMinecraftChatAPI.registerEmote(code, this);
 				emote.setCustomData(entry.get("id").getAsString());
-				emote.addTooltip(TextFormatting.GRAY + I18n.format(BetterMinecraftChat.MOD_ID + ":gui.chat.tooltipBTTVEmotes"));
+				emote.addTooltip(TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipBTTVEmotes"));
 				emote.setImageCacheFile("bttv-" + entry.get("id").getAsString());
 				group.addEmote(emote);
 			}

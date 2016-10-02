@@ -1,12 +1,11 @@
 package net.blay09.mods.bmc.gui.settings;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.BetterMinecraftChat;
-import net.blay09.mods.bmc.BetterMinecraftChatConfig;
+import net.blay09.mods.bmc.ChatTweaks;
+import net.blay09.mods.bmc.ChatTweaksConfig;
 import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.gui.INavigationGui;
 import net.blay09.mods.bmc.api.chat.MessageStyle;
-import net.blay09.mods.bmc.balyware.BalyWare;
 import net.blay09.mods.bmc.balyware.gui.GuiUtils;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.gui.GuiScreenBase;
@@ -21,8 +20,6 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +44,7 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 	private GuiButtonNavigate btnPrevChannel;
 
 	public GuiTabSettings(@Nullable GuiScreen parentScreen) {
-		this(parentScreen, (ChatChannel) BetterMinecraftChat.getChatHandler().getNextChatChannel(null, true));
+		this(parentScreen, (ChatChannel) ChatTweaks.getChatHandler().getNextChatChannel(null, true));
 	}
 
 	public GuiTabSettings(@Nullable GuiScreen parentScreen, ChatChannel selectedChannel) {
@@ -84,13 +81,13 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		btnStyle = new GuiButtonStyle(-1, guiLeft + 175, guiTop + 117);
 		buttonList.add(btnStyle);
 
-		chkTimestamps = new GuiCheckBox(-1, guiLeft + 12, guiTop + 140, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.showTimestamps"), false);
+		chkTimestamps = new GuiCheckBox(-1, guiLeft + 12, guiTop + 140, I18n.format(ChatTweaks.MOD_ID + ":gui.tabSettings.showTimestamps"), false);
 		buttonList.add(chkTimestamps);
 
-		chkMuted = new GuiCheckBox(-1, guiLeft + 12, guiTop + 155, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.muted"), false);
+		chkMuted = new GuiCheckBox(-1, guiLeft + 12, guiTop + 155, I18n.format(ChatTweaks.MOD_ID + ":gui.tabSettings.muted"), false);
 		buttonList.add(chkMuted);
 
-		chkExclusive = new GuiCheckBox(-1, guiLeft + 170, guiTop + 180, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.exclusive"), false);
+		chkExclusive = new GuiCheckBox(-1, guiLeft + 170, guiTop + 180, I18n.format(ChatTweaks.MOD_ID + ":gui.tabSettings.exclusive"), false);
 		buttonList.add(chkExclusive);
 
 		btnDeleteChannel = new GuiButtonDeleteChannel(-1, guiLeft + 4, guiTop + 178);
@@ -140,22 +137,22 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 			activeChannel.setMessageStyle(newStyle);
 			btnStyle.displayString = newStyle.name();
 			if(oldStyle == MessageStyle.Chat || newStyle == MessageStyle.Chat) {
-				if(BetterMinecraftChat.getChatHandler().getActiveChannel() == activeChannel) {
-					IChatChannel channel = BetterMinecraftChat.getChatHandler().getNextChatChannel(activeChannel, true);
+				if(ChatTweaks.getChatHandler().getActiveChannel() == activeChannel) {
+					IChatChannel channel = ChatTweaks.getChatHandler().getNextChatChannel(activeChannel, true);
 					if(channel != null) {
-						BetterMinecraftChat.getChatHandler().setActiveChannel((ChatChannel) channel);
+						ChatTweaks.getChatHandler().setActiveChannel((ChatChannel) channel);
 					}
 				}
 			}
 		} else if(button == btnAddChannel) {
 			apply(false);
-			ChatChannel channel = new ChatChannel(I18n.format(BetterMinecraftChat.MOD_ID + ":gui.tabSettings.untitled"));
-			BetterMinecraftChat.getChatHandler().addChannel(channel);
-			BetterMinecraftChat.getChatHandler().setActiveChannel(channel);
+			ChatChannel channel = new ChatChannel(I18n.format(ChatTweaks.MOD_ID + ":gui.tabSettings.untitled"));
+			ChatTweaks.getChatHandler().addChannel(channel);
+			ChatTweaks.getChatHandler().setActiveChannel(channel);
 			selectChannel(channel);
 		} else if(button == btnPrevChannel) {
 			apply(false);
-			List<ChatChannel> channels = BetterMinecraftChat.getChatHandler().getChannels();
+			List<ChatChannel> channels = ChatTweaks.getChatHandler().getChannels();
 			int index = channels.indexOf(activeChannel);
 			index--;
 			if(index < 0) {
@@ -164,7 +161,7 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 			selectChannel(channels.get(index));
 		} else if(button == btnNextChannel) {
 			apply(false);
-			List<ChatChannel> channels = BetterMinecraftChat.getChatHandler().getChannels();
+			List<ChatChannel> channels = ChatTweaks.getChatHandler().getChannels();
 			int index = channels.indexOf(activeChannel);
 			index++;
 			if(index >= channels.size()) {
@@ -174,8 +171,8 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		} else if(button == btnDeleteChannel && !btnDeleteChannelConfirm.visible) {
 			btnDeleteChannelConfirm.visible = true;
 		} else if(button == btnDeleteChannelConfirm) {
-			BetterMinecraftChat.getChatHandler().removeChannel(activeChannel);
-			selectChannel((ChatChannel) BetterMinecraftChat.getChatHandler().getNextChatChannel(null, true));
+			ChatTweaks.getChatHandler().removeChannel(activeChannel);
+			selectChannel((ChatChannel) ChatTweaks.getChatHandler().getNextChatChannel(null, true));
 		} else {
 			super.actionPerformed(button);
 		}
@@ -214,11 +211,11 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 		activeChannel.setShowTimestamps(chkTimestamps.isChecked());
 		activeChannel.setMuted(chkMuted.isChecked());
 		activeChannel.setExclusive(chkExclusive.isChecked());
-		BetterMinecraftChatConfig.saveChannels();
+		ChatTweaksConfig.saveChannels();
 		if(refreshChat) {
-			BetterMinecraftChat.getChatHandler().refreshChannel(activeChannel);
-			if(BetterMinecraftChat.getChatHandler().getActiveChannel() == activeChannel) {
-				BetterMinecraftChat.getChatHandler().setActiveChannel(activeChannel);
+			ChatTweaks.getChatHandler().refreshChannel(activeChannel);
+			if(ChatTweaks.getChatHandler().getActiveChannel() == activeChannel) {
+				ChatTweaks.getChatHandler().setActiveChannel(activeChannel);
 			}
 		}
 	}
@@ -226,7 +223,7 @@ public class GuiTabSettings extends GuiScreenBase implements INavigationGui {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		drawSimpleWindow();
-		List<ChatChannel> channels = BetterMinecraftChat.getChatHandler().getChannels();
+		List<ChatChannel> channels = ChatTweaks.getChatHandler().getChannels();
 		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.settingsFor", "[" + txtLabel.getText() + "] (" + (channels.indexOf(activeChannel) + 1) + "/" + channels.size() + ")"), guiLeft + 4, guiTop + 4, 0xFFFFFFFF);
 		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.tabLabel"), guiLeft + 8, guiTop + 22, 0xFFFFFFFF);
 		mc.fontRendererObj.drawStringWithShadow(I18n.format("betterminecraftchat:gui.tabSettings.filterPattern"), guiLeft + 8, guiTop + 56, 0xFFFFFFFF);

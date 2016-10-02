@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.gui.chat;
 
-import net.blay09.mods.bmc.BetterMinecraftChat;
+import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.balyware.BalyWare;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -55,9 +55,9 @@ public class GuiImagePreview extends GuiScreen {
 			}).start();
 		}
 
-		buttonList.add(new GuiButton(0, width / 2 - 150, height / 2 + 65, 90, 20, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.openInBrowser")));
-		buttonList.add(new GuiButton(1, width / 2 - 50, height / 2 + 65, 100, 20, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.copyToClipboard")));
-		buttonList.add(new GuiButton(2, width / 2 + 60, height / 2 + 65, 90, 20, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.close")));
+		buttonList.add(new GuiButton(0, width / 2 - 150, height / 2 + 65, 90, 20, I18n.format(ChatTweaks.MOD_ID + ":gui.imagePreview.openInBrowser")));
+		buttonList.add(new GuiButton(1, width / 2 - 50, height / 2 + 65, 100, 20, I18n.format(ChatTweaks.MOD_ID + ":gui.imagePreview.copyToClipboard")));
+		buttonList.add(new GuiButton(2, width / 2 + 60, height / 2 + 65, 90, 20, I18n.format(ChatTweaks.MOD_ID + ":gui.imagePreview.close")));
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class GuiImagePreview extends GuiScreen {
 			loadBuffer = null;
 		}
 		if(textureId == -1) {
-			drawCenteredString(fontRendererObj, I18n.format(BetterMinecraftChat.MOD_ID + ":gui.imagePreview.loadingPreview"), width / 2, height / 2 - 20, 0xFFFFFFFF);
+			drawCenteredString(fontRendererObj, I18n.format(ChatTweaks.MOD_ID + ":gui.imagePreview.loadingPreview"), width / 2, height / 2 - 20, 0xFFFFFFFF);
 		} else {
 			float renderWidth = textureWidth;
 			float renderHeight = textureHeight;

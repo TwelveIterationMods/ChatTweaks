@@ -63,17 +63,17 @@ public class InternalMethodsImpl implements InternalMethods {
 
 	@Override
 	public IChatMessage getChatLine(int id) {
-		return BetterMinecraftChat.getChatHandler().getChatLine(id);
+		return ChatTweaks.getChatHandler().getChatLine(id);
 	}
 
 	@Override
 	public IChatMessage addChatLine(ITextComponent chatComponent, IChatChannel channel) {
-		return BetterMinecraftChat.getChatHandler().addChatLine(chatComponent, channel);
+		return ChatTweaks.getChatHandler().addChatMessage(chatComponent, channel);
 	}
 
 	@Override
 	public void removeChatLine(int id) {
-		BetterMinecraftChat.getChatHandler().removeChatLine(id);
+		ChatTweaks.getChatHandler().removeChatLine(id);
 	}
 
 	@Override
@@ -83,22 +83,22 @@ public class InternalMethodsImpl implements InternalMethods {
 
 	@Override
 	public void registerImageURLTransformer(Function<String, String> function) {
-		BetterMinecraftChat.registerImageURLTransformer(function);
+		ChatTweaks.registerImageURLTransformer(function);
 	}
 
 	@Override
 	public IChatChannel getChatChannel(String name, boolean create) {
-		IChatChannel channel = BetterMinecraftChat.getChatHandler().getChannel(name);
+		IChatChannel channel = ChatTweaks.getChatHandler().getChannel(name);
 		if(channel == null && create) {
 			channel = new ChatChannel(name);
-			BetterMinecraftChat.getChatHandler().addChannel((ChatChannel) channel);
+			ChatTweaks.getChatHandler().addChannel((ChatChannel) channel);
 		}
 		return channel;
 	}
 
 	@Override
 	public void clearChat() {
-		BetterMinecraftChat.getChatHandler().clearChat();
+		ChatTweaks.getChatHandler().clearChatMessages();
 	}
 
 	@Override
@@ -122,17 +122,17 @@ public class InternalMethodsImpl implements InternalMethods {
 
 	@Override
 	public void refreshChat() {
-		BetterMinecraftChat.getChatHandler().setActiveChannel(BetterMinecraftChat.getChatHandler().getActiveChannel());
+		ChatTweaks.getChatHandler().setActiveChannel(ChatTweaks.getChatHandler().getActiveChannel());
 	}
 
 	@Override
 	public void removeChannel(IChatChannel channel) {
-		BetterMinecraftChat.getChatHandler().removeChannel(channel);
+		ChatTweaks.getChatHandler().removeChannel(channel);
 	}
 
 	@Override
 	public IAuthManager getAuthManager() {
-		return BetterMinecraftChat.getAuthManager();
+		return ChatTweaks.getAuthManager();
 	}
 
 	@Override
@@ -142,7 +142,7 @@ public class InternalMethodsImpl implements InternalMethods {
 
 	@Override
 	public void saveChannels() {
-		BetterMinecraftChatConfig.saveChannels();
+		ChatTweaksConfig.saveChannels();
 	}
 
 	private boolean loadEmoteImageFromCache(IEmote emote) {
@@ -159,6 +159,6 @@ public class InternalMethodsImpl implements InternalMethods {
 
 	@Override
 	public void registerIntegration(IntegrationModule module) {
-		BetterMinecraftChat.registerIntegration(module);
+		ChatTweaks.registerIntegration(module);
 	}
 }
