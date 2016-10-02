@@ -20,6 +20,7 @@ import net.blay09.mods.bmc.chat.badges.NameTransformer;
 import net.blay09.mods.bmc.balyware.textcomponent.metadata.MetaEntry;
 import net.blay09.mods.bmc.balyware.textcomponent.StringRegion;
 import net.blay09.mods.bmc.balyware.textcomponent.StringWithMeta;
+import net.blay09.mods.bmc.image.ChatImage;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -61,8 +62,10 @@ public class ChatChannel implements IChatChannel {
 	private final EmoteTransformer emoteTransformer = new EmoteTransformer() {
 		@Override
 		public void finish(ITextComponent chatComponent, ITextComponent transformedComponent) {
-			for(IChatImage image : getImages()) {
-				lastAdded.addImage(image);
+			List<ChatImage> images = getImages();
+			lastAdded.withImages(images.size());
+			for(int i = 0; i < images.size(); i++) {
+				lastAdded.setImage(i, images.get(i));
 			}
 		}
 	};
@@ -85,7 +88,7 @@ public class ChatChannel implements IChatChannel {
 		@Override
 		public void finish(ITextComponent chatComponent, ITextComponent transformedComponent) {
 			if(getImage() != null) {
-				lastAdded.addImage(getImage());
+				lastAdded.setImage(0, getImage()); // TODO fix index
 			}
 		}
 	};
@@ -156,9 +159,10 @@ public class ChatChannel implements IChatChannel {
 		assert Objects.equals(lastMatched, chatLine.getChatComponent().getUnformattedText());
 
 		chatLine = chatLine.copy();
-		if(chatLine.getImages() != null) {
-			chatLine.getImages().clear();
-		}
+		// TODO check me:
+//		if(chatLine.getImages() != null) {
+//			chatLine.getImages().clear();
+//		}
 		lastAdded = chatLine;
 
 		String sender = tryGroup(messageMatcher, "s", null);

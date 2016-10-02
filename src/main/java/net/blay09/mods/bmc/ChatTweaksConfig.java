@@ -26,6 +26,7 @@ public class ChatTweaksConfig {
 	public static boolean smallerEmotes = false;
 	public static int backgroundColor1;
 	public static int backgroundColor2;
+	public static int lineSpacing;
 	public static int backgroundColorHighlight;
 	public static boolean highlightName;
 	public static String[] highlightStrings;

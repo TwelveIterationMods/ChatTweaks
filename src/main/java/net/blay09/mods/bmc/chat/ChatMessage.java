@@ -1,6 +1,5 @@
 package net.blay09.mods.bmc.chat;
 
-import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.api.chat.IChatMessage;
@@ -10,14 +9,14 @@ import net.blay09.mods.bmc.image.ChatImageDefault;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 
-import java.util.List;
+import javax.annotation.Nullable;
 
 public class ChatMessage implements IChatMessage {
 
     private final int id;
     private ITextComponent chatComponent;
     private int backgroundColor;
-    private List<IChatImage> images;
+    private IChatImage[] images;
 	private int[] rgbColors;
     private NBTTagCompound customData;
 	private long timestamp;
@@ -71,16 +70,38 @@ public class ChatMessage implements IChatMessage {
     }
 
 	@Override
-	public void addImage(int index, IChatRenderable image, ITooltipProvider tooltip) {
-		addImage(new ChatImageDefault(index, image, tooltip));
+	public IChatMessage withImages(int count) {
+		images = new IChatImage[count];
+		return this;
 	}
 
 	@Override
-    public void addImage(IChatImage image) {
-        if(images == null) {
-            images = Lists.newArrayList();
-        }
-        images.add(image);
+	@Nullable
+	public IChatImage[] getImages() {
+		return images;
+	}
+
+	@Override
+	@Nullable
+	public IChatImage getImage(int index) {
+		if(images == null || index < 0 || index >= images.length) {
+			return null;
+		}
+		return images[index];
+	}
+
+	@Override
+	public IChatMessage setImage(int index, IChatRenderable image, ITooltipProvider tooltip) {
+		setImage(index, new ChatImageDefault(index, image, tooltip));
+		return this;
+	}
+
+	@Override
+    public IChatMessage setImage(int index, IChatImage image) {
+		if(index >= 0 && index < images.length) {
+			images[index] = image;
+		}
+		return this;
     }
 
 	@Override
@@ -93,10 +114,11 @@ public class ChatMessage implements IChatMessage {
 	}
 
 	@Override
-	public void setRGBColor(int index, int color) {
+	public IChatMessage setRGBColor(int index, int color) {
 		if(index >= 0 && index < rgbColors.length) {
 			rgbColors[index] = color;
 		}
+		return this;
 	}
 
 	@Override
@@ -113,7 +135,7 @@ public class ChatMessage implements IChatMessage {
 
 	@Override
     public boolean hasImages() {
-        return images != null && !images.isEmpty();
+        return images != null;
     }
 
 	@Override
@@ -136,15 +158,11 @@ public class ChatMessage implements IChatMessage {
 		images = null;
 	}
 
-	public List<IChatImage> getImages() {
-        return images;
-    }
-
 	public ChatMessage copy() {
 		ChatMessage out = new ChatMessage(id, chatComponent);
 		out.backgroundColor = backgroundColor;
 		if(images != null) {
-			out.images = Lists.newArrayList(images);
+			out.images = images; // TODO bad copy
 		}
 		if(customData != null) {
 			out.customData = customData.copy();

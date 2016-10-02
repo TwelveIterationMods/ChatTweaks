@@ -39,6 +39,7 @@ public class EmoteTransformer extends TextComponentTransformer {
 				sb.append(text.substring(index, emoteData.getStart()));
 			}
 			int imageIndex = sb.length() + offset + 1;
+			sb.append("\u00a7*");
 			for (int i = 0; i < emoteData.getEmote().getWidthInSpaces(); i++) {
 				sb.append(' ');
 			}

@@ -23,78 +23,59 @@ import java.util.List;
 public class RenderHandler {
 
 	private IChatImage hoverImage;
-	private int lastChatLine;
-	private boolean backgroundColorAlternate;
 
-	@SubscribeEvent
-	public void onDrawChatMessagePre(DrawChatMessageEvent.Pre event) {
-		if(lastChatLine != event.getChatLine().getChatLineID()) {
-			backgroundColorAlternate = !backgroundColorAlternate;
-		}
-		lastChatLine = event.getChatLine().getChatLineID();
-		int chatWidth = (int) (Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatWidth() / Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatScale());
-		ChatMessage chatLine = (ChatMessage) ChatTweaks.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
-		if (chatLine != null) {
-			if(chatLine.hasBackgroundColor()) {
-				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), chatLine.getBackgroundColor() | ((event.getAlpha() / 2) << 24));
-			} else {
-				Gui.drawRect(event.getX(), event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT, event.getX() + chatWidth + 4, event.getY(), (backgroundColorAlternate ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) | ((event.getAlpha() / 2) << 24));
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void onDrawChatMessagePost(DrawChatMessageEvent.Post event) {
-		List<ChatLine> wrappedChatLines = Minecraft.getMinecraft().ingameGUI.getChatGUI().drawnChatLines;
-		int thisIndex = wrappedChatLines.indexOf(event.getChatLine());
-		int thisOffset = 0;
-		int wrappedLinesBefore = 0;
-		for(int i = thisIndex + 1; i < wrappedChatLines.size(); i++) {
-			if(wrappedChatLines.get(i) == null || event.getChatLine() == null) {
-				continue; // wth, this shouldn't even be able to be null but whatever
-			}
-			if(wrappedChatLines.get(i).getChatLineID() != event.getChatLine().getChatLineID()) {
-				break;
-			}
-			String formattedText = wrappedChatLines.get(i).getChatComponent().getFormattedText();
-			thisOffset += formattedText.length() - 2;
-			wrappedLinesBefore++;
-		}
-		float chatScale = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatScale();
-		ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-		int mouseX = Mouse.getX() / scaledResolution.getScaleFactor();
-		int mouseY = Mouse.getY() / scaledResolution.getScaleFactor();
-		int invMouseY = scaledResolution.getScaledHeight() - mouseY;
-		mouseX = MathHelper.floor_float((float) mouseX / chatScale);
-		invMouseY = MathHelper.floor_float((float) invMouseY / chatScale);
-		ChatMessage chatLine = (ChatMessage) ChatTweaks.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
-		if (chatLine != null && chatLine.hasImages()) {
-			String formattedText = event.getChatLine().getChatComponent().getFormattedText();
-			for(IChatImage image : chatLine.getImages()) {
-				if(image.getIndex() >= thisOffset && image.getIndex() < thisOffset + formattedText.length()) {
-					int offset = Math.min(formattedText.length(), image.getIndex() - thisOffset + (wrappedLinesBefore * 2) + 1);
-					String beforeText = formattedText.substring(0, offset);
-					int renderOffset = Minecraft.getMinecraft().fontRendererObj.getStringWidth(beforeText);
-					int spaceWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth(' ') * image.getSpaces();
-					GlStateManager.pushMatrix();
-					float scale = image.getScale();
-//					scale = 1f;
-					GlStateManager.scale(scale, scale, 1f);
-					int renderWidth = (int) (image.getWidth() * scale);
-					int renderHeight = (int) (image.getHeight() * scale);
-					int renderX = event.getX() + renderOffset + spaceWidth / 2 - renderWidth / 2;
-					int renderY = event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2 - renderHeight / 2;
-					image.draw((int) (renderX / scale), (int) (renderY / scale), event.getAlpha());
-					GlStateManager.popMatrix();
-					float offsetX = 2;
-					float offsetY = (scaledResolution.getScaledHeight() - 48) + 20f;
-					if(mouseX >= (offsetX + renderX) && mouseX < offsetX + renderX + renderWidth && invMouseY >= offsetY + renderY - renderHeight && invMouseY < offsetY + renderY) {
-						hoverImage = image;
-					}
-				}
-			}
-		}
-	}
+//	@SubscribeEvent
+//	public void onDrawChatMessagePost(DrawChatMessageEvent.Post event) {
+//		List<ChatLine> wrappedChatLines = Minecraft.getMinecraft().ingameGUI.getChatGUI().drawnChatLines;
+//		int thisIndex = wrappedChatLines.indexOf(event.getChatLine());
+//		int thisOffset = 0;
+//		int wrappedLinesBefore = 0;
+//		for(int i = thisIndex + 1; i < wrappedChatLines.size(); i++) {
+//			if(wrappedChatLines.get(i) == null || event.getChatLine() == null) {
+//				continue; // wth, this shouldn't even be able to be null but whatever
+//			}
+//			if(wrappedChatLines.get(i).getChatLineID() != event.getChatLine().getChatLineID()) {
+//				break;
+//			}
+//			String formattedText = wrappedChatLines.get(i).getChatComponent().getFormattedText();
+//			thisOffset += formattedText.length() - 2;
+//			wrappedLinesBefore++;
+//		}
+//		float chatScale = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatScale();
+//		ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+//		int mouseX = Mouse.getX() / scaledResolution.getScaleFactor();
+//		int mouseY = Mouse.getY() / scaledResolution.getScaleFactor();
+//		int invMouseY = scaledResolution.getScaledHeight() - mouseY;
+//		mouseX = MathHelper.floor_float((float) mouseX / chatScale);
+//		invMouseY = MathHelper.floor_float((float) invMouseY / chatScale);
+//		ChatMessage chatLine = (ChatMessage) ChatTweaks.getChatHandler().getChatLine(event.getChatLine().getChatLineID());
+//		if (chatLine != null && chatLine.hasImages()) {
+//			String formattedText = event.getChatLine().getChatComponent().getFormattedText();
+//			for(IChatImage image : chatLine.getImages()) {
+//				if(image.getIndex() >= thisOffset && image.getIndex() < thisOffset + formattedText.length()) {
+//					int offset = Math.min(formattedText.length(), image.getIndex() - thisOffset + (wrappedLinesBefore * 2) + 1);
+//					String beforeText = formattedText.substring(0, offset);
+//					int renderOffset = Minecraft.getMinecraft().fontRendererObj.getStringWidth(beforeText);
+//					int spaceWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth(' ') * image.getSpaces();
+//					GlStateManager.pushMatrix();
+//					float scale = image.getScale();
+////					scale = 1f;
+//					GlStateManager.scale(scale, scale, 1f);
+//					int renderWidth = (int) (image.getWidth() * scale);
+//					int renderHeight = (int) (image.getHeight() * scale);
+//					int renderX = event.getX() + renderOffset + spaceWidth / 2 - renderWidth / 2;
+//					int renderY = event.getY() - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2 - renderHeight / 2;
+//					image.draw((int) (renderX / scale), (int) (renderY / scale), event.getAlpha());
+//					GlStateManager.popMatrix();
+//					float offsetX = 2;
+//					float offsetY = (scaledResolution.getScaledHeight() - 48) + 20f;
+//					if(mouseX >= (offsetX + renderX) && mouseX < offsetX + renderX + renderWidth && invMouseY >= offsetY + renderY - renderHeight && invMouseY < offsetY + renderY) {
+//						hoverImage = image;
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	@SubscribeEvent
 	public void onRenderOverlayChat(RenderGameOverlayEvent.Post event) {
@@ -102,7 +83,6 @@ public class RenderHandler {
 			return;
 		}
 		EmoteRegistry.runDisposal();
-		backgroundColorAlternate = false;
 		if(hoverImage != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat) {
 			GuiUtils.drawTooltip(hoverImage.getTooltip(), Mouse.getX() / event.getResolution().getScaleFactor(), event.getResolution().getScaledHeight() - Mouse.getY() / event.getResolution().getScaleFactor());
 			hoverImage = null;

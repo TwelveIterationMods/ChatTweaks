@@ -6,6 +6,8 @@ import net.blay09.mods.bmc.api.image.ITooltipProvider;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 
+import javax.annotation.Nullable;
+
 public interface IChatMessage {
 
 	int getId();
@@ -24,15 +26,23 @@ public interface IChatMessage {
 
 	void setBackgroundColor(int backgroundColor);
 
-	void addImage(int index, IChatRenderable image, ITooltipProvider tooltip);
+	IChatMessage withImages(int count);
 
-	void addImage(IChatImage image);
+	@Nullable
+	IChatImage[] getImages();
+
+	@Nullable
+	IChatImage getImage(int index);
+
+	IChatMessage setImage(int index, IChatRenderable image, ITooltipProvider tooltip);
+
+	IChatMessage setImage(int index, IChatImage image);
 
 	IChatMessage withRGB(int count);
 
 	int getRGBColor(int index);
 
-	void setRGBColor(int index, int color);
+	IChatMessage setRGBColor(int index, int color);
 
 	boolean hasImages();
 

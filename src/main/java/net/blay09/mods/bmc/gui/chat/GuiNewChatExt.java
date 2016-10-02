@@ -9,17 +9,22 @@ import net.blay09.mods.bmc.api.chat.IChatChannel;
 import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.api.chat.MessageStyle;
 import net.blay09.mods.bmc.api.event.ClientChatEvent;
+import net.blay09.mods.bmc.api.image.IChatImage;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.ChatMessage;
 import net.blay09.mods.bmc.chat.TextRenderRegion;
+import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
+import net.blay09.mods.bmc.image.ChatImageEmote;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -37,17 +42,25 @@ public class GuiNewChatExt extends GuiNewChat {
 	public static class WrappedChatLine {
 		private final int timeCreated;
 		private final IChatMessage message;
+		private final ITextComponent component;
+		private final String cleanText;
 		private final TextRenderRegion[] regions;
+		private final List<IChatImage> images;
 		private final boolean alternateBackground;
 
-		public WrappedChatLine(int timeCreated, IChatMessage message, TextRenderRegion[] regions, boolean alternateBackground) {
+		public WrappedChatLine(int timeCreated, IChatMessage message, ITextComponent component, String cleanText, TextRenderRegion[] regions, @Nullable List<IChatImage> images, boolean alternateBackground) {
 			this.timeCreated = timeCreated;
 			this.message = message;
+			this.component = component;
+			this.cleanText = cleanText;
 			this.regions = regions;
+			this.images = images;
 			this.alternateBackground = alternateBackground;
 		}
 	}
 
+	private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)\u00a7[0-9A-FK-OR#]");
+	private static final Pattern EMOTE_PATTERN = Pattern.compile("\u00a7\\*");
 	private static final Matcher DEFAULT_SENDER_MATCHER = Pattern.compile("(<[^>]+>)").matcher("");
 	private static final int START_ID = 500;
 
@@ -119,17 +132,37 @@ public class GuiNewChatExt extends GuiNewChat {
 				int chatWidth = MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale());
 				List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getChatComponent(), chatWidth, this.mc.fontRendererObj, false, false);
 				boolean isChatOpen = this.getChatOpen();
+				int colorIndex = 0;
+				int emoteIndex = 0;
 				for (ITextComponent chatLine : wrappedList) {
 					if (isChatOpen && this.scrollPos > 0) {
 						this.isScrolled = true;
 						this.scroll(1);
 					}
-					String[] split = chatLine.getFormattedText().split("\u200b");
+					String formattedText = chatLine.getFormattedText();
+					String[] split = formattedText.split("\u00a7#");
 					TextRenderRegion[] regions = new TextRenderRegion[split.length];
-					for(int i = 0; i < regions.length; i++) {
-						regions[i] = new TextRenderRegion(split[i], chatMessage.getRGBColor(i));
+					for (int i = 0; i < regions.length; i++) {
+						if(i > 0) {
+							colorIndex++;
+						}
+						regions[i] = new TextRenderRegion(split[i], chatMessage.getRGBColor(colorIndex));
 					}
-					this.wrappedChatLines.add(0, new WrappedChatLine(mc.ingameGUI.getUpdateCounter(), chatMessage, regions, alternateBackground));
+					String cleanText = FORMATTING_CODE_PATTERN.matcher(chatLine.getUnformattedText()).replaceAll("");
+					Matcher matcher = EMOTE_PATTERN.matcher(cleanText);
+					List<IChatImage> images = null;
+					if(chatMessage.hasImages()) {
+						images = Lists.newArrayList();
+						while (matcher.find()) {
+							IChatImage image = chatMessage.getImage(emoteIndex);
+							if(image != null) {
+								image.setIndex(matcher.start());
+								images.add(image);
+							}
+							emoteIndex++;
+						}
+					}
+					this.wrappedChatLines.add(0, new WrappedChatLine(mc.ingameGUI.getUpdateCounter(), chatMessage, chatLine, cleanText, regions, images, alternateBackground));
 				}
 				while (this.wrappedChatLines.size() > 100) {
 					this.wrappedChatLines.remove(this.wrappedChatLines.size() - 1);
@@ -149,6 +182,8 @@ public class GuiNewChatExt extends GuiNewChat {
 
 	@Override
 	public void refreshChat() {
+		wrappedChatLines.clear();
+		resetScroll();
 		for (IChatMessage chatMessage : activeChannel.getChatLines()) {
 			addChatMessageForDisplay(chatMessage, activeChannel);
 		}
@@ -157,6 +192,7 @@ public class GuiNewChatExt extends GuiNewChat {
 	@Override
 	public void drawChat(int updateCounter) {
 		if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN) {
+			int lineSpacing = ChatTweaksConfig.lineSpacing;
 			float chatOpacity = this.mc.gameSettings.chatOpacity * 0.9f + 0.1f;
 			int wrappedChatLinesCount = wrappedChatLines.size();
 			if (wrappedChatLinesCount > 0) {
@@ -172,28 +208,42 @@ public class GuiNewChatExt extends GuiNewChat {
 				for (int lineIdx = 0; lineIdx + this.scrollPos < this.wrappedChatLines.size() && lineIdx < maxVisibleLines; lineIdx++) {
 					WrappedChatLine chatLine = this.wrappedChatLines.get(lineIdx + this.scrollPos);
 					int lifeTime = updateCounter - chatLine.timeCreated;
-					if(lifeTime < 200 || isChatOpen) {
+					if (lifeTime < 200 || isChatOpen) {
 						int alpha = 255;
-						if(!isChatOpen) {
-							float percentage = (float) lifeTime / 200f;
-							percentage = 1f - percentage;
-							percentage = percentage * 10f;
+						if (!isChatOpen) {
+							float percentage = (1f - (float) lifeTime / 200f) * 10f;
 							percentage = MathHelper.clamp_float(percentage, 0f, 1f);
 							percentage = percentage * percentage;
 							alpha = (int) (255f * percentage);
 						}
 						alpha = (int) ((float) alpha * chatOpacity);
-						if(alpha > 3) {
+						if (alpha > 3) {
 							int x = 0;
-							int y = -lineIdx * 9;
-							if(chatLine.message.hasBackgroundColor()) {
-								drawRect(-2, y - 9, chatWidth + 4, y, (chatLine.message.getBackgroundColor() & 0x00FFFFFF) + (alpha << 24));
+							int y = -lineIdx * (fontRenderer.FONT_HEIGHT + lineSpacing);
+							if (chatLine.message.hasBackgroundColor()) {
+								drawRect(-2, y - fontRenderer.FONT_HEIGHT + lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), (chatLine.message.getBackgroundColor() & 0x00FFFFFF) + (alpha << 24));
 							} else {
-								drawRect(-2, y - 9, chatWidth + 4, y, ((chatLine.alternateBackground ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) & 0x00FFFFFF) + (alpha << 24));
+								drawRect(-2, y - fontRenderer.FONT_HEIGHT - lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), ((chatLine.alternateBackground ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) & 0x00FFFFFF) + (alpha << 24));
 							}
 							GlStateManager.enableBlend();
-							for(TextRenderRegion region : chatLine.regions) {
-								x = fontRenderer.drawString(region.getText(), x, y - 8, (region.getColor() & 0x00FFFFFF) + (alpha << 24), true);
+							for (TextRenderRegion region : chatLine.regions) {
+								x = fontRenderer.drawString(region.getText(), x, y - fontRenderer.FONT_HEIGHT + 1, (region.getColor() & 0x00FFFFFF) + (alpha << 24), true);
+							}
+							if(chatLine.images != null) {
+								for (IChatImage image : chatLine.images) {
+									int spaceWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth(' ') * image.getSpaces();
+									float scale = image.getScale();
+									String test = chatLine.cleanText.substring(0, image.getIndex());
+									int renderOffset = fontRenderer.getStringWidth(chatLine.cleanText.substring(0, image.getIndex()));
+									int renderWidth = (int) (image.getWidth() * scale);
+									int renderHeight = (int) (image.getHeight() * scale);
+									int renderX = -2 + renderOffset + spaceWidth / 2 - renderWidth / 2;
+									int renderY = y - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2 - renderHeight / 2;
+									GlStateManager.pushMatrix();
+									GlStateManager.scale(scale, scale, 1f);
+									image.draw((int) (renderX / scale), (int) (renderY / scale), 255);
+									GlStateManager.popMatrix();
+								}
 							}
 							GlStateManager.disableAlpha();
 							GlStateManager.disableBlend();
@@ -203,7 +253,7 @@ public class GuiNewChatExt extends GuiNewChat {
 				}
 
 				// Render the scroll bar, if necessary
-				if(isChatOpen) {
+				if (isChatOpen) {
 					GlStateManager.translate(-3f, 0f, 0f);
 					int fullHeight = wrappedChatLinesCount * fontRenderer.FONT_HEIGHT + wrappedChatLinesCount;
 					int drawnHeight = drawnLinesCount * fontRenderer.FONT_HEIGHT + drawnLinesCount;
@@ -231,12 +281,49 @@ public class GuiNewChatExt extends GuiNewChat {
 
 	@Override
 	public void clearChatMessages() {
+		super.clearChatMessages();
 		for (ChatChannel channel : channels) {
 			channel.clearChat();
 		}
 		unreadMessages.clear();
+		wrappedChatLines.clear();
 		chatLines.clear();
 		chatLineCounter.set(START_ID);
+	}
+
+	@Nullable
+	public ITextComponent getChatComponent(int mouseX, int mouseY) {
+		if (!this.getChatOpen()) {
+			return null;
+		}
+		ScaledResolution resolution = new ScaledResolution(this.mc);
+		int scaleFactor = resolution.getScaleFactor();
+		float chatScale = this.getChatScale();
+		int x = mouseX / scaleFactor - 2;
+		int y = mouseY / scaleFactor - 40;
+		x = MathHelper.floor_float((float) x / chatScale);
+		y = MathHelper.floor_float((float) y / chatScale);
+
+		if (x >= 0 && y >= 0) {
+			int lineCount = Math.min(this.getLineCount(), this.wrappedChatLines.size());
+
+			if (x <= MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale()) && y < (fontRenderer.FONT_HEIGHT + ChatTweaksConfig.lineSpacing) * lineCount + lineCount) {
+				int clickedIndex = y / (fontRenderer.FONT_HEIGHT + ChatTweaksConfig.lineSpacing) + this.scrollPos;
+				if (clickedIndex >= 0 && clickedIndex < this.wrappedChatLines.size()) {
+					WrappedChatLine chatLine = this.wrappedChatLines.get(clickedIndex);
+					int width = 0;
+					for (ITextComponent component : chatLine.component) {
+						if (component instanceof TextComponentString) {
+							width += fontRenderer.getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(((TextComponentString) component).getText(), false));
+							if (width > x) {
+								return component;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public void checkHighlights(ChatMessage chatLine, @Nullable String sender, @Nullable String message) {
