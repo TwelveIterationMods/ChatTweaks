@@ -71,7 +71,7 @@ public class StyledString {
 		List<StyledStringSection> result = Lists.newArrayList();
 		for(StyledStringSection section : sections) {
 			if(section.getStart() >= srcStart && section.getStart() < srcEnd) {
-				result.add(new StyledStringSection(Math.max(dstStart, section.getStart()), Math.max(dstEnd, section.getEnd()), section.getStyle()));
+				result.add(new StyledStringSection(Math.max(dstStart, dstStart + (section.getStart() - srcStart)), Math.min(dstEnd, dstEnd + (section.getEnd() - srcEnd)), section.getStyle()));
 			}
 		}
 		return result;

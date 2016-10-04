@@ -95,17 +95,6 @@ public class ChatView {
 		Pattern cacheMe = Pattern.compile("\\$(?:([0-9])|\\{([\\w])\\})");
 
 		ITextComponent textComponent = chatLine.getChatComponent();
-		textComponent = new TextComponentString("<");
-		ITextComponent sender = new TextComponentString("blay09");
-		sender.getStyle().setColor(TextFormatting.GOLD);
-		textComponent.appendSibling(sender);
-		textComponent.appendText(">");
-		ITextComponent message = new TextComponentString("This is a test message.");
-		message.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("It worked!")));
-		textComponent.appendSibling(message);
-		lastMatcher = compiledFilterPattern.matcher(textComponent.getUnformattedText());
-		lastMatcher.matches();
-		outputFormat = "[$1] $2 -- $1";
 		if(!outputFormat.equals("$0")) {
 			StyledString styledString = new StyledString(textComponent);
 			Matcher matcher = cacheMe.matcher(outputFormat);
@@ -136,39 +125,8 @@ public class ChatView {
 			matcher.appendTail(sb);
 			StyledString output = new StyledString(sb.toString(), sections);
 			textComponent = output.toTextComponent();
-//			StyledString output = styledString.substring(lastMatcher.start(1), lastMatcher.end(1));
-//			textComponent = output.toTextComponent();
-
-//			ITextComponent senderComponent = null;
-//			ITextComponent messageComponent = null;
-//			for(ITextComponent part : textComponent) {
-//				if(part instanceof TextComponentString) {
-//					String text = ((TextComponentString) part).getText();
-//					System.out.println(text);
-//					if(text.equals(sender)) {
-//						senderComponent = part;
-//						System.out.println("found sender: " + sender);
-//					}
-//					if(part.getUnformattedText().equals(message)) { // todo strip formatting
-//						messageComponent = part;
-//						System.out.println("found message: " + message);
-//					}
-//				}
-//			}
 		}
 		chatLine.setTextComponent(textComponent);
-//		ITextComponent textComponent = chatLine.getChatComponent();
-//		if(!format.equals("$0")) {
-//			if (sender != null && message != null) {
-//				textComponent = formatComponent(StringWithMeta.fromTextComponent(textComponent), sender, message);
-//			} else if(messageStyle != MessageStyle.Chat) {
-//				textComponent = formatComponentSimple(textComponent);
-//			}
-//		}
-//		if(transformers.getTransformerCount() > 0) {
-//			textComponent = transformers.walkTextComponent(textComponent);
-//		}
-//		chatLine.setTextComponent(textComponent);
 		return chatLine;
 	}
 
