@@ -142,7 +142,7 @@
 ////	}
 //
 ////	public ChatMessage addChatLine(ChatMessage chatLine) {
-////		assert Objects.equals(lastMatched, chatLine.getChatComponent().getUnformattedText());
+////		assert Objects.equals(lastMatched, chatLine.getTextComponent().getUnformattedText());
 ////
 ////		chatLine = chatLine.copy();
 ////		chatLine.clearImages();
@@ -151,7 +151,7 @@
 ////		String sender = tryGroup(messageMatcher, "s", null);
 ////		String message = tryGroup(messageMatcher, "m", null);
 ////
-////		ITextComponent textComponent = chatLine.getChatComponent();
+////		ITextComponent textComponent = chatLine.getTextComponent();
 ////		if(!format.equals("$0")) {
 ////			if (sender != null && message != null) {
 ////				textComponent = formatComponent(StringWithMeta.fromTextComponent(textComponent), sender, message);

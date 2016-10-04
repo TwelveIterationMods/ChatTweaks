@@ -2,12 +2,14 @@ package net.blay09.mods.bmc.chat;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
+import net.blay09.mods.bmc.chat.emotes.EmoteScanner;
+import net.blay09.mods.bmc.chat.emotes.PositionedEmote;
+import net.blay09.mods.bmc.image.ChatImageEmote;
 import net.blay09.mods.bmc.text.StyledString;
 import net.blay09.mods.bmc.text.StyledStringSection;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -18,8 +20,10 @@ import java.util.regex.PatternSyntaxException;
 
 public class ChatView {
 
-	public static final Pattern defaultFilterPattern = Pattern.compile("(?:<(?<s>[^>]+)>)? ?(?<m>.*)"); // TODO this needs /me support
+	public static final Pattern defaultFilterPattern = Pattern.compile("(?:<(?<s>[^>]+)>)? ?(?<m>.*)");
+	public static final Pattern groupPattern = Pattern.compile("\\$(?:([0-9])|\\{([\\w])\\})");
 	public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
+	private static final EmoteScanner emoteScanner = new EmoteScanner();
 	private static final int MAX_MESSAGES = 100;
 
 	private final String name;
@@ -35,6 +39,7 @@ public class ChatView {
 	private String compiledOutputFormat = outputFormat;
 	private Matcher lastMatcher;
 	private final List<ChatMessage> chatLines = Lists.newArrayList();
+	private boolean hasUnread;
 
 	public ChatView(String name) {
 		this.name = name;
@@ -72,19 +77,6 @@ public class ChatView {
 		return lastMatcher.matches();
 	}
 
-	public void setFilterPattern(String filterPattern) {
-		this.filterPattern = filterPattern;
-		if(!filterPattern.isEmpty()) {
-			try {
-				compiledFilterPattern = Pattern.compile(filterPattern);
-			} catch (PatternSyntaxException e) {
-				compiledFilterPattern = defaultFilterPattern;
-			}
-		} else {
-			compiledFilterPattern = defaultFilterPattern;
-		}
-	}
-
 	public ChatMessage addChatLine(ChatMessage chatLine) {
 		chatLine = chatLine.copy();
 		chatLines.add(chatLine);
@@ -92,12 +84,10 @@ public class ChatView {
 			chatLines.remove(0);
 		}
 
-		Pattern cacheMe = Pattern.compile("\\$(?:([0-9])|\\{([\\w])\\})");
-
-		ITextComponent textComponent = chatLine.getChatComponent();
-		if(!outputFormat.equals("$0")) {
+		ITextComponent textComponent = chatLine.getTextComponent();
+		if(!compiledOutputFormat.equals("$0")) {
 			StyledString styledString = new StyledString(textComponent);
-			Matcher matcher = cacheMe.matcher(outputFormat);
+			Matcher matcher = groupPattern.matcher(compiledOutputFormat);
 			StringBuffer sb = new StringBuffer();
 			List<StyledStringSection> sections = Lists.newArrayList();
 			int last = 0;
@@ -126,25 +116,53 @@ public class ChatView {
 			StyledString output = new StyledString(sb.toString(), sections);
 			textComponent = output.toTextComponent();
 		}
-		chatLine.setTextComponent(textComponent);
+		ITextComponent newComponent = null;
+		for(ITextComponent component : textComponent) {
+			if(component instanceof TextComponentString) {
+				String text = ((TextComponentString) component).getText().trim();
+				if(text.length() > 1) {
+					int index = 0;
+					StringBuilder sb = new StringBuilder();
+					List<PositionedEmote> emotes = emoteScanner.scanForEmotes(text, null);
+					for(PositionedEmote emoteData : emotes) {
+						if (index < emoteData.getStart()) {
+							sb.append(text.substring(index, emoteData.getStart()));
+						}
+						int imageIndex = sb.length() + 1;
+						sb.append("\u00a7*");
+						for (int i = 0; i < emoteData.getEmote().getWidthInSpaces(); i++) {
+							sb.append(' ');
+						}
+						chatLine.addImage(new ChatImageEmote(imageIndex, emoteData.getEmote()));
+						index = emoteData.getEnd() + 1;
+					}
+					if(index < text.length()) {
+						sb.append(text.substring(index));
+					}
+					((TextComponentString) component).text = sb.toString();
+				}
+				if(text.length() > 0) {
+					if (newComponent == null) {
+						newComponent = new TextComponentString("");
+						newComponent.setStyle(textComponent.getStyle());
+					}
+					newComponent.appendSibling(component);
+				}
+			}
+		}
+		if(newComponent == null) {
+			newComponent = textComponent;
+		}
+		chatLine.setTextComponent(newComponent);
 		return chatLine;
 	}
 
-	@Nullable
-	private String tryGetGroup(Matcher matcher, String name, @Nullable String defaultVal) {
-		try {
-			return matcher.group(name);
-		} catch (IllegalArgumentException e) {
-			return defaultVal;
-		}
-	}
-
 	public boolean hasUnreadMessages() {
-		return false; // TODO implement me
+		return hasUnread;
 	}
 
-	public void markAsUnread(ChatMessage message) {
-		// TODO implement me
+	public void markAsUnread(boolean hasUnread) {
+		this.hasUnread = hasUnread;
 	}
 
 	public void addChannel(ChatChannel channel) {
@@ -153,6 +171,34 @@ public class ChatView {
 
 	public Collection<ChatChannel> getChannels() {
 		return channels;
+	}
+
+	public void setFilterPattern(String filterPattern) {
+		this.filterPattern = filterPattern;
+		if(!filterPattern.isEmpty()) {
+			try {
+				compiledFilterPattern = Pattern.compile(filterPattern);
+			} catch (PatternSyntaxException e) {
+				compiledFilterPattern = defaultFilterPattern;
+			}
+		} else {
+			compiledFilterPattern = defaultFilterPattern;
+		}
+	}
+
+	public String getOutputFormat() {
+		return outputFormat;
+	}
+
+	public void setOutputFormat(String outputFormat) {
+		this.outputFormat = outputFormat;
+		Matcher matcher = outputFormattingPattern.matcher(outputFormat);
+		StringBuffer sb = new StringBuffer();
+		while(matcher.find()) {
+			matcher.appendReplacement(sb, "\u00a7" + matcher.group(1));
+		}
+		matcher.appendTail(sb);
+		compiledOutputFormat = sb.toString();
 	}
 
 	public boolean isExclusive() {
@@ -187,11 +233,4 @@ public class ChatView {
 		this.outgoingPrefix = outgoingPrefix;
 	}
 
-	public String getOutputFormat() {
-		return outputFormat;
-	}
-
-	public void setOutputFormat(String outputFormat) {
-		this.outputFormat = outputFormat;
-	}
 }

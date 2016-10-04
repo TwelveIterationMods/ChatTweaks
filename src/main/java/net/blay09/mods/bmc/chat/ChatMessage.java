@@ -1,5 +1,6 @@
 package net.blay09.mods.bmc.chat;
 
+import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 import net.blay09.mods.bmc.image.ITooltipProvider;
 import net.blay09.mods.bmc.image.ChatImage;
@@ -8,13 +9,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class ChatMessage {
 
     private final int id;
     private ITextComponent chatComponent;
     private int backgroundColor;
-    private ChatImage[] images;
+    private List<ChatImage> images;
 	private int[] rgbColors;
     private NBTTagCompound customData;
 	private long timestamp;
@@ -31,7 +33,7 @@ public class ChatMessage {
         return id;
     }
 
-	public ITextComponent getChatComponent() {
+	public ITextComponent getTextComponent() {
 		return chatComponent;
 	}
 
@@ -59,32 +61,24 @@ public class ChatMessage {
         this.backgroundColor = backgroundColor;
     }
 
-	public ChatMessage withImages(int count) {
-		images = new ChatImage[count];
-		return this;
-	}
-
 	@Nullable
-	public ChatImage[] getImages() {
+	public List<ChatImage> getImages() {
 		return images;
 	}
 
 	@Nullable
 	public ChatImage getImage(int index) {
-		if(images == null || index < 0 || index >= images.length) {
+		if(images == null || index < 0 || index >= images.size()) {
 			return null;
 		}
-		return images[index];
+		return images.get(index);
 	}
 
-	public ChatMessage setImage(int index, IChatRenderable image, ITooltipProvider tooltip) {
-		setImage(index, new ChatImageDefault(index, image, tooltip));
-		return this;
-	}
-
-    public ChatMessage setImage(int index, ChatImage image) {
-		if(index >= 0 && index < images.length) {
-			images[index] = image;
+    public ChatMessage addImage(ChatImage image) {
+		if(images == null) {
+			images = Lists.newArrayList(image);
+		} else {
+			images.add(image);
 		}
 		return this;
     }

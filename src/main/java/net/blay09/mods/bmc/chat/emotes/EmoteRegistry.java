@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import net.blay09.mods.bmc.event.ReloadEmotes;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +44,7 @@ public class EmoteRegistry {
 		return groupMap.get(name);
 	}
 
+	@Nullable
 	public static IEmote fromName(String name) {
 		return emoteMap.get(name);
 	}

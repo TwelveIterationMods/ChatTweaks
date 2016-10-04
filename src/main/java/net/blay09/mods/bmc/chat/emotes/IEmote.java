@@ -2,6 +2,7 @@ package net.blay09.mods.bmc.chat.emotes;
 
 import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -22,9 +23,10 @@ public interface IEmote {
 
 	IEmoteLoader getLoader();
 
+	@Nullable
 	IChatRenderable getImage();
 
-	void setImage(IChatRenderable image);
+	void setImage(@Nullable IChatRenderable image);
 
 	int getWidthInSpaces();
 
@@ -32,6 +34,7 @@ public interface IEmote {
 
 	void setImageCacheFile(String fileName);
 
+	@Nullable
 	File getImageCacheFile();
 
 	boolean isRegex();

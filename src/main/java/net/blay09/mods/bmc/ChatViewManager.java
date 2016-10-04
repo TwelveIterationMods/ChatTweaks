@@ -9,6 +9,7 @@ import com.google.gson.stream.JsonWriter;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.ChatMessage;
 import net.blay09.mods.bmc.chat.ChatView;
+import net.blay09.mods.bmc.chat.MessageStyle;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -35,6 +36,22 @@ public class ChatViewManager {
 		return defaultView;
 	}
 
+	public static ChatView createSystemView() {
+		ChatView systemView = new ChatView("system");
+		systemView.addChannel(ChatManager.getChatChannel("system"));
+		systemView.setMessageStyle(MessageStyle.Side);
+		systemView.setExclusive(true);
+		return systemView;
+	}
+
+	public static ChatView createInteractionView() {
+		ChatView interactionView = new ChatView("interaction");
+		interactionView.addChannel(ChatManager.getChatChannel("interaction"));
+		interactionView.setMessageStyle(MessageStyle.Bottom);
+		interactionView.setExclusive(true);
+		return interactionView;
+	}
+
 	public static void load() {
 		Gson gson = new Gson();
 		try(FileReader reader = new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/ChatTweaks/views.json"))) {
@@ -48,6 +65,8 @@ public class ChatViewManager {
 		}
 		if(views.isEmpty()) {
 			addChatView(createDefaultView());
+			addChatView(createSystemView());
+			addChatView(createInteractionView());
 		}
 	}
 
@@ -100,7 +119,7 @@ public class ChatViewManager {
 	}
 
 	public static List<ChatView> findChatViews(ChatMessage message, ChatChannel channel) {
-		String unformattedText = message.getChatComponent().getUnformattedText();
+		String unformattedText = message.getTextComponent().getUnformattedText();
 		List<ChatView> result = Lists.newArrayList();
 		for (ChatView view : views.values()) {
 			if (view.getChannels().contains(channel) && view.messageMatches(unformattedText)) {

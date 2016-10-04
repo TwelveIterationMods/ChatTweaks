@@ -1,6 +1,10 @@
 package net.blay09.mods.bmc.text;
 
 import com.google.common.collect.Lists;
+import net.blay09.mods.bmc.chat.ChatMessage;
+import net.blay09.mods.bmc.chat.emotes.EmoteScanner;
+import net.blay09.mods.bmc.chat.emotes.PositionedEmote;
+import net.blay09.mods.bmc.image.ChatImageEmote;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 

@@ -84,10 +84,10 @@ public class GuiNewChatExt extends GuiNewChat {
 		switch (view.getMessageStyle()) {
 			case Chat:
 				if (view != ChatViewManager.getActiveView()) {
-					view.markAsUnread(chatMessage);
+					view.markAsUnread(true);
 				}
 				int chatWidth = MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale());
-				List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getChatComponent(), chatWidth, this.mc.fontRendererObj, false, false);
+				List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getTextComponent(), chatWidth, this.mc.fontRendererObj, false, false);
 				boolean isChatOpen = this.getChatOpen();
 				int colorIndex = 0;
 				int emoteIndex = 0;
@@ -196,7 +196,7 @@ public class GuiNewChatExt extends GuiNewChat {
 									int renderY = y - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2 - renderHeight / 2;
 									GlStateManager.pushMatrix();
 									GlStateManager.scale(scale, scale, 1f);
-									image.draw((int) (renderX / scale), (int) (renderY / scale), 255);
+									image.draw((int) (renderX / scale), (int) (renderY / scale), alpha);
 									GlStateManager.popMatrix();
 								}
 							}

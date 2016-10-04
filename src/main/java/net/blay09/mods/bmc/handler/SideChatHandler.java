@@ -62,7 +62,7 @@ public class SideChatHandler {
 			if(message.timeLeft <= 0) {
 				messages.remove(i);
 			}
-			String formattedText = message.chatMessage.getChatComponent().getFormattedText();
+			String formattedText = message.chatMessage.getTextComponent().getFormattedText();
 			Minecraft.getMinecraft().fontRendererObj.drawString(formattedText, -Minecraft.getMinecraft().fontRendererObj.getStringWidth(formattedText) - 16, message.y, 0xFFFFFF + (alpha << 24), true);
 		}
 		GlStateManager.disableBlend();

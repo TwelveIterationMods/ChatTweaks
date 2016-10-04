@@ -5,6 +5,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.Nullable;
 import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
@@ -25,8 +26,9 @@ public class ImageLoader {
 
 	private static final int MAX_CACHE_TIME = 1000 * 60 * 60 * 24 * 7;
 
-	public static IChatRenderable loadImage(URI uri, File saveToFile) throws MalformedURLException {
-		if(saveToFile.exists() && saveToFile.lastModified() - System.currentTimeMillis() <= MAX_CACHE_TIME) {
+	@Nullable
+	public static IChatRenderable loadImage(URI uri, @Nullable File saveToFile) throws MalformedURLException {
+		if(saveToFile != null && saveToFile.exists() && saveToFile.lastModified() - System.currentTimeMillis() <= MAX_CACHE_TIME) {
 			try {
 				return loadImageInternal(new FileInputStream(saveToFile), null);
 			} catch (FileNotFoundException ignored) {}
@@ -40,23 +42,24 @@ public class ImageLoader {
 		return null;
 	}
 
+	@Nullable
 	public static IChatRenderable loadImage(ResourceLocation resourceLocation) {
 		try {
 			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
-			if(resource != null) {
-				return loadImageInternal(resource.getInputStream(), null);
-			}
+			return loadImageInternal(resource.getInputStream(), null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static IChatRenderable loadImage(InputStream in, File saveToFile) {
+	@Nullable
+	public static IChatRenderable loadImage(InputStream in, @Nullable File saveToFile) {
 		return loadImageInternal(in, saveToFile);
 	}
 
-	private static IChatRenderable loadImageInternal(Object obj, File saveToFile) {
+	@Nullable
+	private static IChatRenderable loadImageInternal(Object obj, @Nullable File saveToFile) {
 		try(ImageInputStream in = ImageIO.createImageInputStream(obj)) {
 			Iterator<ImageReader> it = ImageIO.getImageReaders(in);
 			if(it.hasNext()) {
