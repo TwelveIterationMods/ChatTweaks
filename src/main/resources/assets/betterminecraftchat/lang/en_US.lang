@@ -1,4 +1,4 @@
-betterminecraftchat:gui.button.deleteConfirm=Delete channel?
+betterminecraftchat:gui.button.deleteConfirm=Delete view?
 betterminecraftchat:gui.textfield.originalFormat=(original format)
 betterminecraftchat:gui.textfield.allMessages=(all messages)
 betterminecraftchat:gui.tabSettings.showTimestamps= Show Timestamps

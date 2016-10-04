@@ -1,12 +1,5 @@
 package net.blay09.mods.bmc;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
-import net.blay09.mods.bmc.api.chat.IChatChannel;
-import net.blay09.mods.bmc.api.chat.MessageStyle;
-import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.emotes.DefaultEmotes;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.blay09.mods.bmc.chat.emotes.LocalEmotes;
@@ -45,6 +38,8 @@ public class ChatTweaksConfig {
 		smallerEmotes = config.getBoolean("Smaller Emotes", "general", false, "Should emotes be scaled down to perfectly fit into one line?");
 		randomNameColors = config.getBoolean("Random Name Colors", "general", false, "Should players be assigned random name colors? They're only visual and will not be synchronized with other players.");
 		enableNameBadges = config.getBoolean("Enable Name Badges", "general", true, "Should name badges for supporters, contributors and developers of BalyWare be enabled?");
+
+		ChatManager.init();
 	}
 
 	public static void postInitLoad(Configuration config) {
@@ -57,7 +52,7 @@ public class ChatTweaksConfig {
 		if(config.getBoolean("Twitch Global Emotes", "emotes", true, "Should the Twitch Global emotes (ex. Kappa) be enabled?")) {
 			new TwitchGlobalEmotes(
 					config.getBoolean("Include Twitch Turbo Emotes", "emotes", true, "Should Turbo emotes (ex. KappaHD) be included with the Twitch Global Emotes?"),
-					config.getBoolean("Include Twitch Smileys", "emotes", true, "Should smileys (ex. :-D) be included with the Twitch Global Emotes?")
+					config.getBoolean("Include Twitch Smileys", "emotes", false, "Should smileys (ex. :-D) be included with the Twitch Global Emotes?")
 			);
 		}
 
@@ -82,68 +77,7 @@ public class ChatTweaksConfig {
 
 		new LocalEmotes(new File(Minecraft.getMinecraft().mcDataDir, "bmc/emotes/"));
 
-		Gson gson = new Gson();
-		try(FileReader reader = new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/BetterMinecraftChat/channels.json"))) {
-			JsonObject root = gson.fromJson(reader, JsonObject.class);
-			JsonArray channels = root.getAsJsonArray("channels");
-			for(int i = 0; i < channels.size(); i++) {
-				JsonObject channel = channels.get(i).getAsJsonObject();
-				ChatChannel chatChannel = ChatChannel.fromJson(channel);
-				if(chatChannel != null) {
-					ChatTweaks.getChatHandler().addChannel(chatChannel);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		if(ChatTweaks.getChatHandler().getChannels().isEmpty()) {
-			createDefaultChannels();
-		}
-
-		IChatChannel defaultChannel = ChatTweaks.getChatHandler().getNextChatChannel(null, false);
-		if(defaultChannel == null) {
-			defaultChannel = ChatTweaks.getChatHandler().getChannels().get(0);
-		}
-		ChatTweaks.getChatHandler().setActiveChannel((ChatChannel) defaultChannel);
-	}
-
-	private static void createDefaultChannels() {
-		ChatChannel defaultChannel = new ChatChannel("*");
-		defaultChannel.setShowTimestamps(true);
-		ChatTweaks.getChatHandler().addChannel(defaultChannel);
-
-		ChatChannel bedSpamChannel = new ChatChannel("Bed Message");
-		bedSpamChannel.setFilterPattern("You can only sleep at night");
-		bedSpamChannel.setFormat("~c$0");
-		bedSpamChannel.setMessageStyle(MessageStyle.Bottom);
-		bedSpamChannel.setExclusive(true);
-		ChatTweaks.getChatHandler().addChannel(bedSpamChannel);
-
-		ChatChannel commandChannel = new ChatChannel("Common Commands");
-		commandChannel.setFilterPattern("(Set the time to [0-9]+|Toggled downfall|Given \\[.+\\] \\* [0-9]+ to .+)");
-		commandChannel.setMessageStyle(MessageStyle.Side);
-		commandChannel.setExclusive(true);
-		ChatTweaks.getChatHandler().addChannel(commandChannel);
-	}
-
-	public static void saveChannels() {
-		Gson gson = new Gson();
-		try(FileWriter writer = new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/BetterMinecraftChat/channels.json"))) {
-			JsonWriter jsonWriter = new JsonWriter(writer);
-			jsonWriter.setIndent("  ");
-			JsonObject root = new JsonObject();
-			JsonArray channels = new JsonArray();
-			for(ChatChannel channel : ChatTweaks.getChatHandler().getChannels()) {
-				if(!channel.isTemporary()) {
-					channels.add(channel.toJson());
-				}
-			}
-			root.add("channels", channels);
-			gson.toJson(root, jsonWriter);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		ChatViewManager.load();
 	}
 
 }

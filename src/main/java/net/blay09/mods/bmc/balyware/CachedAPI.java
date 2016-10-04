@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.client.Minecraft;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
 
@@ -13,14 +14,17 @@ public class CachedAPI {
 	private static final Gson gson = new Gson();
 	private static final long DEFAULT_CACHE_TIME = 1000*60*60*24;
 
+	@Nullable
 	public static JsonObject loadCachedAPI(String url, String fileName) {
 		return loadCachedAPI(url, fileName, DEFAULT_CACHE_TIME);
 	}
 
+	@Nullable
 	public static JsonObject loadCachedAPI(String url, String fileName, long maxCacheTime) {
 		return loadCachedAPI(url, new File(getCacheDirectory(), fileName), maxCacheTime);
 	}
 
+	@Nullable
 	public static JsonObject loadCachedAPI(String url, File cacheFile, long maxCacheTime) {
 		JsonObject result = loadLocal(cacheFile, false, maxCacheTime);
 		if(result == null) {
@@ -38,6 +42,7 @@ public class CachedAPI {
 		return result;
 	}
 
+	@Nullable
 	private static JsonObject loadLocal(File file, boolean force, long maxCacheTime) {
 		if(file.exists() && (force || System.currentTimeMillis() - file.lastModified() < maxCacheTime)) {
 			try(FileReader reader = new FileReader(file)) {
@@ -49,6 +54,7 @@ public class CachedAPI {
 		return null;
 	}
 
+	@Nullable
 	private static JsonObject loadRemote(String url) {
 		try {
 			URL apiURL = new URL(url);
@@ -68,8 +74,9 @@ public class CachedAPI {
 
 	public static File getCacheDirectory() {
 		File file = new File(Minecraft.getMinecraft().mcDataDir, "bmc/cache/");
-		//noinspection ResultOfMethodCallIgnored
-		file.mkdirs();
+		if(!file.exists() && !file.mkdirs()) {
+			throw new RuntimeException("Could not create cache directory for Chat Tweaks.");
+		}
 		return file;
 	}
 

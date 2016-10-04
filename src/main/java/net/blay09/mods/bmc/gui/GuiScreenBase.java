@@ -2,10 +2,8 @@ package net.blay09.mods.bmc.gui;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.api.IntegrationModule;
-import net.blay09.mods.bmc.api.gui.INavigationGui;
+import net.blay09.mods.bmc.IntegrationModule;
 import net.blay09.mods.bmc.balyware.BalyWare;
-import net.blay09.mods.bmc.gui.settings.GuiTabSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
@@ -151,7 +149,7 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 				mc.displayGuiScreen(new GuiOpenIntegrationLink(this, "Twitch", "BetterMinecraftChat - Twitch Integration", 7777));
 			}
 		} else if(button == btnSettings) {
-			mc.displayGuiScreen(new GuiTabSettings(null));
+//			mc.displayGuiScreen(new GuiTabSettings(null));
 		}
 	}
 

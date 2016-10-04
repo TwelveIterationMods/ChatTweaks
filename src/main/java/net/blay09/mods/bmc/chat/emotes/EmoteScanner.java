@@ -2,9 +2,6 @@ package net.blay09.mods.bmc.chat.emotes;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.api.emote.IEmote;
-import net.blay09.mods.bmc.api.emote.IEmoteScanner;
-import net.blay09.mods.bmc.api.emote.PositionedEmote;
 
 import java.util.List;
 import java.util.regex.Matcher;

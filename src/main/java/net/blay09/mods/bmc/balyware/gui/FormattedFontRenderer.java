@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
+
 /**
  * WARNING
  * THIS CLASS IS QUITE SPECIFIC FOR THE FORMATTED TEXT BOX
@@ -29,7 +31,7 @@ public class FormattedFontRenderer extends FontRenderer {
 	}
 
 	@Override
-	public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+	public int drawString(@Nullable String text, float x, float y, int color, boolean dropShadow) {
 		if(!isVisible) {
 			return 0;
 		}

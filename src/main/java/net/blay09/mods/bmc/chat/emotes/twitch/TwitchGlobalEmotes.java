@@ -3,14 +3,14 @@ package net.blay09.mods.bmc.chat.emotes.twitch;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
-import net.blay09.mods.bmc.api.emote.IEmote;
-import net.blay09.mods.bmc.api.emote.IEmoteGroup;
-import net.blay09.mods.bmc.api.emote.IEmoteLoader;
+import net.blay09.mods.bmc.ChatTweaksAPI;
+import net.blay09.mods.bmc.chat.emotes.IEmote;
+import net.blay09.mods.bmc.chat.emotes.IEmoteGroup;
+import net.blay09.mods.bmc.chat.emotes.IEmoteLoader;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -21,8 +21,8 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 	public TwitchGlobalEmotes(boolean includeTurbo, boolean includeSmileys) {
 		JsonObject root = includeTurbo ? TwitchAPI.loadEmotes(TwitchAPI.EMOTESET_GLOBAL, TwitchAPI.EMOTESET_TURBO) : TwitchAPI.loadEmotes(TwitchAPI.EMOTESET_GLOBAL);
 		if(root != null) {
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_GLOBAL)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchEmotes"), includeSmileys, BetterMinecraftChatAPI.registerEmoteGroup("TwitchGlobal"));
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_TURBO)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchTurboEmotes"), includeSmileys, BetterMinecraftChatAPI.registerEmoteGroup("TwitchTurbo"));
+			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_GLOBAL)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchGlobal"));
+			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_TURBO)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchTurboEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchTurbo"));
 		}
 	}
 
@@ -39,9 +39,9 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 				code = code.replace("\\\\", "\\");
 				code = code.replace("&lt\\;", "<");
 				code = code.replace("&gt\\;", ">");
-				emote = BetterMinecraftChatAPI.registerRegexEmote(code, this);
+				emote = ChatTweaksAPI.registerRegexEmote(code, this);
 			} else {
-				emote = BetterMinecraftChatAPI.registerEmote(code, this);
+				emote = ChatTweaksAPI.registerEmote(code, this);
 			}
 			emote.setCustomData(id);
 			emote.addTooltip(tooltip);
@@ -54,8 +54,8 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 	@Override
 	public void loadEmoteImage(IEmote emote) {
 		try {
-			BetterMinecraftChatAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", String.valueOf(emote.getCustomData()))));
-		} catch (URISyntaxException | MalformedURLException e) {
+			ChatTweaksAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", String.valueOf(emote.getCustomData()))));
+		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
 	}

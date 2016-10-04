@@ -1,10 +1,11 @@
 package net.blay09.mods.bmc.gui.chat;
 
 import com.google.common.base.Strings;
-import net.blay09.mods.bmc.api.event.ClientChatEvent;
-import net.blay09.mods.bmc.api.event.TabCompletionEvent;
-import net.blay09.mods.bmc.api.event.ChatComponentClickEvent;
-import net.blay09.mods.bmc.api.event.ChatComponentHoverEvent;
+import net.blay09.mods.bmc.ChatViewManager;
+import net.blay09.mods.bmc.event.ClientChatEvent;
+import net.blay09.mods.bmc.event.TabCompletionEvent;
+import net.blay09.mods.bmc.event.ChatComponentClickEvent;
+import net.blay09.mods.bmc.event.ChatComponentHoverEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.util.math.BlockPos;
@@ -35,6 +36,9 @@ public class GuiChatExt extends GuiChat {
 	@Override
 	public void sendChatMessage(String message, boolean addToSentMessages) {
 		ClientChatEvent event = new ClientChatEvent(message);
+		if (ChatViewManager.getActiveView().getOutgoingPrefix() != null) {
+			event.setMessage(ChatViewManager.getActiveView().getOutgoingPrefix() + event.getMessage());
+		}
 		String newMessage;
 		if(MinecraftForge.EVENT_BUS.post(event)) {
 			newMessage = null;

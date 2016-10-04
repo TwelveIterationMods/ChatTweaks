@@ -1,5 +1,7 @@
 package net.blay09.mods.bmc.balyware.textcomponent;
 
+import javax.annotation.Nullable;
+
 public class StringRegion implements Comparable<StringRegion> {
 
 	private final int index;
@@ -11,7 +13,7 @@ public class StringRegion implements Comparable<StringRegion> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(@Nullable Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 

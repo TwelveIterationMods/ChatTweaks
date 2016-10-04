@@ -1,26 +1,24 @@
 package net.blay09.mods.bmc.chat;
 
-import net.blay09.mods.bmc.api.chat.IChatChannel;
-import net.blay09.mods.bmc.api.image.IChatImage;
-import net.blay09.mods.bmc.api.chat.IChatMessage;
-import net.blay09.mods.bmc.api.image.IChatRenderable;
-import net.blay09.mods.bmc.api.image.ITooltipProvider;
+import net.blay09.mods.bmc.image.renderable.IChatRenderable;
+import net.blay09.mods.bmc.image.ITooltipProvider;
+import net.blay09.mods.bmc.image.ChatImage;
 import net.blay09.mods.bmc.image.ChatImageDefault;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 
-public class ChatMessage implements IChatMessage {
+public class ChatMessage {
 
     private final int id;
     private ITextComponent chatComponent;
     private int backgroundColor;
-    private IChatImage[] images;
+    private ChatImage[] images;
 	private int[] rgbColors;
     private NBTTagCompound customData;
 	private long timestamp;
-	private IChatChannel exclusiveChannel;
+	private ChatView exclusiveView;
 	private boolean managed;
 
 	public ChatMessage(int id, ITextComponent chatComponent) {
@@ -29,83 +27,69 @@ public class ChatMessage implements IChatMessage {
 		this.timestamp = System.currentTimeMillis();
     }
 
-    @Override
     public int getId() {
         return id;
     }
 
-	@Override
 	public ITextComponent getChatComponent() {
 		return chatComponent;
 	}
 
-	@Override
-	public void setChatComponent(ITextComponent chatComponent) {
+	public void setTextComponent(ITextComponent chatComponent) {
 		this.chatComponent = chatComponent;
 	}
 
-	@Override
     public NBTTagCompound getCustomData() {
         return customData;
     }
 
-    @Override
     public boolean hasData() {
         return customData != null;
     }
 
-    @Override
     public boolean hasBackgroundColor() {
         return backgroundColor != 0;
     }
 
-    @Override
     public int getBackgroundColor() {
         return backgroundColor;
     }
 
-    @Override
     public void setBackgroundColor(int backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
-	@Override
-	public IChatMessage withImages(int count) {
-		images = new IChatImage[count];
+	public ChatMessage withImages(int count) {
+		images = new ChatImage[count];
 		return this;
 	}
 
-	@Override
 	@Nullable
-	public IChatImage[] getImages() {
+	public ChatImage[] getImages() {
 		return images;
 	}
 
-	@Override
 	@Nullable
-	public IChatImage getImage(int index) {
+	public ChatImage getImage(int index) {
 		if(images == null || index < 0 || index >= images.length) {
 			return null;
 		}
 		return images[index];
 	}
 
-	@Override
-	public IChatMessage setImage(int index, IChatRenderable image, ITooltipProvider tooltip) {
+	public ChatMessage setImage(int index, IChatRenderable image, ITooltipProvider tooltip) {
 		setImage(index, new ChatImageDefault(index, image, tooltip));
 		return this;
 	}
 
-	@Override
-    public IChatMessage setImage(int index, IChatImage image) {
+    public ChatMessage setImage(int index, ChatImage image) {
 		if(index >= 0 && index < images.length) {
 			images[index] = image;
 		}
 		return this;
     }
 
-	@Override
-	public IChatMessage withRGB(int count) {
+	public ChatMessage withRGB(int count) {
 		rgbColors = new int[count];
 		for(int i = 0; i < rgbColors.length; i++) {
 			rgbColors[i] = 0xFFFFFF;
@@ -113,15 +97,13 @@ public class ChatMessage implements IChatMessage {
 		return this;
 	}
 
-	@Override
-	public IChatMessage setRGBColor(int index, int color) {
+	public ChatMessage setRGBColor(int index, int color) {
 		if(index >= 0 && index < rgbColors.length) {
 			rgbColors[index] = color;
 		}
 		return this;
 	}
 
-	@Override
 	public int getRGBColor(int index) {
 		if(rgbColors == null || index < 0 || index >= rgbColors.length) {
 			return 0xFFFFFF;
@@ -133,27 +115,22 @@ public class ChatMessage implements IChatMessage {
 		return rgbColors != null;
 	}
 
-	@Override
     public boolean hasImages() {
         return images != null;
     }
 
-	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}
 
-	@Override
 	public void setManaged(boolean managed) {
 		this.managed = managed;
 	}
 
-	@Override
 	public boolean isManaged() {
 		return managed;
 	}
 
-	@Override
 	public void clearImages() {
 		images = null;
 	}
@@ -171,15 +148,16 @@ public class ChatMessage implements IChatMessage {
 		return out;
 	}
 
-	public void setExclusiveChannel(IChatChannel exclusiveChannel) {
-		this.exclusiveChannel = exclusiveChannel;
+	public void setExclusiveView(ChatView view) {
+		this.exclusiveView = view;
 	}
 
-	public boolean isExclusiveChannel() {
-		return exclusiveChannel != null;
+	public boolean hasExclusiveView() {
+		return exclusiveView != null;
 	}
 
-	public IChatChannel getExclusiveChannel() {
-		return exclusiveChannel;
+	public ChatView getExclusiveView() {
+		return exclusiveView;
 	}
+
 }

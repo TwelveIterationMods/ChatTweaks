@@ -2,10 +2,11 @@ package net.blay09.mods.bmc.chat.emotes.twitch;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.blay09.mods.bmc.api.emote.IEmote;
+import net.blay09.mods.bmc.chat.emotes.IEmote;
 import net.blay09.mods.bmc.balyware.CachedAPI;
 import net.minecraft.util.IntHashMap;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class TwitchAPI {
@@ -28,10 +29,12 @@ public class TwitchAPI {
 		}
 	}
 
+	@Nullable
 	public static String getChannelForEmoteSet(int emoteSet) {
 		return emoteSets.lookup(emoteSet);
 	}
 
+	@Nullable
 	public static JsonObject loadEmotes(int... emotesets) {
 		StringBuilder sb = new StringBuilder();
 		for (int emoteset : emotesets) {
@@ -51,6 +54,7 @@ public class TwitchAPI {
 		twitchEmotes.addKey(id, emote);
 	}
 
+	@Nullable
 	public static IEmote getEmoteById(int id) {
 		return twitchEmotes.lookup(id);
 	}

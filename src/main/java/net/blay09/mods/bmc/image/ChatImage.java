@@ -1,11 +1,9 @@
 package net.blay09.mods.bmc.image;
 
-import net.blay09.mods.bmc.api.image.IChatImage;
-
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ChatImage implements IChatImage {
+public abstract class ChatImage {
 
     private int index;
 
@@ -17,23 +15,23 @@ public abstract class ChatImage implements IChatImage {
         this.index = index;
     }
 
-    @Override
     public int getIndex() {
         return index;
     }
 
-    @Override
     public int getSpaces() {
         return 4;
     }
 
-    @Override
     public float getScale() {
         return 1f;
     }
 
-    @Override
 	public List<String> getTooltip() {
 		return Collections.emptyList();
 	}
+
+    public abstract int getWidth();
+    public abstract int getHeight();
+    public abstract void draw(int x, int y, int alpha);
 }

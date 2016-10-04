@@ -1,7 +1,5 @@
 package net.blay09.mods.bmc.image.renderable;
 
-import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.api.image.IAnimatedChatRenderable;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;

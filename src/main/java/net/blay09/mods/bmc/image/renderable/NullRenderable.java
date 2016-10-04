@@ -1,7 +1,5 @@
 package net.blay09.mods.bmc.image.renderable;
 
-import net.blay09.mods.bmc.api.image.IChatRenderable;
-
 public class NullRenderable implements IChatRenderable {
 
 	public static final NullRenderable INSTANCE = new NullRenderable();

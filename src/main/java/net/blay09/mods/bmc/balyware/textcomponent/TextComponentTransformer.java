@@ -10,8 +10,7 @@ import java.util.regex.Pattern;
 
 public abstract class TextComponentTransformer {
 
-	private static final Pattern PATTERN_ARGUMENT = Pattern.compile("(?:%([0-9])\\$[sdf]|%[sdf])");
-	private static final Matcher MATCHER_ARGUMENT = PATTERN_ARGUMENT.matcher("");
+	private static final Pattern argumentPattern = Pattern.compile("(?:%([0-9])\\$[sdf]|%[sdf])");
 
 	public void begin(ITextComponent chatComponent) {}
 
@@ -38,7 +37,7 @@ public abstract class TextComponentTransformer {
 		} else if(chatComponent instanceof TextComponentTranslation) {
 			return walkTextComponentTranslation((TextComponentTranslation) chatComponent);
 		}
-		return null;
+		return chatComponent;
 	}
 
 	private ITextComponent walkTextComponentString(TextComponentString chatComponent) {
@@ -47,10 +46,7 @@ public abstract class TextComponentTransformer {
 		transformedComponent.setStyle(chatComponent.getStyle());
 		transformStyle(transformedComponent);
 		for(Object object : chatComponent.getSiblings()) {
-			ITextComponent adjustedComponent = walkTextComponentInternal((ITextComponent) object);
-			if(adjustedComponent != null) {
-				transformedComponent.appendSibling(adjustedComponent);
-			}
+			transformedComponent.appendSibling(walkTextComponentInternal((ITextComponent) object));
 		}
 		return transformedComponent;
 	}
@@ -61,19 +57,19 @@ public abstract class TextComponentTransformer {
 
 	private static TextComponentString convertTranslationComponent(TextComponentTranslation chatComponent) {
 		Object[] args = chatComponent.getFormatArgs();
-		String[] splitKey = I18n.translateToLocal(chatComponent.getKey()).split("(?<=" + PATTERN_ARGUMENT + ")|(?=" + PATTERN_ARGUMENT + ")");
+		String[] splitKey = I18n.translateToLocal(chatComponent.getKey()).split("(?<=" + argumentPattern + ")|(?=" + argumentPattern + ")");
 		TextComponentString root = null;
 		int currentArg = 0;
 		for(String key : splitKey) {
-			MATCHER_ARGUMENT.reset(key);
-			if (MATCHER_ARGUMENT.matches()) {
+			Matcher matcher = argumentPattern.matcher(key);
+			if (matcher.matches()) {
 				if (root == null) {
 					root = new TextComponentString("");
 					root.setStyle(chatComponent.getStyle().createShallowCopy());
 				}
 				int thisArg = currentArg;
-				if (MATCHER_ARGUMENT.group(1) != null) {
-					thisArg = Integer.parseInt(MATCHER_ARGUMENT.group(1)) - 1;
+				if (matcher.group(1) != null) {
+					thisArg = Integer.parseInt(matcher.group(1)) - 1;
 				}
 				if (args.length > thisArg) {
 					if (args[thisArg] instanceof TextComponentString) {
@@ -95,6 +91,9 @@ public abstract class TextComponentTransformer {
 					root.appendSibling(new TextComponentString(key));
 				}
 			}
+		}
+		if(root == null) {
+			root = new TextComponentString("");
 		}
 		for(ITextComponent sibling : chatComponent.getSiblings()) {
 			root.appendSibling(sibling);

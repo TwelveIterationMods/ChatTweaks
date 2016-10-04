@@ -1,20 +1,15 @@
 package net.blay09.mods.bmc.gui.chat;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import net.blay09.mods.bmc.ChatManager;
 import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.ChatTweaksConfig;
-import net.blay09.mods.bmc.api.chat.IChatChannel;
-import net.blay09.mods.bmc.api.chat.IChatMessage;
-import net.blay09.mods.bmc.api.chat.MessageStyle;
-import net.blay09.mods.bmc.api.event.ClientChatEvent;
-import net.blay09.mods.bmc.api.image.IChatImage;
+import net.blay09.mods.bmc.ChatViewManager;
 import net.blay09.mods.bmc.chat.ChatChannel;
+import net.blay09.mods.bmc.chat.ChatView;
 import net.blay09.mods.bmc.chat.ChatMessage;
 import net.blay09.mods.bmc.chat.TextRenderRegion;
-import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
-import net.blay09.mods.bmc.image.ChatImageEmote;
+import net.blay09.mods.bmc.image.ChatImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiNewChat;
@@ -25,15 +20,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,14 +31,14 @@ public class GuiNewChatExt extends GuiNewChat {
 
 	public static class WrappedChatLine {
 		private final int timeCreated;
-		private final IChatMessage message;
+		private final ChatMessage message;
 		private final ITextComponent component;
 		private final String cleanText;
 		private final TextRenderRegion[] regions;
-		private final List<IChatImage> images;
+		private final List<ChatImage> images;
 		private final boolean alternateBackground;
 
-		public WrappedChatLine(int timeCreated, IChatMessage message, ITextComponent component, String cleanText, TextRenderRegion[] regions, @Nullable List<IChatImage> images, boolean alternateBackground) {
+		public WrappedChatLine(int timeCreated, ChatMessage message, ITextComponent component, String cleanText, TextRenderRegion[] regions, @Nullable List<ChatImage> images, boolean alternateBackground) {
 			this.timeCreated = timeCreated;
 			this.message = message;
 			this.component = component;
@@ -61,18 +51,10 @@ public class GuiNewChatExt extends GuiNewChat {
 
 	private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)\u00a7[0-9A-FK-OR#]");
 	private static final Pattern EMOTE_PATTERN = Pattern.compile("\u00a7\\*");
-	private static final Matcher DEFAULT_SENDER_MATCHER = Pattern.compile("(<[^>]+>)").matcher("");
-	private static final int START_ID = 500;
 
-	protected final Minecraft mc;
-	private FontRenderer fontRenderer;
-	private final AtomicInteger chatLineCounter = new AtomicInteger(START_ID);
-	private final Map<Integer, ChatMessage> chatLines = Maps.newHashMap();
-	private final Set<Integer> unreadMessages = Sets.newHashSet();
-	private final List<ChatChannel> channels = Lists.newArrayList();
+	private final Minecraft mc;
 	private final List<WrappedChatLine> wrappedChatLines = Lists.newArrayList();
-
-	private ChatChannel activeChannel;
+	private FontRenderer fontRenderer;
 	private boolean alternateBackground;
 
 	public GuiNewChatExt(Minecraft mc) {
@@ -82,53 +64,28 @@ public class GuiNewChatExt extends GuiNewChat {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	private final List<ChatChannel> tmpMessageCandidates = Lists.newArrayList();
-
 	@Override
 	public void printChatMessageWithOptionalDeletion(ITextComponent chatComponent, int chatLineId) {
 		if (chatLineId == 0) {
-			chatLineId = chatLineCounter.incrementAndGet();
+			chatLineId = ChatManager.getNextMessageId();
 		}
-		addChatMessage(new ChatMessage(chatLineId, chatComponent));
+		ChatMessage message = new ChatMessage(chatLineId, chatComponent);
+		addChatMessage(message, ChatManager.findChatChannel(message));
 	}
 
-	public IChatMessage addChatMessage(ITextComponent chatComponent, IChatChannel channel) {
-		ChatMessage chatMessage = new ChatMessage(chatLineCounter.incrementAndGet(), chatComponent);
-		channel.addManagedChatLine(chatMessage);
-		chatMessage.setExclusiveChannel(channel);
-		if (channel != activeChannel) {
-			unreadMessages.add(chatMessage.getId());
-		}
-		addChatMessageForDisplay(chatMessage, channel);
-		return chatMessage;
-	}
-
-	public void addChatMessage(ChatMessage chatMessage) {
-		String unformattedText = chatMessage.getChatComponent().getUnformattedText();
-		tmpMessageCandidates.clear();
-		for (ChatChannel channel : channels) {
-			if (channel.messageMatches(unformattedText)) {
-				if (channel.isExclusive()) {
-					tmpMessageCandidates.clear();
-					tmpMessageCandidates.add(channel);
-					chatMessage.setExclusiveChannel(channel);
-					break;
-				}
-				tmpMessageCandidates.add(channel);
-			}
-		}
-		for (ChatChannel channel : tmpMessageCandidates) {
-			ChatMessage newChatMessage = channel.addChatLine(chatMessage);
-			addChatMessageForDisplay(newChatMessage, channel);
+	public void addChatMessage(ChatMessage message, ChatChannel channel) {
+		List<ChatView> views = ChatViewManager.findChatViews(message, channel);
+		for (ChatView view : views) {
+			addChatMessageForDisplay(view.addChatLine(message), view);
 		}
 	}
 
-	private void addChatMessageForDisplay(IChatMessage chatMessage, IChatChannel channel) {
-		if (channel != activeChannel) {
-			unreadMessages.add(chatMessage.getId());
-		}
-		switch (channel.getMessageStyle()) {
+	private void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
+		switch (view.getMessageStyle()) {
 			case Chat:
+				if (view != ChatViewManager.getActiveView()) {
+					view.markAsUnread(chatMessage);
+				}
 				int chatWidth = MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale());
 				List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getChatComponent(), chatWidth, this.mc.fontRendererObj, false, false);
 				boolean isChatOpen = this.getChatOpen();
@@ -150,11 +107,11 @@ public class GuiNewChatExt extends GuiNewChat {
 					}
 					String cleanText = FORMATTING_CODE_PATTERN.matcher(chatLine.getUnformattedText()).replaceAll("");
 					Matcher matcher = EMOTE_PATTERN.matcher(cleanText);
-					List<IChatImage> images = null;
+					List<ChatImage> images = null;
 					if(chatMessage.hasImages()) {
 						images = Lists.newArrayList();
 						while (matcher.find()) {
-							IChatImage image = chatMessage.getImage(emoteIndex);
+							ChatImage image = chatMessage.getImage(emoteIndex);
 							if(image != null) {
 								image.setIndex(matcher.start());
 								images.add(image);
@@ -171,22 +128,21 @@ public class GuiNewChatExt extends GuiNewChat {
 				break;
 			case Side:
 				ChatTweaks.getSideChatHandler().addMessage(chatMessage);
-				markAsRead(chatMessage);
 				break;
 			case Bottom:
 				ChatTweaks.getBottomChatHandler().setMessage(chatMessage);
-				markAsRead(chatMessage);
 				break;
 		}
 	}
 
 	@Override
+	public void clearChatMessages() {
+		// TODO implement me
+	}
+
+	@Override
 	public void refreshChat() {
-		wrappedChatLines.clear();
-		resetScroll();
-		for (IChatMessage chatMessage : activeChannel.getChatLines()) {
-			addChatMessageForDisplay(chatMessage, activeChannel);
-		}
+		// TODO implement me
 	}
 
 	@Override
@@ -230,10 +186,9 @@ public class GuiNewChatExt extends GuiNewChat {
 								x = fontRenderer.drawString(region.getText(), x, y - fontRenderer.FONT_HEIGHT + 1, (region.getColor() & 0x00FFFFFF) + (alpha << 24), true);
 							}
 							if(chatLine.images != null) {
-								for (IChatImage image : chatLine.images) {
+								for (ChatImage image : chatLine.images) {
 									int spaceWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth(' ') * image.getSpaces();
 									float scale = image.getScale();
-									String test = chatLine.cleanText.substring(0, image.getIndex());
 									int renderOffset = fontRenderer.getStringWidth(chatLine.cleanText.substring(0, image.getIndex()));
 									int renderWidth = (int) (image.getWidth() * scale);
 									int renderHeight = (int) (image.getHeight() * scale);
@@ -272,25 +227,6 @@ public class GuiNewChatExt extends GuiNewChat {
 		}
 	}
 
-	@SubscribeEvent
-	public void onClientChat(ClientChatEvent event) {
-		if (activeChannel.getOutgoingPrefix() != null) {
-			event.setMessage(activeChannel.getOutgoingPrefix() + event.getMessage());
-		}
-	}
-
-	@Override
-	public void clearChatMessages() {
-		super.clearChatMessages();
-		for (ChatChannel channel : channels) {
-			channel.clearChat();
-		}
-		unreadMessages.clear();
-		wrappedChatLines.clear();
-		chatLines.clear();
-		chatLineCounter.set(START_ID);
-	}
-
 	@Nullable
 	public ITextComponent getChatComponent(int mouseX, int mouseY) {
 		if (!this.getChatOpen()) {
@@ -303,10 +239,8 @@ public class GuiNewChatExt extends GuiNewChat {
 		int y = mouseY / scaleFactor - 40;
 		x = MathHelper.floor_float((float) x / chatScale);
 		y = MathHelper.floor_float((float) y / chatScale);
-
 		if (x >= 0 && y >= 0) {
 			int lineCount = Math.min(this.getLineCount(), this.wrappedChatLines.size());
-
 			if (x <= MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale()) && y < (fontRenderer.FONT_HEIGHT + ChatTweaksConfig.lineSpacing) * lineCount + lineCount) {
 				int clickedIndex = y / (fontRenderer.FONT_HEIGHT + ChatTweaksConfig.lineSpacing) + this.scrollPos;
 				if (clickedIndex >= 0 && clickedIndex < this.wrappedChatLines.size()) {
@@ -324,194 +258,6 @@ public class GuiNewChatExt extends GuiNewChat {
 			}
 		}
 		return null;
-	}
-
-	public void checkHighlights(ChatMessage chatLine, @Nullable String sender, @Nullable String message) {
-		if (sender == null && message != null) {
-			DEFAULT_SENDER_MATCHER.reset(message);
-			if (DEFAULT_SENDER_MATCHER.find()) {
-				sender = DEFAULT_SENDER_MATCHER.group(1);
-			}
-		}
-		if (sender != null) {
-			sender = TextFormatting.getTextWithoutFormattingCodes(sender);
-		}
-		if (message == null) {
-			message = chatLine.getChatComponent().getUnformattedText();
-		}
-		boolean isOwnMessage = false;
-		if (sender != null) {
-			EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
-			String playerName = entityPlayer != null ? entityPlayer.getDisplayNameString() : null;
-			if (playerName != null && sender.equals(playerName)) {
-				isOwnMessage = true;
-			}
-			if (!isOwnMessage) {
-				if (ChatTweaksConfig.highlightName && playerName != null) {
-					if (message.matches(".*(?:[\\p{Punct} ]|^)" + playerName + "(?:[\\p{Punct} ]|$).*")) {
-						chatLine.setBackgroundColor(ChatTweaksConfig.backgroundColorHighlight);
-					}
-				}
-				for (String highlight : ChatTweaksConfig.highlightStrings) {
-					if (message.contains(highlight)) {
-						chatLine.setBackgroundColor(ChatTweaksConfig.backgroundColorHighlight);
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	public void removeChatLine(ChatMessage chatLine) {
-		removeChatLine(chatLine.getId());
-	}
-
-	public void removeChatLine(int id) {
-		chatLines.remove(id);
-		for (ChatChannel channel : channels) {
-			channel.removeChatLine(id);
-		}
-	}
-
-	public IChatMessage getChatLine(int id) {
-		IChatMessage chatLine = activeChannel.getChatLine(id);
-		if (chatLine != null) {
-			return chatLine;
-		}
-		return chatLines.get(id);
-	}
-
-	public void setActiveChannel(ChatChannel channel) {
-		ChatChannel oldActiveChannel = activeChannel;
-		this.activeChannel = channel;
-		ChatChannel displayChannel = (ChatChannel) channel.getDisplayChannel();
-		if (displayChannel == null) {
-			displayChannel = channel;
-		}
-		if (Minecraft.getMinecraft().ingameGUI != null && displayChannel.getMessageStyle() == MessageStyle.Chat) {
-			for (IChatMessage chatLine : displayChannel.getChatLines()) {
-				markAsRead(chatLine);
-			}
-			Minecraft.getMinecraft().ingameGUI.getChatGUI().refreshChat();
-		}
-	}
-
-	public void refreshChannel(ChatChannel channel) {
-		channel.clearChat();
-		for (ChatMessage chatLine : chatLines.values()) {
-			if (!chatLine.isManaged() && channel.messageMatches(chatLine.getChatComponent().getUnformattedText()) && (!chatLine.isExclusiveChannel() || chatLine.getExclusiveChannel() == channel)) {
-				channel.addChatLine(chatLine);
-			}
-		}
-		channel.sortMessages();
-	}
-
-	public boolean isUnread(IChatMessage chatLine) {
-		return unreadMessages.contains(chatLine.getId());
-	}
-
-	public void markAsRead(IChatMessage chatLine) {
-		unreadMessages.remove(chatLine.getId());
-	}
-
-	public List<ChatChannel> getChannels() {
-		return channels;
-	}
-
-
-	public ChatChannel getActiveChannel() {
-		return activeChannel;
-	}
-
-	public IChatChannel getChannel(String name) {
-		for (ChatChannel channel : channels) {
-			if (channel.getName().equals(name)) {
-				return channel;
-			}
-		}
-		return null;
-	}
-
-	public void addChannel(ChatChannel channel) {
-		channels.add(channel);
-	}
-
-	public boolean removeChannel(IChatChannel channel) {
-		if (channels.size() == 1) {
-			// Can't delete the last channel.
-			return false;
-		}
-		//noinspection SuspiciousMethodCalls /// not suspicious at all
-		int index = channels.indexOf(channel);
-		if (index != -1) {
-			if (channel == activeChannel) {
-				IChatChannel nextChannel = getNextChatChannel(channel, true);
-				if (nextChannel == null) {
-					nextChannel = channels.get(0);
-				}
-				setActiveChannel((ChatChannel) nextChannel);
-			}
-			channels.remove(index);
-		}
-		return true;
-	}
-
-	public IChatChannel getNextChatChannel(IChatChannel currentChannel, boolean rollover) {
-		int index = -1;
-		if (currentChannel != null) {
-			//noinspection SuspiciousMethodCalls /// THIS IS NOT SUSPICIOUS AT ALL INTELLIJ. CHATCHANNEL IMPLEMENTS ICHATCHANNEL. YOU SILLY
-			index = channels.indexOf(currentChannel);
-		}
-		IChatChannel nextChannel = null;
-		for (int i = index + 1; i < channels.size(); i++) {
-			IChatChannel candidate = channels.get(i);
-			if (candidate.getMessageStyle() == MessageStyle.Chat) {
-				nextChannel = candidate;
-				break;
-			}
-		}
-		if (nextChannel == null && rollover) {
-			for (int i = 0; i < index; i++) {
-				IChatChannel candidate = channels.get(i);
-				if (candidate.getMessageStyle() == MessageStyle.Chat) {
-					nextChannel = candidate;
-					break;
-				}
-			}
-		}
-		if (nextChannel == null) { // Everything is burning, retreat to just whatever channel is left
-			nextChannel = channels.get(0);
-		}
-		return nextChannel;
-	}
-
-	public IChatChannel getPrevChatChannel(IChatChannel currentChannel, boolean rollover) {
-		int index = -1;
-		if (currentChannel != null) {
-			//noinspection SuspiciousMethodCalls /// THIS IS NOT SUSPICIOUS AT ALL INTELLIJ. CHATCHANNEL IMPLEMENTS ICHATCHANNEL. YOU SILLY
-			index = channels.indexOf(currentChannel);
-		}
-		IChatChannel nextChannel = null;
-		for (int i = index - 1; i >= 0; i--) {
-			IChatChannel candidate = channels.get(i);
-			if (candidate.getMessageStyle() == MessageStyle.Chat) {
-				nextChannel = candidate;
-				break;
-			}
-		}
-		if (nextChannel == null && (rollover || currentChannel == null)) {
-			for (int i = channels.size() - 1; i > index; i--) {
-				IChatChannel candidate = channels.get(i);
-				if (candidate.getMessageStyle() == MessageStyle.Chat) {
-					nextChannel = candidate;
-					break;
-				}
-			}
-		}
-		if (nextChannel == null) { // Everything is burning, retreat to just whatever channel is left
-			nextChannel = channels.get(0);
-		}
-		return nextChannel;
 	}
 
 }

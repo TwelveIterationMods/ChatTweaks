@@ -1,7 +1,6 @@
 package net.blay09.mods.bmc.handler;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.api.chat.IChatMessage;
 import net.blay09.mods.bmc.chat.ChatMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,11 +16,11 @@ public class SideChatHandler {
 	private static final float SCALE = 0.5f;
 
 	private static class SideChatMessage {
-		private final IChatMessage chatMessage;
+		private final ChatMessage chatMessage;
 		private int y;
 		private float timeLeft;
 
-		public SideChatMessage(IChatMessage chatMessage, int y, float timeLeft) {
+		public SideChatMessage(ChatMessage chatMessage, int y, float timeLeft) {
 			this.chatMessage = chatMessage;
 			this.y = y;
 			this.timeLeft = timeLeft;
@@ -30,7 +29,7 @@ public class SideChatHandler {
 
 	private final List<SideChatMessage> messages = Lists.newArrayList();
 
-	public void addMessage(IChatMessage chatMessage) {
+	public void addMessage(ChatMessage chatMessage) {
 		for(SideChatMessage message : messages) {
 			message.y -= Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT + 2;
 		}
@@ -41,6 +40,7 @@ public class SideChatHandler {
 	}
 
 	@SubscribeEvent
+	@SuppressWarnings("unused")
 	public void onDrawOverlayChat(RenderGameOverlayEvent.Post event) {
 		if(event.getType() != RenderGameOverlayEvent.ElementType.ALL || messages.isEmpty()) {
 			return;

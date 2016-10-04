@@ -4,13 +4,14 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.api.BetterMinecraftChatAPI;
-import net.blay09.mods.bmc.api.emote.IEmote;
-import net.blay09.mods.bmc.api.emote.IEmoteGroup;
-import net.blay09.mods.bmc.api.emote.IEmoteLoader;
+import net.blay09.mods.bmc.ChatTweaksAPI;
+import net.blay09.mods.bmc.chat.emotes.IEmote;
+import net.blay09.mods.bmc.chat.emotes.IEmoteGroup;
+import net.blay09.mods.bmc.chat.emotes.IEmoteLoader;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,10 +49,10 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 					int id = entry.get("id").getAsInt();
 					IEmoteGroup group = groupMap.get(emoteSet);
 					if(group == null) {
-						group = BetterMinecraftChatAPI.registerEmoteGroup("Twitch-" + emoteSet);
+						group = ChatTweaksAPI.registerEmoteGroup("Twitch-" + emoteSet);
 						groupMap.put(emoteSet, group);
 					}
-					IEmote emote = BetterMinecraftChatAPI.registerEmote(code, this);
+					IEmote emote = ChatTweaksAPI.registerEmote(code, this);
 					emote.setCustomData(id);
 					String channel = TwitchAPI.getChannelForEmoteSet(emoteSet);
 					if(channel != null) {
@@ -68,8 +69,8 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 	@Override
 	public void loadEmoteImage(IEmote emote) {
 		try {
-			BetterMinecraftChatAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", String.valueOf(emote.getCustomData()))));
-		} catch (URISyntaxException | MalformedURLException e) {
+			ChatTweaksAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", String.valueOf(emote.getCustomData()))));
+		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -1,8 +1,8 @@
 package net.blay09.mods.bmc.gui.emotes;
 
-import net.blay09.mods.bmc.api.emote.IEmoteGroup;
-import net.blay09.mods.bmc.api.image.IAnimatedChatRenderable;
-import net.blay09.mods.bmc.api.image.IChatRenderable;
+import net.blay09.mods.bmc.chat.emotes.IEmoteGroup;
+import net.blay09.mods.bmc.image.renderable.IAnimatedChatRenderable;
+import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;

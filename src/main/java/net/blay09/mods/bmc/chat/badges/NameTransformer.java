@@ -9,6 +9,8 @@ import net.minecraft.util.text.TextFormatting;
 
 public class NameTransformer extends TextComponentTransformer {
 
+	// TODO update to new image system
+
 	protected String senderName;
 	protected NameBadge nameBadge;
 	protected TextFormatting nameColor;
@@ -38,7 +40,7 @@ public class NameTransformer extends TextComponentTransformer {
 
 	@Override
 	public String transformText(ITextComponent component, String text) {
-		if(senderName == null || text == null || text.trim().length() <= 1) {
+		if(senderName == null || text.trim().length() <= 1) {
 			return text;
 		}
 		int index = text.indexOf(senderName);

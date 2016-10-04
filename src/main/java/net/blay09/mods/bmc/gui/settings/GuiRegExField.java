@@ -3,7 +3,7 @@ package net.blay09.mods.bmc.gui.settings;
 import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.balyware.gui.FormattedFontRenderer;
 import net.blay09.mods.bmc.balyware.gui.GuiFormattedTextField;
-import net.blay09.mods.bmc.chat.ChatChannel;
+import net.blay09.mods.bmc.chat.ChatView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -22,7 +22,7 @@ public class GuiRegExField extends GuiFormattedTextField {
 	private GuiRegExField(int id, FormattedFontRenderer fontRenderer, int x, int y, int width, int height) {
 		super(id, fontRenderer, x, y, width, height);
 		setDisplayTextWhenEmpty(TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.textfield.allMessages"));
-		setEmptyText(ChatChannel.DEFAULT_PATTERN.pattern());
+		setEmptyText(ChatView.defaultFilterPattern.pattern());
 	}
 
 	@Override

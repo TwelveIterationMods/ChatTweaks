@@ -2,8 +2,8 @@ package net.blay09.mods.bmc.chat.badges;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.blay09.mods.bmc.api.image.IChatRenderable;
-import net.blay09.mods.bmc.api.image.ITooltipProvider;
+import net.blay09.mods.bmc.image.renderable.IChatRenderable;
+import net.blay09.mods.bmc.image.ITooltipProvider;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
@@ -22,7 +22,6 @@ public class NameBadge implements ITooltipProvider {
 		this.name = name;
 		this.image = image;
 		tooltip.add(TextFormatting.YELLOW + name);
-		tooltip.add(TextFormatting.GRAY + "BalyWare Mods");
 	}
 
 	@Override

@@ -1,8 +1,7 @@
 package net.blay09.mods.bmc.image;
 
-import net.blay09.mods.bmc.api.image.IAnimatedChatRenderable;
-import net.blay09.mods.bmc.api.image.IChatRenderable;
-import net.blay09.mods.bmc.api.image.ITooltipProvider;
+import net.blay09.mods.bmc.image.renderable.IAnimatedChatRenderable;
+import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 

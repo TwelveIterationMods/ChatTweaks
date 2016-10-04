@@ -2,10 +2,7 @@ package net.blay09.mods.bmc.chat.emotes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.blay09.mods.bmc.api.emote.IEmote;
-import net.blay09.mods.bmc.api.emote.IEmoteGroup;
-import net.blay09.mods.bmc.api.emote.IEmoteLoader;
-import net.blay09.mods.bmc.api.event.ReloadEmotes;
+import net.blay09.mods.bmc.event.ReloadEmotes;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.Collection;

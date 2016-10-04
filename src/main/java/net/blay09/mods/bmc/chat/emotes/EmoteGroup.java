@@ -1,8 +1,6 @@
 package net.blay09.mods.bmc.chat.emotes;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.bmc.api.emote.IEmote;
-import net.blay09.mods.bmc.api.emote.IEmoteGroup;
 
 import java.util.Collection;
 import java.util.List;

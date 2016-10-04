@@ -2,9 +2,7 @@ package net.blay09.mods.bmc.chat.emotes;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.api.emote.IEmote;
-import net.blay09.mods.bmc.api.image.IChatRenderable;
-import net.blay09.mods.bmc.api.emote.IEmoteLoader;
+import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 import net.blay09.mods.bmc.image.renderable.NullRenderable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;

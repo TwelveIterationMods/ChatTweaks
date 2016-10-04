@@ -1,6 +1,6 @@
 package net.blay09.mods.bmc.handler;
 
-import net.blay09.mods.bmc.api.chat.IChatMessage;
+import net.blay09.mods.bmc.chat.ChatMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -13,15 +13,16 @@ public class BottomChatHandler {
 	private static final float MESSAGE_TIME = 80;
 	private static final float SCALE = 0.8f;
 
-	private IChatMessage chatMessage;
+	private ChatMessage chatMessage;
 	private float timeLeft;
 
-	public void setMessage(IChatMessage chatMessage) {
+	public void setMessage(ChatMessage chatMessage) {
 		this.chatMessage = chatMessage;
 		this.timeLeft = MESSAGE_TIME;
 	}
 
 	@SubscribeEvent
+	@SuppressWarnings("unused")
 	public void onDrawOverlayChat(RenderGameOverlayEvent.Post event) {
 		if(chatMessage == null || event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
 			return;

@@ -1,6 +1,5 @@
 package net.blay09.mods.bmc.image.renderable;
 
-import net.blay09.mods.bmc.api.image.IChatRenderable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
