@@ -19,13 +19,12 @@ public class ChatTweaksConfig {
 	public static boolean smallerEmotes = false;
 	public static int backgroundColor1;
 	public static int backgroundColor2;
-	public static int lineSpacing;
 	public static int backgroundColorHighlight;
+	public static int lineSpacing;
 	public static boolean highlightName;
 	public static String[] highlightStrings;
 	public static boolean emoteTabCompletion;
 	public static boolean randomNameColors;
-	public static boolean enableNameBadges;
 
 	public static void preInitLoad(Configuration config) {
 		ChatTweaksConfig.config = config;
@@ -37,7 +36,6 @@ public class ChatTweaksConfig {
 		emoteTabCompletion = config.getBoolean("Tab Completion for Emotes", "general", false, "Should Tab completion be enabled for emotes?");
 		smallerEmotes = config.getBoolean("Smaller Emotes", "general", false, "Should emotes be scaled down to perfectly fit into one line?");
 		randomNameColors = config.getBoolean("Random Name Colors", "general", false, "Should players be assigned random name colors? They're only visual and will not be synchronized with other players.");
-		enableNameBadges = config.getBoolean("Enable Name Badges", "general", true, "Should name badges for supporters, contributors and developers of BalyWare be enabled?");
 
 		ChatManager.init();
 	}
@@ -45,33 +43,33 @@ public class ChatTweaksConfig {
 	public static void postInitLoad(Configuration config) {
 		EmoteRegistry.reloadEmoticons();
 
-		if(config.getBoolean("Default Emotes", "emotes", true, "Should the default emotes (ex. eiraMeow) be enabled?")) {
+		if (config.getBoolean("Default Emotes", "emotes", true, "Should the default emotes (ex. eiraMeow) be enabled?")) {
 			new DefaultEmotes("eiraArr", "eiraCri", "eiraCute", "eiraFufu", "eiraLewd", "eiraMeow", "eiraPraise", "eiraRage", "eiraScared", "eiraYawn");
 		}
 
-		if(config.getBoolean("Twitch Global Emotes", "emotes", true, "Should the Twitch Global emotes (ex. Kappa) be enabled?")) {
+		if (config.getBoolean("Twitch Global Emotes", "emotes", true, "Should the Twitch Global emotes (ex. Kappa) be enabled?")) {
 			new TwitchGlobalEmotes(
 					config.getBoolean("Include Twitch Turbo Emotes", "emotes", true, "Should Turbo emotes (ex. KappaHD) be included with the Twitch Global Emotes?"),
 					config.getBoolean("Include Twitch Smileys", "emotes", false, "Should smileys (ex. :-D) be included with the Twitch Global Emotes?")
 			);
 		}
 
-		if(config.getBoolean("Twitch Subscriber Emotes", "emotes", true, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled?")) {
+		if (config.getBoolean("Twitch Subscriber Emotes", "emotes", true, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled?")) {
 			new TwitchSubscriberEmotes(
 					config.getString("Twitch Subscriber Emote Regex", "emotes", "[a-z0-9][a-z0-9]+[A-Z0-9].*", "The regex pattern to match for Twitch Subscriber Emotes to be included. By default includes all that follow prefixCode convention.")
 			);
 		}
 
-		if(config.getBoolean("BTTV Emotes", "emotes", true, "Should the BTTV emotes (ex. AngelThump) be enabled?")) {
+		if (config.getBoolean("BTTV Emotes", "emotes", true, "Should the BTTV emotes (ex. AngelThump) be enabled?")) {
 			new BTTVEmotes();
 		}
 
-		String[] bttvChannels = config.getStringList("BTTV Emote Channels", "emotes", new String[] { "ZeekDaGeek" }, "A list of channels to postInitLoad BTTV channel emotes from.");
-		for(String channel : bttvChannels) {
+		String[] bttvChannels = config.getStringList("BTTV Emote Channels", "emotes", new String[]{"ZeekDaGeek"}, "A list of channels to postInitLoad BTTV channel emotes from.");
+		for (String channel : bttvChannels) {
 			new BTTVChannelEmotes(channel);
 		}
 
-		if(config.getBoolean("Patron Emotes", "emotes", true, "Should the user-submitted emotes from Patreon supporters be enabled (note: they undergo an approval process first, so they're safe).")) {
+		if (config.getBoolean("Patron Emotes", "emotes", true, "Should the user-submitted emotes from Patreon supporters be enabled (note: they undergo an approval process first, so they're safe).")) {
 			new PatronEmotes();
 		}
 

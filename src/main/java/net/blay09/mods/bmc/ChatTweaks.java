@@ -24,11 +24,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = ChatTweaks.MOD_ID, name = "Chat Tweaks", clientSideOnly = true, guiFactory = "net.blay09.mods.bmc.gui.GuiFactory")
+@Mod(modid = ChatTweaks.MOD_ID, name = "Chat Tweaks", clientSideOnly = true, guiFactory = "net.blay09.mods.bmc.gui.config.GuiFactory")
 @SuppressWarnings("unused")
 public class ChatTweaks {
 
-	public static final String MOD_ID = "betterminecraftchat";
+	public static final String MOD_ID = "chattweaks";
 	public static final String TWITCH_INTEGRATION = "twitchintegration";
 
 	@Mod.Instance(MOD_ID)

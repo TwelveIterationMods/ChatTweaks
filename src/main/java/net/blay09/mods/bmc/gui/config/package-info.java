@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package net.blay09.mods.bmc.balyware.textcomponent;
+package net.blay09.mods.bmc.gui.config;
 
 import mcp.MethodsReturnNonnullByDefault;
 

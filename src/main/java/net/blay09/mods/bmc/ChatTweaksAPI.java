@@ -40,7 +40,7 @@ public class ChatTweaksAPI {
 	}
 
 	public static void registerImageURLTransformer(SimpleImageURLTransformer urlTransformer) {
-
+		ChatTweaks.registerImageURLTransformer(urlTransformer);
 	}
 
 	private static boolean loadEmoteImageFromCache(IEmote emote) {

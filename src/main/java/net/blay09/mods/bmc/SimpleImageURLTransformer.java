@@ -2,6 +2,8 @@ package net.blay09.mods.bmc;
 
 import com.google.common.base.Function;
 
+import javax.annotation.Nullable;
+
 public class SimpleImageURLTransformer implements Function<String, String> {
 
 	private final String pattern;
@@ -13,8 +15,8 @@ public class SimpleImageURLTransformer implements Function<String, String> {
 	}
 
 	@Override
-	public String apply(String input) {
-		if(input.matches(pattern)) {
+	public String apply(@Nullable String input) {
+		if(input != null && input.matches(pattern)) {
 			return input + suffix;
 		}
 		return null;
