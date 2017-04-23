@@ -60,7 +60,7 @@ public class GuiChatExt extends GuiChat {
 		BlockPos pos = tabCompleter.getTargetBlockPos();
 		List<String> list = new ArrayList<>();
 		Collections.addAll(list, newCompletions);
-		MinecraftForge.EVENT_BUS.post(new TabCompletionEvent(Side.CLIENT, Minecraft.getMinecraft().thePlayer, input.split(" ")[0], pos, pos != null, list));
+		MinecraftForge.EVENT_BUS.post(new TabCompletionEvent(Side.CLIENT, Minecraft.getMinecraft().player, input.split(" ")[0], pos, pos != null, list));
 		super.setCompletions(list.toArray(new String[list.size()]));
 	}
 

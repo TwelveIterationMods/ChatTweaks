@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui.settings;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,7 +13,7 @@ public class GuiButtonAddChannelTab extends GuiButton {
 	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
 		if (visible) {
-			FontRenderer fondRenderer = mc.fontRendererObj;
+			FontRenderer fondRenderer = mc.fontRenderer;
 			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			mouseDragged(mc, mouseX, mouseY);
 			int hoverState = getHoverState(hovered);

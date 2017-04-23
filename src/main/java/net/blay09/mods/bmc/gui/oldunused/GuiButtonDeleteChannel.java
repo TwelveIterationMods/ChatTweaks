@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui.settings;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import net.blay09.mods.bmc.ChatTweaks;
 import net.minecraft.client.Minecraft;
@@ -7,12 +7,12 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiButtonAddChannel extends GuiButton {
+public class GuiButtonDeleteChannel extends GuiButton {
 
 	protected static final ResourceLocation texture = new ResourceLocation(ChatTweaks.MOD_ID, "gui.png");
 
-	public GuiButtonAddChannel(int buttonId, int x, int y) {
-		super(buttonId, x, y, 12, 12, "");
+	public GuiButtonDeleteChannel(int buttonId, int x, int y) {
+		super(buttonId, x, y, 16, 16, "");
 	}
 
 	@Override
@@ -22,8 +22,8 @@ public class GuiButtonAddChannel extends GuiButton {
 			mouseDragged(mc, mouseX, mouseY);
 			int hoverState = getHoverState(hovered);
 			mc.getTextureManager().bindTexture(texture);
-			GlStateManager.color(1f, 1f, 1f, 1f);
-			Gui.drawModalRectWithCustomSizedTexture(xPosition, yPosition, 24, hoverState == 2 ? 28 : (hoverState == 1 ? 16 : 40), 12, 12, 128, 64);
+			GlStateManager.color(1f, 1f, 1f, hoverState == 2 ? 1f : 0.5f);
+			Gui.drawModalRectWithCustomSizedTexture(xPosition, yPosition, 0, 0, 16, 16, 128, 64);
 		}
 	}
 

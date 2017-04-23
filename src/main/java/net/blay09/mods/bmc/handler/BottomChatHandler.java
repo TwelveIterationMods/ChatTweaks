@@ -36,7 +36,7 @@ public class BottomChatHandler {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(event.getResolution().getScaledWidth() / 2, event.getResolution().getScaledHeight() - 64, 0f);
 		GlStateManager.scale(SCALE, SCALE, 1f);
-		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
 		String formattedText = chatMessage.getTextComponent().getFormattedText();
 		int textWidth = fontRenderer.getStringWidth(formattedText);
 		int boxMarginX = 4;

@@ -18,7 +18,7 @@ public class GuiButtonChatView extends GuiButton {
 	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
 		if (visible) {
-			FontRenderer fondRenderer = mc.fontRendererObj;
+			FontRenderer fondRenderer = mc.fontRenderer;
 			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			mouseDragged(mc, mouseX, mouseY);
 			boolean isActiveChannel = (view == ChatViewManager.getActiveView());

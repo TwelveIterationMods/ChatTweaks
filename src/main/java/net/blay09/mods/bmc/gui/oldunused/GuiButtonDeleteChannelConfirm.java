@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui.settings;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import net.blay09.mods.bmc.ChatTweaks;
 import net.minecraft.client.Minecraft;
@@ -19,7 +19,7 @@ public class  GuiButtonDeleteChannelConfirm extends GuiButton {
 			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			mouseDragged(mc, mouseX, mouseY);
 			int hoverState = getHoverState(hovered);
-			mc.fontRendererObj.drawStringWithShadow(displayString, xPosition, yPosition, hoverState == 2 ? 0xFFFF0000 : 0xFFBB0000);
+			mc.fontRenderer.drawStringWithShadow(displayString, xPosition, yPosition, hoverState == 2 ? 0xFFFF0000 : 0xFFBB0000);
 		}
 	}
 

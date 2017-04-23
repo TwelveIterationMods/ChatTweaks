@@ -1,7 +1,7 @@
 package net.blay09.mods.bmc.gui.chat;
 
 import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.balyware.BalyWare;
+import net.blay09.mods.bmc.balyware.BlayCommon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -65,7 +65,7 @@ public class GuiImagePreview extends GuiScreen {
 		switch(button.id) {
 			case 0:
 				try {
-					BalyWare.openWebLink(url.toURI());
+					BlayCommon.openWebLink(url.toURI());
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
@@ -93,7 +93,7 @@ public class GuiImagePreview extends GuiScreen {
 			loadBuffer = null;
 		}
 		if(textureId == -1) {
-			drawCenteredString(fontRendererObj, I18n.format(ChatTweaks.MOD_ID + ":gui.imagePreview.loadingPreview"), width / 2, height / 2 - 20, 0xFFFFFFFF);
+			drawCenteredString(fontRenderer, I18n.format(ChatTweaks.MOD_ID + ":gui.imagePreview.loadingPreview"), width / 2, height / 2 - 20, 0xFFFFFFFF);
 		} else {
 			float renderWidth = textureWidth;
 			float renderHeight = textureHeight;

@@ -60,7 +60,7 @@ public class GuiNewChatExt extends GuiNewChat {
 	public GuiNewChatExt(Minecraft mc) {
 		super(mc);
 		this.mc = mc;
-		this.fontRenderer = mc.fontRendererObj;
+		this.fontRenderer = mc.fontRenderer;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -86,8 +86,8 @@ public class GuiNewChatExt extends GuiNewChat {
 				if (view != ChatViewManager.getActiveView()) {
 					view.markAsUnread(true);
 				}
-				int chatWidth = MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale());
-				List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getTextComponent(), chatWidth, this.mc.fontRendererObj, false, false);
+				int chatWidth = MathHelper.floor((float) this.getChatWidth() / this.getChatScale());
+				List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getTextComponent(), chatWidth, this.mc.fontRenderer, false, false);
 				boolean isChatOpen = this.getChatOpen();
 				int colorIndex = 0;
 				int emoteIndex = 0;
@@ -136,7 +136,7 @@ public class GuiNewChatExt extends GuiNewChat {
 	}
 
 	@Override
-	public void clearChatMessages() {
+	public void clearChatMessages(boolean clearSent) {
 		// TODO implement me
 	}
 
@@ -154,7 +154,7 @@ public class GuiNewChatExt extends GuiNewChat {
 			if (wrappedChatLinesCount > 0) {
 				boolean isChatOpen = this.getChatOpen();
 				float chatScale = this.getChatScale();
-				int chatWidth = MathHelper.ceiling_float_int((float) this.getChatWidth() / chatScale);
+				int chatWidth = MathHelper.ceil((float) this.getChatWidth() / chatScale);
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(2f, 8f, 0f);
 				GlStateManager.scale(chatScale, chatScale, 1f);
@@ -168,7 +168,7 @@ public class GuiNewChatExt extends GuiNewChat {
 						int alpha = 255;
 						if (!isChatOpen) {
 							float percentage = (1f - (float) lifeTime / 200f) * 10f;
-							percentage = MathHelper.clamp_float(percentage, 0f, 1f);
+							percentage = MathHelper.clamp(percentage, 0f, 1f);
 							percentage = percentage * percentage;
 							alpha = (int) (255f * percentage);
 						}
@@ -187,13 +187,13 @@ public class GuiNewChatExt extends GuiNewChat {
 							}
 							if(chatLine.images != null) {
 								for (ChatImage image : chatLine.images) {
-									int spaceWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth(' ') * image.getSpaces();
+									int spaceWidth = Minecraft.getMinecraft().fontRenderer.getCharWidth(' ') * image.getSpaces();
 									float scale = image.getScale();
 									int renderOffset = fontRenderer.getStringWidth(chatLine.cleanText.substring(0, image.getIndex()));
 									int renderWidth = (int) (image.getWidth() * scale);
 									int renderHeight = (int) (image.getHeight() * scale);
 									int renderX = -2 + renderOffset + spaceWidth / 2 - renderWidth / 2;
-									int renderY = y - Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2 - renderHeight / 2;
+									int renderY = y - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2 - renderHeight / 2;
 									GlStateManager.pushMatrix();
 									GlStateManager.scale(scale, scale, 1f);
 									image.draw((int) (renderX / scale), (int) (renderY / scale), alpha);
@@ -237,11 +237,11 @@ public class GuiNewChatExt extends GuiNewChat {
 		float chatScale = this.getChatScale();
 		int x = mouseX / scaleFactor - 2;
 		int y = mouseY / scaleFactor - 40;
-		x = MathHelper.floor_float((float) x / chatScale);
-		y = MathHelper.floor_float((float) y / chatScale);
+		x = MathHelper.floor((float) x / chatScale);
+		y = MathHelper.floor((float) y / chatScale);
 		if (x >= 0 && y >= 0) {
 			int lineCount = Math.min(this.getLineCount(), this.wrappedChatLines.size());
-			if (x <= MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale()) && y < (fontRenderer.FONT_HEIGHT + ChatTweaksConfig.lineSpacing) * lineCount + lineCount) {
+			if (x <= MathHelper.floor((float) this.getChatWidth() / this.getChatScale()) && y < (fontRenderer.FONT_HEIGHT + ChatTweaksConfig.lineSpacing) * lineCount + lineCount) {
 				int clickedIndex = y / (fontRenderer.FONT_HEIGHT + ChatTweaksConfig.lineSpacing) + this.scrollPos;
 				if (clickedIndex >= 0 && clickedIndex < this.wrappedChatLines.size()) {
 					WrappedChatLine chatLine = this.wrappedChatLines.get(clickedIndex);

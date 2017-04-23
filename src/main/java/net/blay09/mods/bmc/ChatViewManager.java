@@ -52,6 +52,14 @@ public class ChatViewManager {
 		return interactionView;
 	}
 
+	public static ChatView[] createDefaults() {
+		return new ChatView[] {
+				createDefaultView(),
+				createSystemView(),
+				createInteractionView()
+		};
+	}
+
 	public static void load() {
 		Gson gson = new Gson();
 		try(FileReader reader = new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/ChatTweaks/views.json"))) {
@@ -146,5 +154,28 @@ public class ChatViewManager {
 
 	public static Collection<ChatView> getViews() {
 		return views.values();
+	}
+
+	public static ChatView getChatViewByName(String name) {
+		return views.get(name);
+	}
+
+	private static List<String> reservedNames = Lists.newArrayList();
+	public static String getNextChatViewName() {
+		String baseName = "New View";
+		String name = baseName;
+		int i = 0;
+		while(views.containsKey(name) || reservedNames.contains(name)) {
+			i++;
+			name = baseName + " (" + i + ")";
+		}
+		reservedNames.add(name);
+		return name;
+	}
+
+	public static void removeAllChatViews() {
+		views.clear();
+		viewNames = new String[0];
+		reservedNames.clear();
 	}
 }

@@ -52,7 +52,7 @@ public class StaticChatRenderable implements IChatRenderable {
 		if(textureId == -1) {
 			return 4; // Texture is not loaded yet - most emotes fit just fine into four spaces though.
 		}
-        return (int) Math.ceil((width * scale) / (float) Minecraft.getMinecraft().fontRendererObj.getCharWidth(' '));
+        return (int) Math.ceil((width * scale) / (float) Minecraft.getMinecraft().fontRenderer.getCharWidth(' '));
     }
 
 	@Override

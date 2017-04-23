@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +30,6 @@ import java.util.Map;
 public class ChatTweaks {
 
 	public static final String MOD_ID = "chattweaks";
-	public static final String TWITCH_INTEGRATION = "twitchintegration";
 
 	@Mod.Instance(MOD_ID)
     public static ChatTweaks instance;
@@ -90,6 +90,7 @@ public class ChatTweaks {
 	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 		if(event.getModID().equals(MOD_ID)) {
 			if(event.getConfigID().equals("config")) {
+				ChatViewManager.save();
 				ChatTweaksConfig.preInitLoad(config);
 				ChatTweaksConfig.postInitLoad(config);
 			}
@@ -128,6 +129,7 @@ public class ChatTweaks {
 		return Integer.parseInt(hex.startsWith("#") ? hex.substring(1) : hex, 16);
 	}
 
+	@Nullable
 	public static IntegrationModule getModule(String id) {
 		return instance.moduleMap.get(id);
 	}

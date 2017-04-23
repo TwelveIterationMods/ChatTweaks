@@ -1,9 +1,11 @@
-package net.blay09.mods.bmc.gui;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.IntegrationModule;
-import net.blay09.mods.bmc.balyware.BalyWare;
+import net.blay09.mods.bmc.balyware.BlayCommon;
+import net.blay09.mods.bmc.compat.Compat;
+import net.blay09.mods.bmc.gui.GuiOpenIntegrationLink;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
@@ -141,7 +143,7 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 	@Override
 	protected void actionPerformed(@Nullable GuiButton button) throws IOException {
 		if (button == btnTwitchIntegration) {
-			IntegrationModule module = ChatTweaks.getModule(ChatTweaks.TWITCH_INTEGRATION);
+			IntegrationModule module = ChatTweaks.getModule(Compat.TWITCH_INTEGRATION);
 			if (btnTwitchIntegration.isAvailable()) {
 				mc.displayGuiScreen(module.getConfigScreen(this));
 			} else {
@@ -158,7 +160,7 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 		super.confirmClicked(result, id);
 		if(id == 7777 && result) {
 			try {
-				BalyWare.openWebLink(new URI(clickedLink));
+				BlayCommon.openWebLink(new URI(clickedLink));
 			} catch (URISyntaxException ignored) {}
 		}
 		mc.displayGuiScreen(this);
@@ -172,8 +174,8 @@ public abstract class GuiScreenBase extends GuiScreen implements INavigationGui 
 		}
 		buttonList.add(btnSettings);
 
-		btnTwitchIntegration = new GuiButtonNavigation(-1, guiLeft - 32, guiTop + 30, new ResourceLocation(ChatTweaks.MOD_ID, "icons/twitch.png"), Loader.isModLoaded(ChatTweaks.TWITCH_INTEGRATION), ChatTweaks.TWITCH_INTEGRATION);
-		if(getNavigationId().equals(ChatTweaks.TWITCH_INTEGRATION)) {
+		btnTwitchIntegration = new GuiButtonNavigation(-1, guiLeft - 32, guiTop + 30, new ResourceLocation(ChatTweaks.MOD_ID, "icons/twitch.png"), Loader.isModLoaded(Compat.TWITCH_INTEGRATION), Compat.TWITCH_INTEGRATION);
+		if(getNavigationId().equals(Compat.TWITCH_INTEGRATION)) {
 			btnTwitchIntegration.xPosition += 2;
 			btnTwitchIntegration.enabled = false;
 		}

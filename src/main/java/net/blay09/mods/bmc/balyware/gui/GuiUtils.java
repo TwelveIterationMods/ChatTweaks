@@ -17,7 +17,7 @@ public class GuiUtils extends GuiScreen {
 	}
 
 	public static void drawTooltip(List<String> list, int x, int y) {
-		getInstance().drawHoveringText(list, x, y, Minecraft.getMinecraft().fontRendererObj);
+		getInstance().drawHoveringText(list, x, y, Minecraft.getMinecraft().fontRenderer);
 	}
 
 }

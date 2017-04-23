@@ -2,7 +2,7 @@ package net.blay09.mods.bmc.balyware;
 
 import java.net.URI;
 
-public class BalyWare {
+public class BlayCommon {
 
 	public static void openWebLink(URI uri) {
 		try {

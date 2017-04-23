@@ -1,9 +1,10 @@
-package net.blay09.mods.bmc.gui.settings;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import net.blay09.mods.bmc.ChatTweaks;
 import net.blay09.mods.bmc.balyware.gui.FormattedFontRenderer;
 import net.blay09.mods.bmc.balyware.gui.GuiFormattedTextField;
 import net.blay09.mods.bmc.chat.ChatView;
+import net.blay09.mods.bmc.gui.settings.RegExStringFormatter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

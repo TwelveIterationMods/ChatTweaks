@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;

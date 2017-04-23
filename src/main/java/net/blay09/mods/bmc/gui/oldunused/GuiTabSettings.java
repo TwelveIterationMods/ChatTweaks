@@ -3,11 +3,11 @@
 //import com.google.common.collect.Lists;
 //import net.blay09.mods.bmc.ChatTweaks;
 //import net.blay09.mods.bmc.ChatViewManager;
-//import net.blay09.mods.bmc.gui.INavigationGui;
+//import net.blay09.mods.bmc.gui.oldunused.INavigationGui;
 //import net.blay09.mods.bmc.chat.MessageStyle;
 //import net.blay09.mods.bmc.balyware.gui.GuiUtils;
 //import net.blay09.mods.bmc.chat.ChatViewOld;
-//import net.blay09.mods.bmc.gui.GuiScreenBase;
+//import net.blay09.mods.bmc.gui.oldunused.GuiScreenBase;
 //import net.blay09.mods.bmc.gui.chat.GuiButtonChatView;
 //import net.minecraft.client.Minecraft;
 //import net.minecraft.client.gui.*;

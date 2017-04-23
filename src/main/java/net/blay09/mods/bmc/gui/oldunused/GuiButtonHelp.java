@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui.settings;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import net.blay09.mods.bmc.ChatTweaks;
 import net.minecraft.client.Minecraft;
@@ -7,14 +7,12 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiButtonNavigate extends GuiButton {
+public class GuiButtonHelp extends GuiButton {
 
 	protected static final ResourceLocation texture = new ResourceLocation(ChatTweaks.MOD_ID, "gui.png");
-	private final boolean isNext;
 
-	public GuiButtonNavigate(int buttonId, int x, int y, boolean isNext) {
-		super(buttonId, x, y, 12, 12, "");
-		this.isNext = isNext;
+	public GuiButtonHelp(int buttonId, int x, int y) {
+		super(buttonId, x, y, 16, 16, "?");
 	}
 
 	@Override
@@ -25,7 +23,16 @@ public class GuiButtonNavigate extends GuiButton {
 			int hoverState = getHoverState(hovered);
 			mc.getTextureManager().bindTexture(texture);
 			GlStateManager.color(1f, 1f, 1f, 1f);
-			Gui.drawModalRectWithCustomSizedTexture(xPosition, yPosition, isNext ? 36 : 12, hoverState == 2 ? 28 : (hoverState == 1 ? 16 : 40), 12, 12, 128, 64);
+			Gui.drawModalRectWithCustomSizedTexture(xPosition, yPosition, 48, hoverState == 2 ? 16 : (hoverState == 1 ? 0 : 32), 16, 16, 128, 64);
+			int textColor = 0xE0E0E0;
+			if (packedFGColour != 0) {
+				textColor = packedFGColour;
+			} else if (!enabled) {
+				textColor = 0xA0A0A0;
+			} else if (hovered) {
+				textColor = 0xFFFFA0;
+			}
+			drawCenteredString(mc.fontRenderer, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, textColor);
 		}
 	}
 

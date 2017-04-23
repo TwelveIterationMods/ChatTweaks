@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.opengl.GL11;
 
 public class ChatImageItem extends ChatImage {
@@ -21,7 +22,7 @@ public class ChatImageItem extends ChatImage {
 
 	@Override
 	public void draw(int x, int y, int alpha) {
-		renderItemModelIntoGUI(itemStack, x, y - 2, Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(itemStack, null, Minecraft.getMinecraft().thePlayer), alpha);
+		renderItemModelIntoGUI(itemStack, x, y - 2, Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(itemStack, null, FMLClientHandler.instance().getClientPlayerEntity()), alpha);
 	}
 
 	private void renderItemModelIntoGUI(ItemStack itemStack, int x, int y, IBakedModel model, int alpha) {

@@ -51,7 +51,7 @@ public class ChatView {
 
 	public static ChatView fromJson(JsonObject jsonView) {
 		ChatView view = new ChatView(jsonView.get("name").getAsString());
-		view.setFilterPattern(jsonView.get("filterPattern").getAsString());
+		view.setFilterPattern(jsonView.has("filterPattern") ? jsonView.get("filterPattern").getAsString() : "");
 		view.setOutputFormat(jsonView.get("outputFormat").getAsString());
 		view.setMessageStyle(MessageStyle.valueOf(jsonView.get("style").getAsString()));
 		view.setOutgoingPrefix(jsonView.has("outgoingPrefix") ? jsonView.get("outgoingPrefix").getAsString() : null);
@@ -186,6 +186,10 @@ public class ChatView {
 		}
 	}
 
+	public String getFilterPattern() {
+		return filterPattern;
+	}
+
 	public String getOutputFormat() {
 		return outputFormat;
 	}
@@ -233,4 +237,22 @@ public class ChatView {
 		this.outgoingPrefix = outgoingPrefix;
 	}
 
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ChatView chatView = (ChatView) o;
+		return name.equals(chatView.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 }

@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui.settings;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import net.blay09.mods.bmc.ChatTweaks;
 import net.minecraft.client.Minecraft;
@@ -7,12 +7,12 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiButtonStyle extends GuiButton {
+public class GuiButtonAddChannel extends GuiButton {
 
 	protected static final ResourceLocation texture = new ResourceLocation(ChatTweaks.MOD_ID, "gui.png");
 
-	public GuiButtonStyle(int buttonId, int x, int y) {
-		super(buttonId, x, y, 64, 16, "");
+	public GuiButtonAddChannel(int buttonId, int x, int y) {
+		super(buttonId, x, y, 12, 12, "");
 	}
 
 	@Override
@@ -23,16 +23,7 @@ public class GuiButtonStyle extends GuiButton {
 			int hoverState = getHoverState(hovered);
 			mc.getTextureManager().bindTexture(texture);
 			GlStateManager.color(1f, 1f, 1f, 1f);
-			Gui.drawModalRectWithCustomSizedTexture(xPosition, yPosition, 64, hoverState == 2 ? 16 : (hoverState == 1 ? 0 : 32), 64, 16, 128, 64);
-			int textColor = 0xE0E0E0;
-			if (packedFGColour != 0) {
-				textColor = packedFGColour;
-			} else if (!enabled) {
-				textColor = 0xA0A0A0;
-			} else if (hovered) {
-				textColor = 0xFFFFA0;
-			}
-			drawCenteredString(mc.fontRendererObj, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, textColor);
+			Gui.drawModalRectWithCustomSizedTexture(xPosition, yPosition, 24, hoverState == 2 ? 28 : (hoverState == 1 ? 16 : 40), 12, 12, 128, 64);
 		}
 	}
 

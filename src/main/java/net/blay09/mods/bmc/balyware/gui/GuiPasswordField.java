@@ -15,7 +15,7 @@ public class GuiPasswordField extends GuiFormattedTextField {
 	}
 
 	public GuiPasswordField(int id, Minecraft mc, int x, int y, int width, int height) {
-		super(id, new FormattedFontRenderer(mc, mc.fontRendererObj, new PasswordFormatter()), x, y, width, height);
+		super(id, new FormattedFontRenderer(mc, mc.fontRenderer, new PasswordFormatter()), x, y, width, height);
 	}
 
 }

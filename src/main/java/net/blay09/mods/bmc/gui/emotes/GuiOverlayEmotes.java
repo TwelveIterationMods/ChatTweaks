@@ -2,12 +2,12 @@ package net.blay09.mods.bmc.gui.emotes;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.gui.IGuiOverlay;
+import net.blay09.mods.bmc.gui.oldunused.IGuiOverlay;
 import net.blay09.mods.bmc.chat.emotes.IEmote;
 import net.blay09.mods.bmc.chat.emotes.IEmoteGroup;
 import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
-import net.blay09.mods.bmc.gui.GuiOverlay;
+import net.blay09.mods.bmc.gui.oldunused.GuiOverlay;
 import net.blay09.mods.bmc.image.renderable.ImageLoader;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;

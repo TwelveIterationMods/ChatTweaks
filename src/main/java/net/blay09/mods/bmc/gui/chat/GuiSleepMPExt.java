@@ -1,9 +1,8 @@
 package net.blay09.mods.bmc.gui.chat;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSleepMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -51,8 +50,9 @@ public class GuiSleepMPExt extends GuiChatExt {
 	}
 
 	private void wakeFromSleep() {
-		NetHandlerPlayClient netHandler = mc.thePlayer.connection;
-		netHandler.sendPacket(new CPacketEntityAction(mc.thePlayer, CPacketEntityAction.Action.STOP_SLEEPING));
+		EntityPlayerSP player = FMLClientHandler.instance().getClientPlayerEntity();
+		NetHandlerPlayClient netHandler = player.connection;
+		netHandler.sendPacket(new CPacketEntityAction(player, CPacketEntityAction.Action.STOP_SLEEPING));
 		Minecraft.getMinecraft().displayGuiScreen(null);
 	}
 }

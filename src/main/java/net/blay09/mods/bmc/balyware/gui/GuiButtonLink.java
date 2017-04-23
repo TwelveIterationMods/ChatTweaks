@@ -15,7 +15,7 @@ public class GuiButtonLink extends GuiButton {
 		if (visible) {
 			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			int hoverState = getHoverState(hovered);
-			mc.fontRendererObj.drawStringWithShadow(displayString, xPosition, yPosition, hoverState == 2 ? 0xFFFFFF : 0xBBBBBB);
+			mc.fontRenderer.drawStringWithShadow(displayString, xPosition, yPosition, hoverState == 2 ? 0xFFFFFF : 0xBBBBBB);
 		}
 	}
 

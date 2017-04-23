@@ -1,4 +1,4 @@
-package net.blay09.mods.bmc.gui;
+package net.blay09.mods.bmc.gui.oldunused;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

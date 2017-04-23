@@ -31,7 +31,7 @@ public class SideChatHandler {
 
 	public void addMessage(ChatMessage chatMessage) {
 		for(SideChatMessage message : messages) {
-			message.y -= Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT + 2;
+			message.y -= Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 2;
 		}
 		messages.add(new SideChatMessage(chatMessage, 0, MESSAGE_TIME));
 		if(messages.size() > MAX_MESSAGES) {
@@ -63,7 +63,7 @@ public class SideChatHandler {
 				messages.remove(i);
 			}
 			String formattedText = message.chatMessage.getTextComponent().getFormattedText();
-			Minecraft.getMinecraft().fontRendererObj.drawString(formattedText, -Minecraft.getMinecraft().fontRendererObj.getStringWidth(formattedText) - 16, message.y, 0xFFFFFF + (alpha << 24), true);
+			Minecraft.getMinecraft().fontRenderer.drawString(formattedText, -Minecraft.getMinecraft().fontRenderer.getStringWidth(formattedText) - 16, message.y, 0xFFFFFF + (alpha << 24), true);
 		}
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();

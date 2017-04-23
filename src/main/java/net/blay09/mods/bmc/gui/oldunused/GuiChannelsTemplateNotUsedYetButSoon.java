@@ -1,8 +1,5 @@
-package net.blay09.mods.bmc.gui;
+package net.blay09.mods.bmc.gui.oldunused;
 
-import net.blay09.mods.bmc.gui.settings.GuiButtonAddChannel;
-import net.blay09.mods.bmc.gui.settings.GuiButtonDeleteChannel;
-import net.blay09.mods.bmc.gui.settings.GuiButtonNavigate;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
@@ -63,7 +60,7 @@ public class GuiChannelsTemplateNotUsedYetButSoon extends GuiScreenBase {
 
 		// Top Section
 		drawRoundRect(width / 2 - 115, height / 2 - 92, width / 2 + 19, height / 2 - 77, 0xDDFFFFFF);
-		drawCenteredString(fontRendererObj, "Twitch", width / 2 - 55, height / 2 - 88, 0xFFFFFF);
+		drawCenteredString(fontRenderer, "Twitch", width / 2 - 55, height / 2 - 88, 0xFFFFFF);
 
 		// Channel List
 		drawRoundRect(width / 2 - 115, height / 2 - 70, width / 2 - 25, height / 2 + 90, 0xDDFFFFFF);
@@ -71,7 +68,7 @@ public class GuiChannelsTemplateNotUsedYetButSoon extends GuiScreenBase {
 		// Settings
 		drawRoundRect(width / 2 - 17, height / 2 - 70, width / 2 + 114, height / 2 + 90, 0xDDFFFFFF);
 		drawHorizontalLine(width / 2 - 10, width / 2 + 107, height / 2 - 50, 0xDDFFFFFF);
-		drawString(fontRendererObj, "Deleted messages", width / 2 - 10, height / 2 - 25, 0xFFFFFF);
+		drawString(fontRenderer, "Deleted messages", width / 2 - 10, height / 2 - 25, 0xFFFFFF);
 	}
 
 	@Override
