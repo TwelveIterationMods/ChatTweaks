@@ -48,13 +48,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 	}
 
 	public static IConfigElement getDummyElement() {
-		DummyConfigElement.DummyListElement dummy = new DummyConfigElement.DummyListElement("Views", ChatViewManager.createDefaults(), ConfigGuiType.STRING, "config.category.views") {
-			@Override
-			public void set(Object[] values) {
-//				super.set(aVal); SUPER SETS DEFAULT VALUES BECAUSE THE PERSON WHO WROTE THIS SYSTEM IS SMART
-				this.values = values;
-			}
-		};
+		SmartyListElement dummy = new SmartyListElement("Views", ChatViewManager.createDefaults(), ConfigGuiType.STRING, "config.category.views");
 		dummy.setConfigEntryClass(ChatViewConfigEntry.class);
 		dummy.setArrayEntryClass(ChatViewArrayEntry.class);
 		dummy.setCustomEditListEntryClass(ChatViewArrayEntry.class);

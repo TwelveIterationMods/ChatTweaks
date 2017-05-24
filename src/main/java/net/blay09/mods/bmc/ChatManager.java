@@ -71,4 +71,7 @@ public class ChatManager {
 		return chatLineCounter.incrementAndGet();
 	}
 
+	public static String[] collectChatChannelNames() {
+		return channels.keySet().toArray(new String[channels.size()]);
+	}
 }

@@ -1,7 +1,11 @@
 package net.blay09.mods.bmc.chat;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import net.blay09.mods.bmc.ChatManager;
 import net.blay09.mods.bmc.chat.emotes.EmoteScanner;
 import net.blay09.mods.bmc.chat.emotes.PositionedEmote;
 import net.blay09.mods.bmc.image.ChatImageEmote;
@@ -26,9 +30,9 @@ public class ChatView {
 	private static final EmoteScanner emoteScanner = new EmoteScanner();
 	private static final int MAX_MESSAGES = 100;
 
-	private final String name;
+	private String name;
 	private final List<ChatChannel> channels = Lists.newArrayList();
-	private String filterPattern;
+	private String filterPattern = "";
 	private String outputFormat = "$0";
 	private MessageStyle messageStyle = MessageStyle.Chat;
 	private String outgoingPrefix;
@@ -45,6 +49,10 @@ public class ChatView {
 		this.name = name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -57,6 +65,18 @@ public class ChatView {
 		view.setOutgoingPrefix(jsonView.has("outgoingPrefix") ? jsonView.get("outgoingPrefix").getAsString() : null);
 		view.setExclusive(jsonView.get("isExclusive").getAsBoolean());
 		view.setMuted(jsonView.get("isMuted").getAsBoolean());
+
+		JsonArray channels = jsonView.getAsJsonArray("channels");
+		if(channels != null) {
+			for (int i = 0; i < channels.size(); i++) {
+				JsonElement element = channels.get(i);
+				if (!element.isJsonPrimitive()) {
+					continue;
+				}
+				view.addChannel(ChatManager.getChatChannel(element.getAsString()));
+			}
+		}
+
 		return view;
 	}
 
@@ -69,6 +89,11 @@ public class ChatView {
 		object.addProperty("outgoingPrefix", outgoingPrefix);
 		object.addProperty("isExclusive", isExclusive);
 		object.addProperty("isMuted", isMuted);
+
+		JsonArray channels = new JsonArray();
+		for(ChatChannel channel : this.channels) {
+			channels.add(new JsonPrimitive(channel.getName()));
+		}
 		return object;
 	}
 
@@ -119,7 +144,7 @@ public class ChatView {
 		ITextComponent newComponent = null;
 		for(ITextComponent component : textComponent) {
 			if(component instanceof TextComponentString) {
-				String text = ((TextComponentString) component).getText().trim();
+				String text = ((TextComponentString) component).getText();
 				if(text.length() > 1) {
 					int index = 0;
 					StringBuilder sb = new StringBuilder();
@@ -141,6 +166,7 @@ public class ChatView {
 					}
 					((TextComponentString) component).text = sb.toString();
 				}
+				component.getSiblings().clear();
 				if(text.length() > 0) {
 					if (newComponent == null) {
 						newComponent = new TextComponentString("");
@@ -229,6 +255,7 @@ public class ChatView {
 		this.isMuted = isMuted;
 	}
 
+	@Nullable
 	public String getOutgoingPrefix() {
 		return outgoingPrefix;
 	}

@@ -178,4 +178,10 @@ public class ChatViewManager {
 		viewNames = new String[0];
 		reservedNames.clear();
 	}
+
+	public static void renameChatView(ChatView chatView, String name) {
+		views.remove(chatView.getName());
+		chatView.setName(name);
+		addChatView(chatView);
+	}
 }

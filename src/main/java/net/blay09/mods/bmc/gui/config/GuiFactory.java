@@ -96,9 +96,10 @@ public class GuiFactory implements IModGuiFactory {
 
 		@Override
 		public void confirmClicked(boolean result, int id) {
-			try {
-				BlayCommon.openWebLink(new URI("http://minecraft.curseforge.com/projects/twitch-integration"));
-			} catch (URISyntaxException ignored) {
+			if(result) {
+				try {
+					BlayCommon.openWebLink(new URI("http://minecraft.curseforge.com/projects/twitch-integration"));
+				} catch (URISyntaxException ignored) {}
 			}
 			mc.displayGuiScreen(owningScreen);
 		}
