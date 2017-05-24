@@ -28,7 +28,18 @@ public class GuiChatViewsConfig extends GuiEditArray {
 	}
 
 	private void fixForge() {
-		entryList = new GuiEditArrayEntries(this, mc, configElement, beforeValues, currentValues);
+		entryList = new GuiEditArrayEntries(this, mc, configElement, beforeValues, currentValues) {
+			@Override
+			public void addNewEntry(int index) {
+				super.addNewEntry(index);
+
+				saveListChanges();
+				ChatViewArrayEntry entry = (ChatViewArrayEntry) listEntries.get(index);
+				if(entry.chatView != null) {
+					mc.displayGuiScreen(new GuiChatView(owningGui, entry.chatView));
+				}
+			}
+		};
 		entryList.listEntries.clear();
 		boolean canDelete = currentValues.length > 1;
 		for (Object chatView : currentValues) {
