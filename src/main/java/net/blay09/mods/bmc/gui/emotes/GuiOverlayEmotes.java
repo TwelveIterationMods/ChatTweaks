@@ -2,12 +2,10 @@ package net.blay09.mods.bmc.gui.emotes;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.ChatTweaks;
-import net.blay09.mods.bmc.gui.oldunused.IGuiOverlay;
 import net.blay09.mods.bmc.chat.emotes.IEmote;
 import net.blay09.mods.bmc.chat.emotes.IEmoteGroup;
 import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
-import net.blay09.mods.bmc.gui.oldunused.GuiOverlay;
 import net.blay09.mods.bmc.image.renderable.ImageLoader;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -16,10 +14,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Iterator;
 import java.util.List;
 
-public class GuiOverlayEmotes extends GuiOverlay {
+public class GuiOverlayEmotes {
 
 	/**
 	 * Twitch Emotes with white backgrounds or white borders that they refuse to fix for "Nostalgia"'s sake. They make everything look horrible, no need to have them in our beautiful menu.
@@ -40,23 +37,25 @@ public class GuiOverlayEmotes extends GuiOverlay {
 			"NoNoSpot"
 	};
 
-	private static String currentGroup = "Default";
-
 	private static IChatRenderable iconDefault;
 	private static IChatRenderable iconPatreon;
 	private static IChatRenderable iconTwitch;
 	private static IChatRenderable iconBTTV;
 
-	private final List<GuiButtonEmote> emoteButtons = Lists.newArrayList();
+	private final GuiScreen parentScreen;
+	private final int width = 100;
+	private final int height = 60;
+	private int x;
+	private int y;
 
+	private String currentGroup = "Default";
+	private final List<GuiButtonEmote> emoteButtons = Lists.newArrayList();
 	private int scrollOffset;
+	private boolean mouseInside;
 
 	public GuiOverlayEmotes(GuiScreen parentScreen) {
-		super(parentScreen);
-		this.width = 100;
-		this.height = 60;
-		this.x = parentScreen.width - width - 2;
-		this.y = parentScreen.height - height - 14;
+		this.parentScreen = parentScreen;
+
 		if (iconDefault == null) {
 			iconDefault = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/default.png"));
 		}
@@ -71,25 +70,33 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		}
 	}
 
-	@Override
 	public void initGui() {
-		super.initGui();
+		this.x = parentScreen.width - width - 2;
+		this.y = parentScreen.height - height - 14;
+
+		clear();
+
 		int groupY = y + 2;
-		if (EmoteRegistry.hasGroup("Default")) {
-			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconDefault, EmoteRegistry.getGroup("Default")));
+		IEmoteGroup defaultGroup = EmoteRegistry.getGroup("Default");
+		if (defaultGroup != null) {
+			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconDefault, defaultGroup));
 			groupY += 14;
 		}
-		if (EmoteRegistry.hasGroup("Patreon")) {
-			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconPatreon, EmoteRegistry.getGroup("Patreon")));
+		IEmoteGroup patreonGroup = EmoteRegistry.getGroup("Patreon");
+		if (patreonGroup != null) {
+			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconPatreon, patreonGroup));
 			groupY += 14;
 		}
-		if (EmoteRegistry.hasGroup("TwitchGlobal")) {
-			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconTwitch, EmoteRegistry.getGroup("TwitchGlobal")));
+		IEmoteGroup twitchGroup = EmoteRegistry.getGroup("TwitchGlobal");
+		if (twitchGroup != null) {
+			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconTwitch, twitchGroup));
 			groupY += 14;
 		}
-		if (EmoteRegistry.hasGroup("BTTV")) {
-			addButton(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconBTTV, EmoteRegistry.getGroup("BTTV")));
+		IEmoteGroup bttvGroup = EmoteRegistry.getGroup("BTTV");
+		if (bttvGroup != null) {
+			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconBTTV, bttvGroup));
 		}
+
 		IEmoteGroup group = EmoteRegistry.getGroup(currentGroup);
 		if (group != null) {
 			displayGroup(group);
@@ -101,9 +108,7 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		}
 	}
 
-	@Override
 	public void actionPerformed(GuiButton button) {
-		super.actionPerformed(button);
 		if (button instanceof GuiButtonEmoteGroup) {
 			displayGroup(((GuiButtonEmoteGroup) button).getEmoteGroup());
 		} else if (button instanceof GuiButtonEmote) {
@@ -111,20 +116,7 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		}
 	}
 
-	public void displayGroup(IEmoteGroup group) {
-		clearEmotes();
-		for (IEmote emote : group.getEmotes()) {
-			if (!emote.isRegex() && !ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
-				GuiButtonEmote button = new GuiButtonEmote(-1, x, y, emote);
-				emoteButtons.add(button);
-				addButton(button);
-			}
-		}
-		currentGroup = group.getName();
-	}
-
-	@Override
-	public void drawOverlayBackground(int mouseX, int mouseY) {
+	public void drawOverlay(int mouseX, int mouseY) {
 		int index = 0;
 		int buttonX = x + 16;
 		int buttonY = y + 2;
@@ -149,26 +141,21 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		}
 
 		Gui.drawRect(x + 14, y, x + width, y + height, 0xAA000000);
+		mouseInside = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY > y + height;
 	}
 
-	@Override
-	public void clear() {
-		scrollOffset = 0;
-		clearEmotes();
-		super.clear();
-	}
-
-	private void clearEmotes() {
-		Iterator<GuiButton> it = parentScreen.buttonList.iterator();
-		while (it.hasNext()) {
-			if (it.next() instanceof GuiButtonEmote) {
-				it.remove();
+	public void displayGroup(IEmoteGroup group) {
+		clear();
+		for (IEmote emote : group.getEmotes()) {
+			if (!emote.isRegex() && !ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
+				GuiButtonEmote button = new GuiButtonEmote(-1, x, y, emote);
+				emoteButtons.add(button);
+				parentScreen.buttonList.add(button);
 			}
 		}
-		emoteButtons.clear();
+		currentGroup = group.getName();
 	}
 
-	@Override
 	public void mouseScrolled(int delta) {
 		if (delta > 0) {
 			scrollOffset = Math.max(0, scrollOffset - 4);
@@ -177,9 +164,13 @@ public class GuiOverlayEmotes extends GuiOverlay {
 		}
 	}
 
-	@Override
-	public IGuiOverlay recreateFor(IGuiOverlay overlay, GuiScreen guiScreen) {
-		return new GuiOverlayEmotes(guiScreen);
+	public void clear() {
+		scrollOffset = 0;
+		parentScreen.buttonList.removeIf(guiButton -> guiButton instanceof GuiButtonEmote);
+		emoteButtons.clear();
 	}
 
+	public boolean isMouseInside() {
+		return mouseInside;
+	}
 }

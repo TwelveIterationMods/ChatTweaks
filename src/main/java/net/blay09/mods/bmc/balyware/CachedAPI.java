@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class CachedAPI {
@@ -15,20 +16,20 @@ public class CachedAPI {
 	private static final long DEFAULT_CACHE_TIME = 1000*60*60*24;
 
 	@Nullable
-	public static JsonObject loadCachedAPI(String url, String fileName) {
-		return loadCachedAPI(url, fileName, DEFAULT_CACHE_TIME);
+	public static JsonObject loadCachedAPI(String url, String fileName, @Nullable String accept) {
+		return loadCachedAPI(url, fileName, DEFAULT_CACHE_TIME, accept);
 	}
 
 	@Nullable
-	public static JsonObject loadCachedAPI(String url, String fileName, long maxCacheTime) {
-		return loadCachedAPI(url, new File(getCacheDirectory(), fileName), maxCacheTime);
+	public static JsonObject loadCachedAPI(String url, String fileName, long maxCacheTime, @Nullable String accept) {
+		return loadCachedAPI(url, new File(getCacheDirectory(), fileName), maxCacheTime, accept);
 	}
 
 	@Nullable
-	public static JsonObject loadCachedAPI(String url, File cacheFile, long maxCacheTime) {
+	public static JsonObject loadCachedAPI(String url, File cacheFile, long maxCacheTime, @Nullable String accept) {
 		JsonObject result = loadLocal(cacheFile, false, maxCacheTime);
 		if(result == null) {
-			result = loadRemote(url);
+			result = loadRemote(url, accept);
 			if(result == null) {
 				result = loadLocal(cacheFile, true, maxCacheTime);
 			} else {
@@ -55,10 +56,14 @@ public class CachedAPI {
 	}
 
 	@Nullable
-	private static JsonObject loadRemote(String url) {
+	private static JsonObject loadRemote(String url, @Nullable String accept) {
 		try {
 			URL apiURL = new URL(url);
-			try(InputStreamReader reader = new InputStreamReader(apiURL.openStream())) {
+			HttpURLConnection connection = (HttpURLConnection) apiURL.openConnection();
+			if(accept != null) {
+				connection.setRequestProperty("Accept", accept);
+			}
+			try(InputStreamReader reader = new InputStreamReader(connection.getInputStream())) {
 				try {
 					return gson.fromJson(reader, JsonObject.class);
 				} catch (JsonParseException e) {
@@ -73,7 +78,7 @@ public class CachedAPI {
 	}
 
 	public static File getCacheDirectory() {
-		File file = new File(Minecraft.getMinecraft().mcDataDir, "bmc/cache/");
+		File file = new File(Minecraft.getMinecraft().mcDataDir, "ChatTweaks/cache/");
 		if(!file.exists() && !file.mkdirs()) {
 			throw new RuntimeException("Could not create cache directory for Chat Tweaks.");
 		}

@@ -5,13 +5,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.blay09.mods.bmc.auth.AuthManager;
 import net.blay09.mods.bmc.chat.emotes.twitch.*;
+import net.blay09.mods.bmc.gui.chat.GuiChatExt;
 import net.blay09.mods.bmc.gui.chat.GuiNewChatExt;
+import net.blay09.mods.bmc.gui.chat.GuiSleepMPExt;
 import net.blay09.mods.bmc.handler.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiSleepMP;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -35,7 +39,7 @@ public class ChatTweaks {
     public static ChatTweaks instance;
 
 	private Configuration config;
-	private GuiNewChatExt chatHandler;
+	private GuiNewChatExt persistentChatGUI;
 	private SideChatHandler sideChatHandler;
 	private BottomChatHandler bottomChatHandler;
 	private AuthManager authManager;
@@ -67,7 +71,7 @@ public class ChatTweaks {
 		//noinspection ResultOfMethodCallIgnored
 		new File(Minecraft.getMinecraft().mcDataDir, "bmc/cache/").mkdirs();
 
-		chatHandler = new GuiNewChatExt(Minecraft.getMinecraft());
+		persistentChatGUI = new GuiNewChatExt(Minecraft.getMinecraft());
 	}
 
     @Mod.EventHandler
@@ -83,7 +87,18 @@ public class ChatTweaks {
 
 	@SubscribeEvent
 	public void onConnectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-		Minecraft.getMinecraft().ingameGUI.persistantChatGUI = chatHandler;
+		Minecraft.getMinecraft().ingameGUI.persistantChatGUI = persistentChatGUI;
+	}
+
+	@SubscribeEvent
+	public void onOpenGui(GuiOpenEvent event) {
+		if(event.getGui() != null) {
+			if (event.getGui().getClass() == GuiChat.class) {
+				event.setGui(new GuiChatExt(((GuiChat) event.getGui()).defaultInputFieldText));
+			} else if (event.getGui().getClass() == GuiSleepMP.class) {
+				event.setGui(new GuiSleepMPExt());
+			}
+		}
 	}
 
 	@SubscribeEvent
@@ -98,7 +113,7 @@ public class ChatTweaks {
 	}
 
 	public static GuiNewChatExt getChatDisplay() {
-		return instance.chatHandler;
+		return instance.persistentChatGUI;
 	}
 
 	public static SideChatHandler getSideChatHandler() {

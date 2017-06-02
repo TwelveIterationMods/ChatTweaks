@@ -30,15 +30,16 @@ public class ChatViewManager {
 
 	public static ChatView createDefaultView() {
 		ChatView defaultView = new ChatView("*");
-		defaultView.addChannel(ChatManager.getChatChannel("main"));
-		defaultView.addChannel(ChatManager.getChatChannel("interaction"));
-		defaultView.addChannel(ChatManager.getChatChannel("system"));
+		defaultView.addChannel(ChatManager.mainChannel);
+		defaultView.addChannel(ChatManager.interactionChannel);
+		defaultView.addChannel(ChatManager.systemChannel);
+		defaultView.addChannel(ChatManager.deathChannel);
 		return defaultView;
 	}
 
 	public static ChatView createSystemView() {
 		ChatView systemView = new ChatView("system");
-		systemView.addChannel(ChatManager.getChatChannel("system"));
+		systemView.addChannel(ChatManager.systemChannel);
 		systemView.setMessageStyle(MessageStyle.Side);
 		systemView.setExclusive(true);
 		return systemView;
@@ -46,7 +47,7 @@ public class ChatViewManager {
 
 	public static ChatView createInteractionView() {
 		ChatView interactionView = new ChatView("interaction");
-		interactionView.addChannel(ChatManager.getChatChannel("interaction"));
+		interactionView.addChannel(ChatManager.interactionChannel);
 		interactionView.setMessageStyle(MessageStyle.Bottom);
 		interactionView.setExclusive(true);
 		return interactionView;
@@ -61,6 +62,7 @@ public class ChatViewManager {
 	}
 
 	public static void load() {
+		removeAllChatViews();
 		Gson gson = new Gson();
 		try(FileReader reader = new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/ChatTweaks/views.json"))) {
 			JsonObject root = gson.fromJson(reader, JsonObject.class);

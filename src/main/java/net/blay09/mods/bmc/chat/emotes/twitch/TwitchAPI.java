@@ -20,7 +20,7 @@ public class TwitchAPI {
 	private static final IntHashMap<IEmote> twitchEmotes = new IntHashMap<>();
 
 	public static void init() {
-		JsonObject object = CachedAPI.loadCachedAPI("https://twitchemotes.com/api_cache/v2/sets.json", "twitch_emotesets.json");
+		JsonObject object = CachedAPI.loadCachedAPI("https://twitchemotes.com/api_cache/v2/sets.json", "twitch_emotesets.json", null);
 		if(object != null) {
 			JsonObject sets = object.get("sets").getAsJsonObject();
 			for(Map.Entry<String, JsonElement> entry : sets.entrySet()) {
@@ -47,7 +47,7 @@ public class TwitchAPI {
 		if(emotesets.length > 0) {
 			url += "&emotesets=" + sb.toString();
 		}
-		return CachedAPI.loadCachedAPI(url, "twitch_emotes" + (sb.length() > 0 ? "-" + sb.toString() : "") + ".json");
+		return CachedAPI.loadCachedAPI(url, "twitch_emotes" + (sb.length() > 0 ? "-" + sb.toString() : "") + ".json", "application/vnd.twitchtv.v5+json");
 	}
 
 	public static void registerTwitchEmote(int id, IEmote emote) {

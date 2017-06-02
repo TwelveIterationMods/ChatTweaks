@@ -94,6 +94,7 @@ public class ChatView {
 		for(ChatChannel channel : this.channels) {
 			channels.add(new JsonPrimitive(channel.getName()));
 		}
+		object.add("channels", channels);
 		return object;
 	}
 
@@ -170,7 +171,7 @@ public class ChatView {
 				if(text.length() > 0) {
 					if (newComponent == null) {
 						newComponent = new TextComponentString("");
-						newComponent.setStyle(textComponent.getStyle());
+						newComponent.setStyle(textComponent.getStyle().createDeepCopy());
 					}
 					newComponent.appendSibling(component);
 				}

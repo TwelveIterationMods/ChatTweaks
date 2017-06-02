@@ -36,10 +36,12 @@ public class EmoteRegistry {
 		return group;
 	}
 
+	@Nullable
 	public static IEmoteGroup getFirstGroup() {
 		return groupMap.values().iterator().next();
 	}
 
+	@Nullable
 	public static IEmoteGroup getGroup(String name) {
 		return groupMap.get(name);
 	}

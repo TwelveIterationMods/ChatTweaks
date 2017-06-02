@@ -16,26 +16,24 @@ import java.io.*;
 public class ChatTweaksConfig {
 
 	private static Configuration config;
-	public static boolean smallerEmotes = false;
+	public static boolean smallerEmotes = true;
+	public static boolean alternateBackground = true;
 	public static int backgroundColor1;
 	public static int backgroundColor2;
 	public static int backgroundColorHighlight;
 	public static int lineSpacing;
 	public static boolean highlightName;
 	public static String[] highlightStrings;
-	public static boolean emoteTabCompletion;
-	public static boolean randomNameColors;
 
 	public static void preInitLoad(Configuration config) {
 		ChatTweaksConfig.config = config;
 		backgroundColor1 = ChatTweaks.colorFromHex(config.getString("Background Color 1", "theme", "000000", "The background color to use for even line numbers in HEX."));
-		backgroundColor2 = ChatTweaks.colorFromHex(config.getString("Background Color 2", "theme", "111111", "The background color to use for uneven line numbers in HEX."));
+		backgroundColor2 = ChatTweaks.colorFromHex(config.getString("Background Color 2", "theme", "111111", "The background color to use for uneven line numbers in HEX (if enabled)."));
 		backgroundColorHighlight = ChatTweaks.colorFromHex(config.getString("Highlight Color", "theme", "FF0000", "The background color to use for highlighted lines in HEX."));
 		highlightName = config.getBoolean("Highlight Name", "highlights", true, "If set to true, mentions of your Minecraft IGN will be highlighted in chat.");
 		highlightStrings = config.getStringList("Highlighted Words", "highlights", new String[0], "List of words that are highlighted in chat.");
-		emoteTabCompletion = config.getBoolean("Tab Completion for Emotes", "general", false, "Should Tab completion be enabled for emotes?");
+		alternateBackground = config.getBoolean("Alternate Background Color", "general", true, "Should uneven lines alternate their background color for easier reading?");
 		smallerEmotes = config.getBoolean("Smaller Emotes", "general", false, "Should emotes be scaled down to perfectly fit into one line?");
-		randomNameColors = config.getBoolean("Random Name Colors", "general", false, "Should players be assigned random name colors? They're only visual and will not be synchronized with other players.");
 
 		ChatManager.init();
 	}

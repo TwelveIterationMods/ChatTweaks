@@ -7,12 +7,14 @@ import net.blay09.mods.bmc.ChatViewManager;
 import net.blay09.mods.bmc.balyware.gui.FormattedFontRenderer;
 import net.blay09.mods.bmc.balyware.gui.GuiFormattedTextField;
 import net.blay09.mods.bmc.balyware.gui.IStringFormatter;
+import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.ChatView;
 import net.blay09.mods.bmc.chat.MessageStyle;
 import net.blay09.mods.bmc.gui.settings.FormatStringFormatter;
 import net.blay09.mods.bmc.gui.settings.RegExStringFormatter;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.minecraftforge.fml.client.config.GuiConfig;
@@ -35,6 +37,7 @@ public class GuiChatView extends GuiConfig {
 	private static SmartyConfigElement outgoingPrefixElement;
 	private static SmartyConfigElement exclusiveElement;
 	private static SmartyConfigElement mutedElement;
+	private static SmartyListElement channelListElement;
 	private static String[] channelNames;
 
 	public GuiChatView(GuiScreen parentScreen, ChatView chatView) {
@@ -100,18 +103,9 @@ public class GuiChatView extends GuiConfig {
 		mutedElement.set(chatView.isMuted());
 		list.add(mutedElement);
 
-		channelNames = ChatManager.collectChatChannelNames();
-		Boolean[] channelStates = new Boolean[channelNames.length];
-		for (int i = 0; i < channelNames.length; i++) {
-			final String channelName = channelNames[i];
-			if (chatView.getChannels().stream().anyMatch(t -> t.getName().equals(channelName))) {
-				channelStates[i] = Boolean.TRUE;
-			} else {
-				channelStates[i] = Boolean.FALSE;
-			}
-		}
-		SmartyListElement channelListElement = new SmartyListElement("Channels", channelStates, ConfigGuiType.BOOLEAN, "chattweaks:gui.config.view.channels", true);
-		channelListElement.set(channelStates);
+		channelNames = chatView.getChannels().stream().map(ChatChannel::getName).toArray(String[]::new);
+		channelListElement = new SmartyListElement("Channels", channelNames, ConfigGuiType.STRING, "chattweaks:gui.config.view.channels", true);
+		channelListElement.set(channelNames);
 		channelListElement.setConfigEntryClass(ChannelListConfigEntry.class);
 		channelListElement.setArrayEntryClass(ChannelListArrayEntry.class);
 		channelListElement.setCustomEditListEntryClass(ChannelListArrayEntry.class);
@@ -275,11 +269,37 @@ public class GuiChatView extends GuiConfig {
 
 		@Override
 		public void updateValueButtonText() {
-//			this.btnValue.displayString = "";
-//			for (Object o : currentValues)
-//				this.btnValue.displayString += ", [" + o + "]";
-//
-//			this.btnValue.displayString = this.btnValue.displayString.replaceFirst(", ", "");
+			ChatView chatView = ((GuiChatView) owningScreen).chatView;
+			if(chatView != null) {
+				StringBuilder sb = new StringBuilder();
+
+				for (Object value : currentValues) {
+					if (sb.length() > 0) {
+						sb.append(", ");
+					}
+					sb.append((String) value);
+				}
+				btnValue.displayString = sb.length() > 0 ? sb.toString() : TextFormatting.RED + "Warning: No channels selected";
+			}
+		}
+
+		@Override
+		public void valueButtonPressed(int slotIndex) {
+			mc.displayGuiScreen(new GuiChatViewChannels(owningScreen, configElement, slotIndex, currentValues, true));
+		}
+
+		@Override
+		public boolean saveConfigElement() {
+			((GuiChatView) owningScreen).chatView.getChannels().clear();
+			for(Object o : currentValues) {
+				ChatChannel channel = ChatManager.getChatChannel((String) o);
+				if(channel != null) {
+					((GuiChatView) owningScreen).chatView.getChannels().add(channel);
+				}
+			}
+			updateValueButtonText();
+
+			return false;
 		}
 	}
 }

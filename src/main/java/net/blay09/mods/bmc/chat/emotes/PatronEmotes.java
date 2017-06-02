@@ -16,7 +16,7 @@ public class PatronEmotes implements IEmoteLoader {
 	private String urlTemplate;
 
 	public PatronEmotes() {
-		JsonObject root = CachedAPI.loadCachedAPI("http://balyware.com/control-panel/api/emotes.php", "patron_emotes.json");
+		JsonObject root = CachedAPI.loadCachedAPI("http://blay09.net/mods/control-panel/api/emotes.php", "patron_emotes.json", null);
 		if(root != null) {
 			IEmoteGroup group = ChatTweaksAPI.registerEmoteGroup("Patreon");
 			urlTemplate = "http:" + root.get("url_template").getAsString();

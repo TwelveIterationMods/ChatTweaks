@@ -12,7 +12,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -21,7 +20,7 @@ public class BTTVEmotes implements IEmoteLoader {
 	private String urlTemplate;
 
 	public BTTVEmotes() {
-		JsonObject root = CachedAPI.loadCachedAPI("https://api.betterttv.net/2/emotes", "bttv_emotes.json");
+		JsonObject root = CachedAPI.loadCachedAPI("https://api.betterttv.net/2/emotes", "bttv_emotes.json", null);
 		if(root != null) {
 			if (!root.has("status") && root.get("status").getAsInt() != 200) {
 				System.out.println("Failed to grab BTTV emotes.");

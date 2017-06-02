@@ -179,7 +179,7 @@ public class GuiNewChatExt extends GuiNewChat {
 							if (chatLine.message.hasBackgroundColor()) {
 								drawRect(-2, y - fontRenderer.FONT_HEIGHT + lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), (chatLine.message.getBackgroundColor() & 0x00FFFFFF) + (alpha << 24));
 							} else {
-								drawRect(-2, y - fontRenderer.FONT_HEIGHT - lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), ((chatLine.alternateBackground ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) & 0x00FFFFFF) + (alpha << 24));
+								drawRect(-2, y - fontRenderer.FONT_HEIGHT - lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), (((!ChatTweaksConfig.alternateBackground || !chatLine.alternateBackground) ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) & 0x00FFFFFF) + (alpha << 24));
 							}
 							GlStateManager.enableBlend();
 							for (TextRenderRegion region : chatLine.regions) {

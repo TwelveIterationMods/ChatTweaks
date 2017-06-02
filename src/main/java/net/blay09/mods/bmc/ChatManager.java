@@ -3,18 +3,21 @@ package net.blay09.mods.bmc;
 import com.google.common.collect.Maps;
 import net.blay09.mods.bmc.chat.ChatChannel;
 import net.blay09.mods.bmc.chat.ChatMessage;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatManager {
 	private static final int START_ID = 500;
 	private static final AtomicInteger chatLineCounter = new AtomicInteger(START_ID);
-	private static final ChatChannel mainChannel = new ChatChannel("main");
-	private static final ChatChannel interactionChannel = new ChatChannel("interaction");
-	private static final ChatChannel systemChannel = new ChatChannel("system");
-	private static final ChatChannel deathChannel = new ChatChannel("death");
+	public static final ChatChannel mainChannel = new ChatChannel("main", "Default", new ResourceLocation("chattweaks:textures/channel_main.png"));
+	public static final ChatChannel interactionChannel = new ChatChannel("interaction", "e.g. bed messages", new ResourceLocation("chattweaks:textures/channel_interaction.png"));
+	public static final ChatChannel systemChannel = new ChatChannel("system", "e.g. command response", new ResourceLocation("chattweaks:textures/channel_system.png"));
+	public static final ChatChannel deathChannel = new ChatChannel("death", "death messages", new ResourceLocation("chattweaks:textures/channel_death.png"));
 	private static final Map<String, ChatChannel> channels = Maps.newHashMap();
 
 	public static String[] systemLang = new String[] {
@@ -29,9 +32,11 @@ public class ChatManager {
 	};
 
 	public static void init() {
+		channels.clear();
 		addChatChannel(mainChannel);
 		addChatChannel(interactionChannel);
 		addChatChannel(systemChannel);
+		addChatChannel(deathChannel);
 	}
 
 	public static ChatChannel findChatChannel(ChatMessage message) {
@@ -56,8 +61,13 @@ public class ChatManager {
 		return mainChannel;
 	}
 
+	@Nullable
 	public static ChatChannel getChatChannel(String name) {
 		return channels.get(name);
+	}
+
+	public static Collection<ChatChannel> getChatChannels() {
+		return channels.values();
 	}
 
 	public static void addChatChannel(ChatChannel channel) {
@@ -71,7 +81,4 @@ public class ChatManager {
 		return chatLineCounter.incrementAndGet();
 	}
 
-	public static String[] collectChatChannelNames() {
-		return channels.keySet().toArray(new String[channels.size()]);
-	}
 }
