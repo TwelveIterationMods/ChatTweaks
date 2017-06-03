@@ -12,12 +12,14 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatManager {
-	private static final int START_ID = 500;
-	private static final AtomicInteger chatLineCounter = new AtomicInteger(START_ID);
+
 	public static final ChatChannel mainChannel = new ChatChannel("main", "Default", new ResourceLocation("chattweaks:textures/channel_main.png"));
 	public static final ChatChannel interactionChannel = new ChatChannel("interaction", "e.g. bed messages", new ResourceLocation("chattweaks:textures/channel_interaction.png"));
 	public static final ChatChannel systemChannel = new ChatChannel("system", "e.g. command response", new ResourceLocation("chattweaks:textures/channel_system.png"));
 	public static final ChatChannel deathChannel = new ChatChannel("death", "death messages", new ResourceLocation("chattweaks:textures/channel_death.png"));
+
+	private static final int START_ID = 500;
+	private static final AtomicInteger chatLineCounter = new AtomicInteger(START_ID);
 	private static final Map<String, ChatChannel> channels = Maps.newHashMap();
 
 	public static String[] systemLang = new String[] {
@@ -64,6 +66,10 @@ public class ChatManager {
 	@Nullable
 	public static ChatChannel getChatChannel(String name) {
 		return channels.get(name);
+	}
+
+	public static void removeChatChannel(String name) {
+		channels.remove(name);
 	}
 
 	public static Collection<ChatChannel> getChatChannels() {

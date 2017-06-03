@@ -14,6 +14,7 @@ public class ChatChannel {
 	private final String name;
 	private final ResourceLocation icon;
 	private final String description;
+	private boolean enabled;
 
 	public ChatChannel(String name, String description, ResourceLocation icon) {
 		this.name = name;
@@ -31,5 +32,13 @@ public class ChatChannel {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

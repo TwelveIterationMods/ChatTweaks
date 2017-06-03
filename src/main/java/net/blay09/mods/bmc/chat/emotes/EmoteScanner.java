@@ -1,12 +1,12 @@
 package net.blay09.mods.bmc.chat.emotes;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import net.blay09.mods.bmc.chat.ChatMessage;
 import net.blay09.mods.bmc.image.ChatImageEmote;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
 public class EmoteScanner implements IEmoteScanner {
@@ -16,7 +16,7 @@ public class EmoteScanner implements IEmoteScanner {
 		List<PositionedEmote> emotes = Lists.newArrayList();
 		Matcher matcher = null;
 		for(IEmote emote : EmoteRegistry.getRegexEmotes()) {
-			if(emoteFilter != null && !emoteFilter.apply(emote)) {
+			if(emoteFilter != null && !emoteFilter.test(emote)) {
 				break;
 			}
 			if(matcher == null) {
@@ -37,7 +37,7 @@ public class EmoteScanner implements IEmoteScanner {
 			}
 			String word = message.substring(lastIdx, spaceIdx);
 			IEmote emote = EmoteRegistry.fromName(word);
-			if (emote != null && (emoteFilter == null || emoteFilter.apply(emote))) {
+			if (emote != null && (emoteFilter == null || emoteFilter.test(emote))) {
 				emotes.add(new PositionedEmote(emote, lastIdx, spaceIdx - 1));
 			}
 			lastIdx = spaceIdx + 1;
