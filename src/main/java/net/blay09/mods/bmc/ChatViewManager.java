@@ -158,8 +158,13 @@ public class ChatViewManager {
 		return views.values();
 	}
 
-	public static ChatView getChatViewByName(String name) {
+	@Nullable
+	public static ChatView getChatView(String name) {
 		return views.get(name);
+	}
+
+	public static ChatView getOrCreateChatView(String name) {
+		return views.computeIfAbsent(name, ChatView::new);
 	}
 
 	private static List<String> reservedNames = Lists.newArrayList();

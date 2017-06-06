@@ -4,8 +4,11 @@ import net.blay09.mods.bmc.chat.emotes.EmoteRegistry;
 import net.blay09.mods.bmc.chat.emotes.IEmote;
 import net.blay09.mods.bmc.chat.emotes.IEmoteGroup;
 import net.blay09.mods.bmc.chat.emotes.IEmoteLoader;
+import net.blay09.mods.bmc.image.renderable.IChatRenderable;
 import net.blay09.mods.bmc.image.renderable.ImageLoader;
 
+import javax.annotation.Nullable;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +28,11 @@ public class ChatTweaksAPI {
 
 	public static IEmote registerRegexEmote(String pattern, IEmoteLoader loader) {
 		return EmoteRegistry.registerRegexEmote(pattern, loader);
+	}
+
+	@Nullable
+	public static IChatRenderable loadImage(URI uri, File cacheFile) throws IOException {
+		return ImageLoader.loadImage(uri, cacheFile);
 	}
 
 	public static void loadEmoteImage(IEmote emote, InputStream inputStream) throws IOException {

@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.blay09.mods.bmc.auth.AuthManager;
+import net.blay09.mods.bmc.chat.ChatChannel;
+import net.blay09.mods.bmc.chat.ChatMessage;
 import net.blay09.mods.bmc.chat.emotes.twitch.*;
 import net.blay09.mods.bmc.gui.chat.GuiChatExt;
 import net.blay09.mods.bmc.gui.chat.GuiNewChatExt;
@@ -12,6 +14,7 @@ import net.blay09.mods.bmc.handler.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiSleepMP;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -34,6 +37,7 @@ import java.util.Map;
 public class ChatTweaks {
 
 	public static final String MOD_ID = "chattweaks";
+	public static final String TEXT_FORMATTING_RGB = "\u00a7#";
 
 	@Mod.Instance(MOD_ID)
     public static ChatTweaks instance;
@@ -151,5 +155,15 @@ public class ChatTweaks {
 
 	public static void registerIntegration(IntegrationModule module) {
 		instance.moduleMap.put(module.getModId(), module);
+	}
+
+	public static ChatMessage addChatMessage(ITextComponent component, @Nullable ChatChannel chatChannel) {
+		ChatMessage chatMessage = new ChatMessage(ChatManager.getNextMessageId(), component);
+		instance.persistentChatGUI.addChatMessage(chatMessage, chatChannel != null ? chatChannel : ChatManager.findChatChannel(chatMessage));
+		return chatMessage;
+	}
+
+	public static void refreshChat() {
+		// TODO
 	}
 }

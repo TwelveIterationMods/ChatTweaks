@@ -68,6 +68,10 @@ public class ChatManager {
 		return channels.get(name);
 	}
 
+	public static ChatChannel getTemporaryChannel(String name) {
+		return channels.computeIfAbsent(name, n -> new ChatChannel(n, "(temporary channel)", new ResourceLocation(ChatTweaks.MOD_ID, "channel_temporary")));
+	}
+
 	public static void removeChatChannel(String name) {
 		channels.remove(name);
 	}
@@ -81,6 +85,10 @@ public class ChatManager {
 			throw new RuntimeException("duplicate channel " + channel.getName());
 		}
 		channels.put(channel.getName(), channel);
+	}
+
+	public static void removeChatLine(int chatLineId) {
+		// TODO
 	}
 
 	public static int getNextMessageId() {

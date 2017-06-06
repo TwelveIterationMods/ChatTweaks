@@ -45,6 +45,8 @@ public class ChatView {
 	private final List<ChatMessage> chatLines = Lists.newArrayList();
 	private boolean hasUnread;
 
+	private boolean isTemporary;
+
 	public ChatView(String name) {
 		this.name = name;
 	}
@@ -263,6 +265,14 @@ public class ChatView {
 
 	public void setOutgoingPrefix(@Nullable String outgoingPrefix) {
 		this.outgoingPrefix = outgoingPrefix;
+	}
+
+	public boolean isTemporary() {
+		return isTemporary;
+	}
+
+	public void setTemporary(boolean temporary) {
+		isTemporary = temporary;
 	}
 
 	@Override
