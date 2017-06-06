@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
@@ -23,6 +24,8 @@ import net.minecraftforge.fml.client.config.GuiEditArray;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 import javax.annotation.Nullable;
 import java.net.URI;
@@ -87,9 +90,9 @@ public class GuiFactory implements IModGuiFactory {
 
 		@Override
 		protected GuiScreen buildChildScreen() {
-			IntegrationModule module = ChatTweaks.getModule(Compat.TWITCH_INTEGRATION);
-			if (module != null) {
-				return module.getConfigScreen(owningScreen);
+			if(Loader.isModLoaded(Compat.TWITCH_INTEGRATION)) {
+				IModGuiFactory factory = FMLClientHandler.instance().getGuiFactoryFor(Loader.instance().getIndexedModList().get(Compat.TWITCH_INTEGRATION));
+				return factory.createConfigGui(owningScreen);
 			}
 			return new GuiOpenIntegrationLink(this, "Twitch", "Chat Tweaks - Twitch Integration", 0);
 		}
