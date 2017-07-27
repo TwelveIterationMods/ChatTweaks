@@ -39,6 +39,7 @@ betterminecraftchat:gui.chat.tooltipLocalEmotes=Local Emotes
 betterminecraftchat:gui.chat.tooltipEmotePatron=Patron:
 betterminecraftchat:gui.chat.tooltipEmoteChannel=Channel:
 betterminecraftchat:gui.chat.tooltipBTTVEmotes=BetterTTV
+betterminecraftchat:gui.chat.tooltipFFZEmotes=FrankerFaceZ
 betterminecraftchat:gui.chat.tooltipTwitchEmotes=Twitch Global
 betterminecraftchat:gui.chat.tooltipTwitchTurboEmotes=Twitch Turbo
 betterminecraftchat:gui.confirm.optionalModuleRequired=You need to install an optional module for %s functionality:

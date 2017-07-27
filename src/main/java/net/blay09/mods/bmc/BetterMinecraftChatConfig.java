@@ -13,6 +13,8 @@ import net.blay09.mods.bmc.chat.emotes.LocalEmotes;
 import net.blay09.mods.bmc.chat.emotes.PatronEmotes;
 import net.blay09.mods.bmc.chat.emotes.twitch.BTTVChannelEmotes;
 import net.blay09.mods.bmc.chat.emotes.twitch.BTTVEmotes;
+import net.blay09.mods.bmc.chat.emotes.twitch.FFZChannelEmotes;
+import net.blay09.mods.bmc.chat.emotes.twitch.FFZEmotes;
 import net.blay09.mods.bmc.chat.emotes.twitch.TwitchGlobalEmotes;
 import net.blay09.mods.bmc.chat.emotes.twitch.TwitchSubscriberEmotes;
 import net.minecraft.client.Minecraft;
@@ -73,6 +75,15 @@ public class BetterMinecraftChatConfig {
 		String[] bttvChannels = config.getStringList("BTTV Emote Channels", "emotes", new String[] { "ZeekDaGeek" }, "A list of channels to postInitLoad BTTV channel emotes from.");
 		for(String channel : bttvChannels) {
 			new BTTVChannelEmotes(channel);
+		}
+
+		if (config.getBoolean("FFZ Emotes", "emotes", true, "Should the FrankerFaceZ emotes (ex. ZreknarF) be enabled?")) {
+			new FFZEmotes();
+		}
+
+		String[] ffzChannels = config.getStringList("FFZ Emote Channels", "emotes", new String[]{"tehbasshunter"}, "A list of channels to load FrankerFaceZ channel emotes from.");
+		for (String channel : ffzChannels) {
+			new FFZChannelEmotes(channel);
 		}
 
 		if(config.getBoolean("Patron Emotes", "emotes", true, "Should the user-submitted emotes from Patreon supporters be enabled (note: they undergo an approval process first, so they're safe).")) {
