@@ -23,7 +23,7 @@ import java.util.regex.PatternSyntaxException;
 
 public class ChatView {
 
-	public static final Pattern defaultFilterPattern = Pattern.compile("(?:<(?<s>[^>]+)>)? ?(?<m>.*)");
+	public static final Pattern defaultFilterPattern = Pattern.compile("(?:<(?<s>[^>]+)>)? ?(?<m>.*)", Pattern.DOTALL);
 	public static final Pattern groupPattern = Pattern.compile("\\$(?:([0-9])|\\{([\\w])\\})");
 	public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
 	private static final EmoteScanner emoteScanner = new EmoteScanner();
@@ -209,7 +209,7 @@ public class ChatView {
 		this.filterPattern = filterPattern;
 		if(!filterPattern.isEmpty()) {
 			try {
-				compiledFilterPattern = Pattern.compile(filterPattern);
+				compiledFilterPattern = Pattern.compile(filterPattern, Pattern.DOTALL);
 			} catch (PatternSyntaxException e) {
 				compiledFilterPattern = defaultFilterPattern;
 			}
