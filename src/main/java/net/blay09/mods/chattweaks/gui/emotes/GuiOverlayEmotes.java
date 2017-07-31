@@ -37,8 +37,6 @@ public class GuiOverlayEmotes {
 			"NoNoSpot"
 	};
 
-	private static IChatRenderable iconDefault;
-	private static IChatRenderable iconPatreon;
 	private static IChatRenderable iconTwitch;
 	private static IChatRenderable iconBTTV;
 
@@ -56,12 +54,6 @@ public class GuiOverlayEmotes {
 	public GuiOverlayEmotes(GuiScreen parentScreen) {
 		this.parentScreen = parentScreen;
 
-		if (iconDefault == null) {
-			iconDefault = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/default.png"));
-		}
-		if (iconPatreon == null) {
-			iconPatreon = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/patreon.png"));
-		}
 		if (iconTwitch == null) {
 			iconTwitch = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/twitch.png"));
 		}
@@ -77,16 +69,6 @@ public class GuiOverlayEmotes {
 		clear();
 
 		int groupY = y + 2;
-		IEmoteGroup defaultGroup = EmoteRegistry.getGroup("Default");
-		if (defaultGroup != null) {
-			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconDefault, defaultGroup));
-			groupY += 14;
-		}
-		IEmoteGroup patreonGroup = EmoteRegistry.getGroup("Patreon");
-		if (patreonGroup != null) {
-			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconPatreon, patreonGroup));
-			groupY += 14;
-		}
 		IEmoteGroup twitchGroup = EmoteRegistry.getGroup("TwitchGlobal");
 		if (twitchGroup != null) {
 			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconTwitch, twitchGroup));
@@ -141,7 +123,7 @@ public class GuiOverlayEmotes {
 		}
 
 		Gui.drawRect(x + 14, y, x + width, y + height, 0xAA000000);
-		mouseInside = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY > y + height;
+		mouseInside = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 	}
 
 	public void displayGroup(IEmoteGroup group) {

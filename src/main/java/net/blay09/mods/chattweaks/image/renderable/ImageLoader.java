@@ -1,5 +1,6 @@
 package net.blay09.mods.chattweaks.image.renderable;
 
+import net.blay09.mods.chattweaks.ChatTweaks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +26,6 @@ public class ImageLoader {
 
 	private static final int MAX_CACHE_TIME = 1000 * 60 * 60 * 24 * 7;
 
-	@Nullable
 	public static IChatRenderable loadImage(URI uri, @Nullable File saveToFile) throws IOException {
 		if(saveToFile != null && saveToFile.exists() && saveToFile.lastModified() - System.currentTimeMillis() <= MAX_CACHE_TIME) {
 			try {
@@ -36,21 +36,23 @@ public class ImageLoader {
 				return loadImageInternal(in, saveToFile);
 			}
 		}
-		return null;
+		return NullRenderable.INSTANCE;
 	}
 
-	@Nullable
-	public static IChatRenderable loadImage(ResourceLocation resourceLocation) throws IOException {
-		IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
-		return loadImageInternal(resource.getInputStream(), null);
+	public static IChatRenderable loadImage(ResourceLocation resourceLocation) {
+		try {
+			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
+			return loadImageInternal(resource.getInputStream(), null);
+		} catch (IOException e) {
+			ChatTweaks.logger.error("Failed to load inbuilt image {}: ", resourceLocation, e);
+			return NullRenderable.INSTANCE;
+		}
 	}
 
-	@Nullable
 	public static IChatRenderable loadImage(InputStream in, @Nullable File saveToFile) throws IOException {
 		return loadImageInternal(in, saveToFile);
 	}
 
-	@Nullable
 	private static IChatRenderable loadImageInternal(Object obj, @Nullable File saveToFile) throws IOException {
 		try(ImageInputStream in = ImageIO.createImageInputStream(obj)) {
 			if(in == null) {
@@ -135,6 +137,6 @@ public class ImageLoader {
 		} catch (IllegalArgumentException e) {
 			throw new IOException(e);
 		}
-		return null;
+		return NullRenderable.INSTANCE;
 	}
 }

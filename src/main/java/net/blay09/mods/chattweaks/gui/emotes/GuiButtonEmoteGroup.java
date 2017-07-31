@@ -25,14 +25,6 @@ public class GuiButtonEmoteGroup extends GuiButton {
 			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			int hoverState = getHoverState(hovered);
 			mouseDragged(mc, mouseX, mouseY);
-			int j = 0xE0E0E0;
-			if (packedFGColour != 0) {
-				j = packedFGColour;
-			} else if (!enabled) {
-				j = 0xA0A0A0;
-			} else if (hovered) {
-				j = 0xFFFFA0;
-			}
 			Gui.drawRect(xPosition, yPosition, xPosition + width, yPosition + height, (hoverState == 2) ? 0x88333333 : 0x44000000);
 			if(image.getTextureId() != -1) {
 				this.width = (int) (image.getWidth() * image.getScale());

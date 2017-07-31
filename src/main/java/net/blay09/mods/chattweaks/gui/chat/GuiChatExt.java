@@ -92,7 +92,7 @@ public class GuiChatExt extends GuiChat {
 	@Override
 	public void sendChatMessage(String message, boolean addToSentMessages) {
 		ClientChatEvent event = new ClientChatEvent(message);
-		if (ChatViewManager.getActiveView().getOutgoingPrefix() != null) {
+		if (ChatViewManager.getActiveView().getOutgoingPrefix() != null && !event.getMessage().startsWith("/")) {
 			event.setMessage(ChatViewManager.getActiveView().getOutgoingPrefix() + event.getMessage());
 		}
 		String newMessage;
@@ -120,6 +120,7 @@ public class GuiChatExt extends GuiChat {
 					delta *= 7;
 				}
 				emoteMenu.mouseScrolled(delta);
+				return;
 			}
 		}
 		super.handleMouseInput();
