@@ -52,7 +52,7 @@ processResources{
 jar {
     manifest {
         attributes('FMLAT': 'BetterMinecraftChat_at.cfg',
-                "FMLCorePlugin": "net.blay09.mods.bmc.coremod.LoadingPlugin",
+                "FMLCorePlugin": "net.blay09.mods.chattweaks.coremod.LoadingPlugin",
                 "FMLCorePluginContainsFMLMod": "true")
     }
 }

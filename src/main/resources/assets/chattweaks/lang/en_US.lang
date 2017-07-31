@@ -36,11 +36,10 @@ chattweaks:gui.imagePreview.loadingPreview=Loading Preview...
 chattweaks:gui.chat.textStoredInMacro=Text stored in Marco #%d.
 chattweaks:gui.chat.tooltipEmote=Emote:
 chattweaks:gui.chat.tooltipLocalEmotes=Local Emotes
-chattweaks:gui.chat.tooltipEmotePatron=Patron:
 chattweaks:gui.chat.tooltipEmoteChannel=Channel:
 chattweaks:gui.chat.tooltipBTTVEmotes=BetterTTV
 chattweaks:gui.chat.tooltipTwitchEmotes=Twitch Global
-chattweaks:gui.chat.tooltipTwitchTurboEmotes=Twitch Turbo
+chattweaks:gui.chat.tooltipTwitchPrimeEmotes=Twitch Prime
 chattweaks:gui.confirm.optionalModuleRequired=You need to install an optional module for %s functionality:
 chattweaks:gui.confirm.optionalModuleInstall=Please install the additional mod and restart your game.
 
