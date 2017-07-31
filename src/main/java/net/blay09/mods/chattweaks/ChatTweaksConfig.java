@@ -4,6 +4,8 @@ import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.chat.emotes.LocalEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.BTTVChannelEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.BTTVEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.FFZChannelEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.FFZEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchGlobalEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchSubscriberEmotes;
 import net.minecraft.client.Minecraft;
@@ -75,6 +77,23 @@ public class ChatTweaksConfig {
 			}
 		} catch (Exception e) {
 			ChatTweaks.logger.error("Failed to load BetterTTV channel emotes: ", e);
+		}
+
+		try {
+			if (config.getBoolean("FFZ Emotes", "emotes", true, "Should the FrankerFaceZ emotes (ex. ZreknarF) be enabled?")) {
+				new FFZEmotes();
+			}
+		} catch (Exception e) {
+			ChatTweaks.logger.error("Failed to load FrankerFaceZ emotes: ", e);
+		}
+
+		try {
+			String[] ffzChannels = config.getStringList("FFZ Emote Channels", "emotes", new String[]{"tehbasshunter"}, "A list of channels to load FrankerFaceZ channel emotes from.");
+			for (String channel : ffzChannels) {
+				new FFZChannelEmotes(channel);
+			}
+		} catch (Exception e) {
+			ChatTweaks.logger.error("Failed to load FrankerFaceZ channel emotes: ", e);
 		}
 
 		try {

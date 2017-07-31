@@ -5,7 +5,9 @@ import net.blay09.mods.chattweaks.auth.AuthManager;
 import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchAPI;
+import net.blay09.mods.chattweaks.event.ChatComponentClickEvent;
 import net.blay09.mods.chattweaks.gui.chat.GuiChatExt;
+import net.blay09.mods.chattweaks.gui.chat.GuiImagePreview;
 import net.blay09.mods.chattweaks.gui.chat.GuiNewChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiSleepMPExt;
 import net.blay09.mods.chattweaks.handler.BottomChatHandler;
@@ -14,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiSleepMP;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -28,6 +31,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.function.Function;
 
@@ -64,9 +69,10 @@ public class ChatTweaks {
 		authManager = new AuthManager();
 		authManager.load();
 
-		ChatTweaksAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".+\\.(?:png|jpg)", ""));
-		ChatTweaksAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*imgur\\.com/[A-Za-z]+", ".png"));
-		ChatTweaksAPI.registerImageURLTransformer(new SimpleImageURLTransformer(".*gyazo\\.com/[a-z0-9]+", ".png"));
+		ChatTweaksAPI.registerImageURLTransformer(new PatternImageURLTransformer(".+\\.(?:png|jpg)", "%s"));
+		ChatTweaksAPI.registerImageURLTransformer(new PatternImageURLTransformer(".*imgur\\.com/[A-Za-z]+", "%s.png"));
+		ChatTweaksAPI.registerImageURLTransformer(new PatternImageURLTransformer(".*gyazo\\.com/[a-z0-9]+", "%s.png"));
+		ChatTweaksAPI.registerImageURLTransformer(new PatternImageURLTransformer("(.*twimg\\.com/[^:]+):large", "%s"));
 
 		File configDir = new File(event.getModConfigurationDirectory(), "ChatTweaks");
 		if(!configDir.exists() && !configDir.mkdirs()) {
@@ -118,6 +124,31 @@ public class ChatTweaks {
 				ChatViewManager.save();
 				ChatTweaksConfig.preInitLoad(config);
 				ChatTweaksConfig.postInitLoad(config);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onChatComponentClick(ChatComponentClickEvent event) {
+		ClickEvent clickEvent = event.getComponent().getStyle().getClickEvent();
+		if (clickEvent != null) {
+			if (clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
+				String url = clickEvent.getValue();
+				String directURL = null;
+				for(Function<String, String> function : ChatTweaks.getImageURLTransformers()) {
+					directURL = function.apply(url);
+					if(directURL != null) {
+						break;
+					}
+				}
+				if (directURL != null) {
+					try {
+						Minecraft.getMinecraft().displayGuiScreen(new GuiImagePreview(Minecraft.getMinecraft().currentScreen, new URL(url), new URL(directURL)));
+						event.setCanceled(true);
+					} catch (MalformedURLException e) {
+						logger.error("Could not open image preview: ", e);
+					}
+				}
 			}
 		}
 	}

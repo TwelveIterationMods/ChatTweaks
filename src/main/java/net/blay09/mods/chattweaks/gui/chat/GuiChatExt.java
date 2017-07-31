@@ -81,7 +81,7 @@ public class GuiChatExt extends GuiChat {
 				emoteMenu = new GuiOverlayEmotes(this);
 				emoteMenu.initGui();
 			} else {
-				emoteMenu.clear();
+				emoteMenu.close();
 				emoteMenu = null;
 			}
 		} else if (emoteMenu != null) {

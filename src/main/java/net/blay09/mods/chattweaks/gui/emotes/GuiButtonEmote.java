@@ -13,7 +13,7 @@ public class GuiButtonEmote extends GuiButton {
 	private final IEmote emote;
 
 	public GuiButtonEmote(int buttonId, int x, int y, IEmote emote) {
-		super(buttonId, x, y, 18, 12, "");
+		super(buttonId, x, y, 22, 16, "");
 		this.emote = emote;
 		this.visible = false;
 	}
@@ -32,13 +32,14 @@ public class GuiButtonEmote extends GuiButton {
 				GlStateManager.enableBlend();
 				GlStateManager.bindTexture(image.getTextureId());
 				GlStateManager.color(1f, 1f, 1f, 1f);
-				GlStateManager.translate(xPosition + width / 2 - (image.getWidth() * image.getScale()) / 2, yPosition, 100f);
+//				GlStateManager.translate(xPosition + width / 2 - (image.getWidth() * image.getScale()) / 2, yPosition, 100f);
+				GlStateManager.translate(xPosition + width / 2 - (image.getWidth() * image.getScale()) / 2, yPosition + height / 2 - (image.getHeight() * image.getScale()) / 2, 100f);
 				GlStateManager.scale(image.getScale(), image.getScale(), 1f);
 				if(image instanceof IAnimatedChatRenderable) {
 					((IAnimatedChatRenderable) image).updateAnimation();
 				}
-//				Gui.drawModalRectWithCustomSizedTexture(0, 0, image.getTexCoordX(), image.getTexCoordY(), image.getWidth(), image.getHeight(), image.getSheetWidth(), image.getSheetHeight());
-				Gui.drawScaledCustomSizeModalRect(0, 0, image.getTexCoordX(), image.getTexCoordY(), image.getWidth(), image.getHeight(), width, height, image.getSheetWidth(), image.getSheetHeight());
+				Gui.drawModalRectWithCustomSizedTexture(0, 0, image.getTexCoordX(), image.getTexCoordY(), image.getWidth(), image.getHeight(), image.getSheetWidth(), image.getSheetHeight());
+//				Gui.drawScaledCustomSizeModalRect(0, 0, image.getTexCoordX(), image.getTexCoordY(), image.getWidth(), image.getHeight(), (int) (width * image.getScale()), (int) (height * image.getScale()), image.getSheetWidth(), image.getSheetHeight());
 				GlStateManager.popMatrix();
 			} else {
 				emote.requestLoad();

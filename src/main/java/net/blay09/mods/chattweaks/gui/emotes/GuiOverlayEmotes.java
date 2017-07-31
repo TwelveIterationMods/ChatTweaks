@@ -39,14 +39,15 @@ public class GuiOverlayEmotes {
 
 	private static IChatRenderable iconTwitch;
 	private static IChatRenderable iconBTTV;
+	private static IChatRenderable iconFFZ;
 
 	private final GuiScreen parentScreen;
-	private final int width = 100;
-	private final int height = 60;
+	private final int width = 120;
+	private final int height = 80;
 	private int x;
 	private int y;
 
-	private String currentGroup = "Default";
+	private String currentGroup = "TwitchGlobal";
 	private final List<GuiButtonEmote> emoteButtons = Lists.newArrayList();
 	private int scrollOffset;
 	private boolean mouseInside;
@@ -60,6 +61,9 @@ public class GuiOverlayEmotes {
 		if (iconBTTV == null) {
 			iconBTTV = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/bttv.png"));
 		}
+		if (iconFFZ == null) {
+			iconFFZ = ImageLoader.loadImage(new ResourceLocation(ChatTweaks.MOD_ID, "groups/ffz.png"));
+		}
 	}
 
 	public void initGui() {
@@ -68,15 +72,22 @@ public class GuiOverlayEmotes {
 
 		clear();
 
+		int groupX = x;
 		int groupY = y + 2;
 		IEmoteGroup twitchGroup = EmoteRegistry.getGroup("TwitchGlobal");
 		if (twitchGroup != null) {
-			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconTwitch, twitchGroup));
+			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, groupX, groupY, iconTwitch, twitchGroup));
 			groupY += 14;
 		}
 		IEmoteGroup bttvGroup = EmoteRegistry.getGroup("BTTV");
 		if (bttvGroup != null) {
-			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, x + 2, groupY, iconBTTV, bttvGroup));
+			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, groupX, groupY, iconBTTV, bttvGroup));
+			groupY += 14;
+		}
+		IEmoteGroup ffzGroup = EmoteRegistry.getGroup("FFZ");
+		if (ffzGroup != null) {
+			parentScreen.buttonList.add(new GuiButtonEmoteGroup(-1, groupX, groupY, iconFFZ, ffzGroup));
+			groupY += 14;
 		}
 
 		IEmoteGroup group = EmoteRegistry.getGroup(currentGroup);
@@ -99,7 +110,7 @@ public class GuiOverlayEmotes {
 	}
 
 	public void drawOverlay(int mouseX, int mouseY) {
-		int index = 0;
+		int index = -1;
 		int buttonX = x + 16;
 		int buttonY = y + 2;
 		for (GuiButtonEmote button : emoteButtons) {
@@ -107,9 +118,9 @@ public class GuiOverlayEmotes {
 			if (index >= scrollOffset) {
 				if (buttonX + button.width > x + width - 2) {
 					buttonX = x + 16;
-					buttonY += 14;
+					buttonY += 18;
 				}
-				if (buttonY + 14 > y + height - 2) {
+				if (buttonY + 18 > y + height - 2) {
 					button.visible = false;
 					continue;
 				}
@@ -139,17 +150,24 @@ public class GuiOverlayEmotes {
 	}
 
 	public void mouseScrolled(int delta) {
+		final int emoteColumns = width / 22;
+		final int emoteRows = height / 16;
 		if (delta > 0) {
-			scrollOffset = Math.max(0, scrollOffset - 4);
+			scrollOffset = Math.max(0, scrollOffset - emoteColumns);
 		} else {
-			scrollOffset = Math.min(emoteButtons.size() - 16, scrollOffset + 4);
+			scrollOffset = Math.min(emoteButtons.size() - (emoteRows * emoteColumns) + emoteColumns, scrollOffset + emoteColumns);
 		}
 	}
 
-	public void clear() {
+	private void clear() {
 		scrollOffset = 0;
 		parentScreen.buttonList.removeIf(guiButton -> guiButton instanceof GuiButtonEmote);
 		emoteButtons.clear();
+	}
+
+	public void close() {
+		clear();
+		parentScreen.buttonList.removeIf(p -> p instanceof GuiButtonEmoteGroup);
 	}
 
 	public boolean isMouseInside() {
