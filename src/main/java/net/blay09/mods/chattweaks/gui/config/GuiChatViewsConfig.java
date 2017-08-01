@@ -31,7 +31,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 	private void fixForge() { // TODO remove in 1.12
 		entryList = new ChatViewEditArrayEntries(this, mc, configElement, beforeValues, currentValues);
 
-		// Workaround for a Forge bug where it would call constructors of existing elements with .toString() ... will PR a fix soon
+		// Workaround for a Forge bug where it would call constructors of existing elements with .toString() ... fixed in 1.12
 		// Basically we just repopulate the entire list with proper constructor calls
 		entryList.listEntries.clear();
 		boolean canDelete = currentValues.length > 1;
@@ -146,8 +146,10 @@ public class GuiChatViewsConfig extends GuiEditArray {
 	 * This is a single entry in the list of chat views.
 	 */
 	public static class ChatViewArrayEntry extends GuiEditArrayEntries.BaseEntry {
-		protected final GuiButtonExt button;
-		protected final ChatView chatView;
+		private final GuiButtonExt button;
+		private final ChatView chatView;
+		private final GuiButtonSortChatView buttonUp;
+		private final GuiButtonSortChatView buttonDown;
 
 		public ChatViewArrayEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement, Object value) {
 			this(owningScreen, owningEntryList, configElement, value, true);
@@ -158,7 +160,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 
 			btnRemoveEntry.enabled = canDelete;
 
-			if (value.equals("")) {
+			if (value.equals("")) { // TODO fix in 1.12, see fixForge()
 				chatView = new ChatView(ChatViewManager.getFreeChatViewName());
 			} else if (value instanceof ChatView) {
 				chatView = (ChatView) value;
@@ -166,7 +168,9 @@ public class GuiChatViewsConfig extends GuiEditArray {
 				chatView = null;
 			}
 
-			button = new GuiButtonExt(0, 0, 0, owningEntryList.controlWidth, 18, I18n.format(String.valueOf(value)));
+			button = new GuiButtonExt(0, 0, 0, owningEntryList.controlWidth - 12, 18, I18n.format(String.valueOf(value)));
+			buttonUp = new GuiButtonSortChatView(1, 0, 0, this, -1);
+			buttonDown = new GuiButtonSortChatView(1, 0, 0, this, 1);
 		}
 
 		@Override
@@ -175,7 +179,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 
 			btnRemoveEntry.enabled = owningEntryList.listEntries.size() > 2;
 
-			button.xPosition = listWidth / 4;
+			button.xPosition = listWidth / 4 + 12;
 			button.yPosition = y;
 
 			if(chatView != null) {
@@ -197,6 +201,12 @@ public class GuiChatViewsConfig extends GuiEditArray {
 			}
 
 			button.drawButton(owningEntryList.getMC(), mouseX, mouseY);
+			if(slotIndex > 0) {
+				buttonUp.drawButton(owningEntryList.getMC(), mouseX, mouseY, x, y, listWidth, slotHeight);
+			}
+			if(slotIndex < owningEntryList.listEntries.size() - 2) { // -2 because the new button counts here as well
+				buttonDown.drawButton(owningEntryList.getMC(), mouseX, mouseY, x, y, listWidth, slotHeight);
+			}
 		}
 
 		@Override
@@ -206,6 +216,16 @@ public class GuiChatViewsConfig extends GuiEditArray {
 				((GuiChatViewsConfig) owningScreen).saveAndUpdateList();
 				owningScreen.mc.displayGuiScreen(new GuiChatView(owningScreen, chatView));
 				return true;
+			} else if(buttonUp.mousePressed(owningEntryList.getMC(), x, y)) {
+				if(index > 0) {
+					owningEntryList.listEntries.set(index, owningEntryList.listEntries.get(index - 1));
+					owningEntryList.listEntries.set(index - 1, this);
+				}
+			} else if(buttonDown.mousePressed(owningEntryList.getMC(), x, y)) {
+				if(index < owningEntryList.listEntries.size() - 2) {
+					owningEntryList.listEntries.set(index, owningEntryList.listEntries.get(index + 1));
+					owningEntryList.listEntries.set(index + 1, this);
+				}
 			}
 
 			return super.mousePressed(index, x, y, mouseEvent, relativeX, relativeY);

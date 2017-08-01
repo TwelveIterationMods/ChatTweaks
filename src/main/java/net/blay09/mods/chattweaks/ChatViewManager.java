@@ -26,6 +26,7 @@ import java.util.Map;
 public class ChatViewManager {
 
 	private static final Map<String, ChatView> views = Maps.newHashMap();
+	private static final List<ChatView> sortedViews = Lists.newArrayList();
 	private static String[] viewNames;
 	private static String[] tabViewNames;
 	private static ChatView activeView;
@@ -91,7 +92,7 @@ public class ChatViewManager {
 			jsonWriter.setIndent("  ");
 			JsonObject root = new JsonObject();
 			JsonArray jsonViews = new JsonArray();
-			for(ChatView view : views.values()) {
+			for(ChatView view : sortedViews) {
 				jsonViews.add(view.toJson());
 			}
 			root.add("views", jsonViews);
@@ -102,8 +103,8 @@ public class ChatViewManager {
 	}
 
 	private static void updateNameCache() {
-		viewNames = views.keySet().toArray(new String[views.keySet().size()]);
-		tabViewNames = views.values().stream().filter(p -> p.getMessageStyle() == MessageStyle.Chat).map(ChatView::getName).toArray(String[]::new);
+		viewNames = sortedViews.stream().map(ChatView::getName).toArray(String[]::new);
+		tabViewNames = sortedViews.stream().filter(p -> p.getMessageStyle() == MessageStyle.Chat).map(ChatView::getName).toArray(String[]::new);
 	}
 
 	public static void addChatView(ChatView view) {
@@ -111,13 +112,17 @@ public class ChatViewManager {
 			throw new IllegalArgumentException("duplicate view " + view.getName());
 		}
 		views.put(view.getName(), view);
+		sortedViews.add(view);
 		updateNameCache();
 	}
 
 	public static void removeChatView(ChatView view) {
 		views.remove(view.getName());
+		sortedViews.remove(view);
 		if(views.isEmpty()) {
-			views.put("*", createDefaultView());
+			ChatView defaultView = createDefaultView();
+			views.put("*", defaultView);
+			sortedViews.add(defaultView);
 		}
 		updateNameCache();
 		if(view == activeView) {
@@ -144,7 +149,7 @@ public class ChatViewManager {
 	public static List<ChatView> findChatViews(ChatMessage message, ChatChannel channel) {
 		String unformattedText = message.getTextComponent().getUnformattedText();
 		List<ChatView> result = Lists.newArrayList();
-		for (ChatView view : views.values()) {
+		for (ChatView view : sortedViews) {
 			if (view.getChannels().contains(channel) && view.messageMatches(unformattedText)) {
 				if (view.isExclusive()) {
 					result.clear();
@@ -169,7 +174,7 @@ public class ChatViewManager {
 	}
 
 	public static Collection<ChatView> getViews() {
-		return views.values();
+		return sortedViews;
 	}
 
 	@Nullable
@@ -196,6 +201,7 @@ public class ChatViewManager {
 
 	public static void removeAllChatViews() {
 		views.clear();
+		sortedViews.clear();
 		viewNames = new String[0];
 		tabViewNames = new String[0];
 		reservedNames.clear();
@@ -203,6 +209,7 @@ public class ChatViewManager {
 
 	public static void renameChatView(ChatView chatView, String name) {
 		views.remove(chatView.getName());
+		sortedViews.remove(chatView);
 		chatView.setName(name);
 		addChatView(chatView);
 	}
