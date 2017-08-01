@@ -1,4 +1,4 @@
-package net.blay09.mods.chattweaks.handler;
+package net.blay09.mods.chattweaks.gui;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 
-public class SideChatHandler {
+public class SideChatRenderer {
 
 	private static final int MAX_MESSAGES = 10;
 	private static final float MESSAGE_TIME = 120;

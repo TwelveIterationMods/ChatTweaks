@@ -19,6 +19,8 @@ public class ChatMessage {
 	private long timestamp;
 	private ChatView exclusiveView;
 	private boolean managed;
+	private String sender;
+	private String message;
 
 	public ChatMessage(int id, ITextComponent chatComponent) {
         this.id = id;
@@ -151,4 +153,21 @@ public class ChatMessage {
 		return exclusiveView;
 	}
 
+	public void setSender(@Nullable String sender) {
+		this.sender = sender;
+	}
+
+	@Nullable
+	public String getSender() {
+		return sender;
+	}
+
+	@Nullable
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
 }

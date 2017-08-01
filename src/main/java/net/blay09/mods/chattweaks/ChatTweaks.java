@@ -8,8 +8,10 @@ import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchAPI;
 import net.blay09.mods.chattweaks.gui.chat.GuiChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiNewChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiSleepMPExt;
-import net.blay09.mods.chattweaks.handler.BottomChatHandler;
-import net.blay09.mods.chattweaks.handler.SideChatHandler;
+import net.blay09.mods.chattweaks.gui.BottomChatRenderer;
+import net.blay09.mods.chattweaks.gui.SideChatRenderer;
+import net.blay09.mods.chattweaks.handler.EmoteTabCompletionHandler;
+import net.blay09.mods.chattweaks.handler.HighlightHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiSleepMP;
@@ -51,8 +53,8 @@ public class ChatTweaks {
 
 	private Configuration config;
 	private GuiNewChatExt persistentChatGUI;
-	private SideChatHandler sideChatHandler;
-	private BottomChatHandler bottomChatHandler;
+	private SideChatRenderer sideChatRenderer;
+	private BottomChatRenderer bottomChatRenderer;
 	private AuthManager authManager;
 	private List<Function<String, String>> imageURLTransformers = Lists.newArrayList();
 
@@ -61,8 +63,10 @@ public class ChatTweaks {
 		logger = event.getModLog();
 
         MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.EVENT_BUS.register((sideChatHandler = new SideChatHandler()));
-		MinecraftForge.EVENT_BUS.register((bottomChatHandler = new BottomChatHandler()));
+		MinecraftForge.EVENT_BUS.register((sideChatRenderer = new SideChatRenderer()));
+		MinecraftForge.EVENT_BUS.register((bottomChatRenderer = new BottomChatRenderer()));
+		MinecraftForge.EVENT_BUS.register(new EmoteTabCompletionHandler());
+		MinecraftForge.EVENT_BUS.register(new HighlightHandler());
 
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
@@ -139,12 +143,12 @@ public class ChatTweaks {
 		return instance.persistentChatGUI;
 	}
 
-	public static SideChatHandler getSideChatHandler() {
-		return instance.sideChatHandler;
+	public static SideChatRenderer getSideChatHandler() {
+		return instance.sideChatRenderer;
 	}
 
-	public static BottomChatHandler getBottomChatHandler() {
-		return instance.bottomChatHandler;
+	public static BottomChatRenderer getBottomChatHandler() {
+		return instance.bottomChatRenderer;
 	}
 
 	public static Configuration getConfig() {

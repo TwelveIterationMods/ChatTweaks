@@ -11,6 +11,7 @@ import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.blay09.mods.chattweaks.chat.MessageStyle;
 import net.blay09.mods.chattweaks.chat.TextRenderRegion;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
+import net.blay09.mods.chattweaks.event.PrintChatMessageEvent;
 import net.blay09.mods.chattweaks.image.ChatImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -83,6 +84,7 @@ public class GuiNewChatExt extends GuiNewChat {
 	}
 
 	private void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
+		MinecraftForge.EVENT_BUS.post(new PrintChatMessageEvent(chatMessage, view));
 		switch (view.getMessageStyle()) {
 			case Chat:
 				if (view != ChatViewManager.getActiveView()) {

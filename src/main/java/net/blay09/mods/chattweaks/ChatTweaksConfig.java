@@ -31,8 +31,8 @@ public class ChatTweaksConfig {
 		backgroundColor1 = ChatTweaks.colorFromHex(config.getString("Background Color 1", "theme", "000000", "The background color to use for even line numbers in HEX."));
 		backgroundColor2 = ChatTweaks.colorFromHex(config.getString("Background Color 2", "theme", "111111", "The background color to use for uneven line numbers in HEX (if enabled)."));
 		backgroundColorHighlight = ChatTweaks.colorFromHex(config.getString("Highlight Color", "theme", "FF0000", "The background color to use for highlighted lines in HEX."));
-		highlightName = config.getBoolean("Highlight Name", "highlights", true, "If set to true, mentions of your Minecraft IGN will be highlighted in chat.");
-		highlightStrings = config.getStringList("Highlighted Words", "highlights", new String[0], "List of words that are highlighted in chat.");
+		highlightName = config.getBoolean("Highlight Name", "general", true, "If set to true, mentions of your Minecraft IGN will be highlighted in chat.");
+		highlightStrings = config.getStringList("Highlighted Words", "general", new String[0], "List of words that are highlighted in chat.");
 		alternateBackground = config.getBoolean("Alternate Background Color", "general", true, "Should uneven lines alternate their background color for easier reading?");
 		smallerEmotes = config.getBoolean("Smaller Emotes", "general", false, "Should emotes be scaled down to perfectly fit into one line?");
 		emoteTabCompletion = config.getBoolean("Emote Tab Completion", "general", false, "Should emotes be considered in tab completion?");

@@ -111,6 +111,13 @@ public class ChatView {
 			chatLines.remove(0);
 		}
 
+		try {
+			chatLine.setSender(lastMatcher.group("s"));
+			chatLine.setMessage(lastMatcher.group("m"));
+		} catch (Exception ignored) {
+			chatLine.setMessage(lastMatcher.group(0));
+		}
+
 		ITextComponent textComponent = chatLine.getTextComponent();
 		if(!compiledOutputFormat.equals("$0")) {
 			StyledString styledString = new StyledString(textComponent);
@@ -126,12 +133,20 @@ public class ChatView {
 				if(namedGroup != null) {
 					start = lastMatcher.start(namedGroup);
 					end = lastMatcher.end(namedGroup);
-					groupValue = lastMatcher.group(namedGroup);
+					try {
+						groupValue = lastMatcher.group(namedGroup);
+					} catch (Exception ignored) {
+						groupValue = "";
+					}
 				} else {
 					int group = Integer.parseInt(matcher.group(1));
 					start = lastMatcher.start(group);
 					end = lastMatcher.end(group);
-					groupValue = lastMatcher.group(group);
+					try {
+						groupValue = lastMatcher.group(group);
+					} catch (Exception ignored) {
+						groupValue = "";
+					}
 				}
 				int dstStart = sb.length() + matcher.start() - last;
 				int dstEnd = dstStart + groupValue.length();

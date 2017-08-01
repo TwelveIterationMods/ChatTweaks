@@ -1,4 +1,4 @@
-package net.blay09.mods.chattweaks.handler;
+package net.blay09.mods.chattweaks.gui;
 
 import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.minecraft.client.Minecraft;
@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class BottomChatHandler {
+public class BottomChatRenderer {
 
 	private static final float MESSAGE_TIME = 80;
 	private static final float SCALE = 0.8f;
