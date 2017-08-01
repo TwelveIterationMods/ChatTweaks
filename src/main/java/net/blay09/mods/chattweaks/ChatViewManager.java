@@ -206,4 +206,5 @@ public class ChatViewManager {
 		chatView.setName(name);
 		addChatView(chatView);
 	}
+
 }

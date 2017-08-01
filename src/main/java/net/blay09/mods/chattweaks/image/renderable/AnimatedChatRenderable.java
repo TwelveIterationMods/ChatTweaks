@@ -110,13 +110,8 @@ public class AnimatedChatRenderable extends StaticChatRenderable implements IAni
 		}
 		if(currentFrame != lastFrame) {
 			currentFrameTexCoordX = currentFrame * width;
-			// TODO test this
 			currentFrameTexCoordY += height * (currentFrameTexCoordX / spriteSheetWidth);
 			currentFrameTexCoordX = currentFrameTexCoordX % spriteSheetWidth;
-//			while(currentFrameTexCoordX > spriteSheetWidth) {
-//				currentFrameTexCoordX -= spriteSheetWidth;
-//				currentFrameTexCoordY += height;
-//			}
 		}
 		lastRenderTime = now;
 	}

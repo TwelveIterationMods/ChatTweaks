@@ -77,6 +77,7 @@ public class GuiNewChatExt extends GuiNewChat {
 	}
 
 	public void addChatMessage(ChatMessage message, ChatChannel channel) {
+		channel.addChatMessage(message);
 		List<ChatView> views = ChatViewManager.findChatViews(message, channel);
 		for (ChatView view : views) {
 			addChatMessageForDisplay(view.addChatLine(message), view);

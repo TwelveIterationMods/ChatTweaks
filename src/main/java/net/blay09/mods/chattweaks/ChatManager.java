@@ -88,7 +88,9 @@ public class ChatManager {
 	}
 
 	public static void removeChatLine(int chatLineId) {
-		// TODO implement me
+		for(ChatChannel channel : channels.values()) {
+			channel.removeChatMessage(chatLineId);
+		}
 	}
 
 	public static int getNextMessageId() {

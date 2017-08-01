@@ -16,6 +16,7 @@ import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -310,5 +311,15 @@ public class ChatView {
 	@Override
 	public int hashCode() {
 		return name.hashCode();
+	}
+
+	public void refresh() {
+		chatLines.clear();
+		for(ChatChannel chatChannel : channels) {
+			for(ChatMessage chatMessage : chatChannel.getChatMessages()) {
+				chatLines.add(addChatLine(chatMessage));
+			}
+		}
+		chatLines.sort(Comparator.comparingInt(ChatMessage::getId));
 	}
 }
