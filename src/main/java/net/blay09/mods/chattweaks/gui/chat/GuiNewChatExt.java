@@ -10,6 +10,7 @@ import net.blay09.mods.chattweaks.chat.ChatView;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.blay09.mods.chattweaks.chat.MessageStyle;
 import net.blay09.mods.chattweaks.chat.TextRenderRegion;
+import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.image.ChatImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -161,6 +162,7 @@ public class GuiNewChatExt extends GuiNewChat {
 
 	@Override
 	public void drawChat(int updateCounter) {
+		EmoteRegistry.runDisposal();
 		if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN) {
 			int lineSpacing = ChatTweaksConfig.lineSpacing;
 			float chatOpacity = this.mc.gameSettings.chatOpacity * 0.9f + 0.1f;

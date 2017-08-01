@@ -54,4 +54,8 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 		ChatTweaksAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", String.valueOf(emote.getCustomData()))));
 	}
 
+	@Override
+	public boolean isCommonEmote(String name) {
+		return true;
+	}
 }

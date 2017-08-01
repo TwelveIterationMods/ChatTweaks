@@ -15,12 +15,17 @@ public class EmoteRegistry {
 
 	private static final Map<String, IEmoteGroup> groupMap = Maps.newHashMap();
 	private static final Map<String, IEmote> emoteMap = Maps.newHashMap();
+	private static final List<String> commonEmoteCodes = Lists.newArrayList();
 	private static final List<IEmote> regexEmotes = Lists.newArrayList();
 	private static final List<IEmote> disposalList = Lists.newArrayList();
+	public static boolean isLoading;
 
 	public static IEmote registerEmote(String name, IEmoteLoader loader) {
 		IEmote emote = new Emote(name, loader, false);
 		emoteMap.put(emote.getCode(), emote);
+		if(loader.isCommonEmote(name)) {
+			commonEmoteCodes.add(name);
+		}
 		return emote;
 	}
 
@@ -38,16 +43,25 @@ public class EmoteRegistry {
 
 	@Nullable
 	public static IEmoteGroup getFirstGroup() {
+		if(isLoading) {
+			return null;
+		}
 		return groupMap.values().iterator().next();
 	}
 
 	@Nullable
 	public static IEmoteGroup getGroup(String name) {
+		if(isLoading) {
+			return null;
+		}
 		return groupMap.get(name);
 	}
 
 	@Nullable
 	public static IEmote fromName(String name) {
+		if(isLoading) {
+			return null;
+		}
 		return emoteMap.get(name);
 	}
 
@@ -72,19 +86,38 @@ public class EmoteRegistry {
 		}
 	}
 
+	public static Collection<String> getCommonEmoteCodes() {
+		if(isLoading) {
+			return Collections.emptyList();
+		}
+		return commonEmoteCodes;
+	}
+
 	public static Collection<String> getEmoteCodes() {
+		if(isLoading) {
+			return Collections.emptyList();
+		}
 		return emoteMap.keySet();
 	}
 
 	public static Collection<IEmote> getRegexEmotes() {
+		if(isLoading) {
+			return Collections.emptyList();
+		}
 		return regexEmotes;
 	}
 
 	public static Collection<IEmote> getEmotes() {
+		if(isLoading) {
+			return Collections.emptyList();
+		}
 		return emoteMap.values();
 	}
 
 	public static Collection<IEmote> getEmotesByGroup(String group) {
+		if(isLoading) {
+			return Collections.emptyList();
+		}
 		IEmoteGroup emoteGroup = groupMap.get(group);
 		if (emoteGroup != null) {
 			return emoteGroup.getEmotes();
@@ -93,6 +126,9 @@ public class EmoteRegistry {
 	}
 
 	public static boolean hasGroup(String group) {
+		if(isLoading) {
+			return false;
+		}
 		return groupMap.containsKey(group);
 	}
 }

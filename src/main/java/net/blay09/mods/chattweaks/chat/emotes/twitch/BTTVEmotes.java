@@ -43,4 +43,8 @@ public class BTTVEmotes implements IEmoteLoader {
 		ChatTweaksAPI.loadEmoteImage(emote, new URI("https:" + urlTemplate.replace("{{id}}", (String) emote.getCustomData()).replace("{{image}}", "1x")));
 	}
 
+	@Override
+	public boolean isCommonEmote(String name) {
+		return true;
+	}
 }

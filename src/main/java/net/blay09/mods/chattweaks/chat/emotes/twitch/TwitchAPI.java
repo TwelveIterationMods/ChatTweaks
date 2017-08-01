@@ -14,17 +14,16 @@ public class TwitchAPI {
 	public static final String CLIENT_ID = "gdhi94otnk7c7746syjv7gkr6bizq4w";
 
 	public static final int EMOTESET_GLOBAL = 0;
-	public static final int EMOTESET_TURBO = 457;
+	public static final int EMOTESET_TURBO = 19194;
 
 	private static final IntHashMap<String> emoteSets = new IntHashMap<>();
 	private static final IntHashMap<IEmote> twitchEmotes = new IntHashMap<>();
 
-	public static void init() {
-		JsonObject object = CachedAPI.loadCachedAPI("https://twitchemotes.com/api_cache/v2/sets.json", "twitch_emotesets.json", null);
-		if(object != null) {
-			JsonObject sets = object.get("sets").getAsJsonObject();
+	public static void loadEmoteSets() throws Exception {
+		JsonObject sets = CachedAPI.loadCachedAPI("https://twitchemotes.com/api_cache/v3/sets.json", "twitch_emotesets_v3.json", null);
+		if(sets != null) {
 			for(Map.Entry<String, JsonElement> entry : sets.entrySet()) {
-				emoteSets.addKey(Integer.parseInt(entry.getKey()), entry.getValue().getAsString());
+				emoteSets.addKey(Integer.parseInt(entry.getKey()), entry.getValue().getAsJsonObject().get("channel_name").getAsString());
 			}
 		}
 	}

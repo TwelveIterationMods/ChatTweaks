@@ -48,5 +48,6 @@ chattweaks:config.category.general=General
 chattweaks:config.category.emotes=Emotes
 chattweaks:config.category.theme=Theme
 
-key.chattweaks.options=Open Settings
 key.category.chattweaks=chattweaks
+key.chattweaks.options=Open Settings
+key.chattweaks.switch_chat_view=Switch Chat View

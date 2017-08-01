@@ -23,10 +23,9 @@ public interface IEmote {
 
 	IEmoteLoader getLoader();
 
-	@Nullable
 	IChatRenderable getImage();
 
-	void setImage(@Nullable IChatRenderable image);
+	void setImage(IChatRenderable image);
 
 	int getWidthInSpaces();
 

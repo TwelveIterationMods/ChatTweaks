@@ -48,4 +48,9 @@ public class FFZEmotes implements IEmoteLoader {
 	public void loadEmoteImage(IEmote emote) throws Exception {
 		ChatTweaksAPI.loadEmoteImage(emote, new URI("https:" + emote.getCustomData()));
 	}
+
+	@Override
+	public boolean isCommonEmote(String name) {
+		return true;
+	}
 }

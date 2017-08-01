@@ -5,9 +5,7 @@ import net.blay09.mods.chattweaks.auth.AuthManager;
 import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchAPI;
-import net.blay09.mods.chattweaks.event.ChatComponentClickEvent;
 import net.blay09.mods.chattweaks.gui.chat.GuiChatExt;
-import net.blay09.mods.chattweaks.gui.chat.GuiImagePreview;
 import net.blay09.mods.chattweaks.gui.chat.GuiNewChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiSleepMPExt;
 import net.blay09.mods.chattweaks.handler.BottomChatHandler;
@@ -15,12 +13,15 @@ import net.blay09.mods.chattweaks.handler.SideChatHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiSleepMP;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -28,11 +29,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.function.Function;
 
@@ -46,6 +46,8 @@ public class ChatTweaks {
 
 	@Mod.Instance(MOD_ID)
     public static ChatTweaks instance;
+
+	public static final KeyBinding keySwitchChatView = new KeyBinding("key.chattweaks.switch_chat_view", KeyConflictContext.GUI, KeyModifier.SHIFT, Keyboard.KEY_TAB, "key.categories.chattweaks");
 
 	private Configuration config;
 	private GuiNewChatExt persistentChatGUI;
@@ -87,12 +89,17 @@ public class ChatTweaks {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
+		ClientRegistry.registerKeyBinding(keySwitchChatView);
 		persistentChatGUI = new GuiNewChatExt(Minecraft.getMinecraft());
 	}
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-		TwitchAPI.init();
+		try {
+			TwitchAPI.loadEmoteSets();
+		} catch (Exception e) {
+			logger.error("Failed to load Twitch emote set mappings.");
+		}
 
 		ChatTweaksConfig.postInitLoad(config);
 
@@ -124,31 +131,6 @@ public class ChatTweaks {
 				ChatViewManager.save();
 				ChatTweaksConfig.preInitLoad(config);
 				ChatTweaksConfig.postInitLoad(config);
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void onChatComponentClick(ChatComponentClickEvent event) {
-		ClickEvent clickEvent = event.getComponent().getStyle().getClickEvent();
-		if (clickEvent != null) {
-			if (clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
-				String url = clickEvent.getValue();
-				String directURL = null;
-				for(Function<String, String> function : ChatTweaks.getImageURLTransformers()) {
-					directURL = function.apply(url);
-					if(directURL != null) {
-						break;
-					}
-				}
-				if (directURL != null) {
-					try {
-						Minecraft.getMinecraft().displayGuiScreen(new GuiImagePreview(Minecraft.getMinecraft().currentScreen, new URL(url), new URL(directURL)));
-						event.setCanceled(true);
-					} catch (MalformedURLException e) {
-						logger.error("Could not open image preview: ", e);
-					}
-				}
 			}
 		}
 	}

@@ -1,9 +1,12 @@
 package net.blay09.mods.chattweaks.gui.chat;
 
 import com.google.common.base.Strings;
+import net.blay09.mods.chattweaks.ChatTweaks;
+import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.ChatViewManager;
 import net.blay09.mods.chattweaks.chat.ChatView;
 import net.blay09.mods.chattweaks.chat.MessageStyle;
+import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.event.ClientChatEvent;
 import net.blay09.mods.chattweaks.event.TabCompletionEvent;
 import net.blay09.mods.chattweaks.event.ChatComponentClickEvent;
@@ -14,17 +17,23 @@ import net.blay09.mods.chattweaks.gui.emotes.GuiOverlayEmotes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.command.CommandBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 public class GuiChatExt extends GuiChat {
 
@@ -127,6 +136,15 @@ public class GuiChatExt extends GuiChat {
 	}
 
 	@Override
+	public void handleKeyboardInput() throws IOException {
+		if(Keyboard.getEventKeyState() && ChatTweaks.keySwitchChatView.isActiveAndMatches(Keyboard.getEventKey())) {
+			ChatViewManager.setActiveView(ChatViewManager.getNextChatView(ChatViewManager.getActiveView()));
+		} else {
+			super.handleKeyboardInput();
+		}
+	}
+
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		if (emoteMenu != null) {
 			emoteMenu.drawOverlay(mouseX, mouseY);
@@ -140,6 +158,9 @@ public class GuiChatExt extends GuiChat {
 		BlockPos pos = tabCompleter.getTargetBlockPos();
 		List<String> list = new ArrayList<>();
 		Collections.addAll(list, newCompletions);
+		if (ChatTweaksConfig.emoteTabCompletion) {
+			list.addAll(CommandBase.getListOfStringsMatchingLastWord(new String[]{input}, EmoteRegistry.getEmoteCodes()));
+		}
 		MinecraftForge.EVENT_BUS.post(new TabCompletionEvent(Side.CLIENT, Minecraft.getMinecraft().player, input.split(" ")[0], pos, pos != null, list));
 		super.setCompletions(list.toArray(new String[list.size()]));
 	}
@@ -153,6 +174,32 @@ public class GuiChatExt extends GuiChat {
 
 	@Override
 	protected boolean handleComponentClick(ITextComponent component) {
-		return (component != null && MinecraftForge.EVENT_BUS.post(new ChatComponentClickEvent(component))) || super.handleComponentClick(component);
+		if(component != null) {
+			if (MinecraftForge.EVENT_BUS.post(new ChatComponentClickEvent(component))) {
+				return true;
+			}
+			ClickEvent clickEvent = component.getStyle().getClickEvent();
+			if (clickEvent != null) {
+				if (clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
+					String url = clickEvent.getValue();
+					String directURL = null;
+					for (Function<String, String> function : ChatTweaks.getImageURLTransformers()) {
+						directURL = function.apply(url);
+						if (directURL != null) {
+							break;
+						}
+					}
+					if (directURL != null) {
+						try {
+							Minecraft.getMinecraft().displayGuiScreen(new GuiImagePreview(Minecraft.getMinecraft().currentScreen, new URL(url), new URL(directURL)));
+							return true;
+						} catch (MalformedURLException e) {
+							ChatTweaks.logger.error("Could not open image preview: ", e);
+						}
+					}
+				}
+			}
+		}
+		return super.handleComponentClick(component);
 	}
 }

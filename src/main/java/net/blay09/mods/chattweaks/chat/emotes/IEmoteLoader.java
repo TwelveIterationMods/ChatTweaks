@@ -7,4 +7,8 @@ public interface IEmoteLoader {
      * @param emote the emote being loaded
      */
     void loadEmoteImage(IEmote emote) throws Exception;
+
+	default boolean isCommonEmote(String name) {
+		return false;
+	}
 }
