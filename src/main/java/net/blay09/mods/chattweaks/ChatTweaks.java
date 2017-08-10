@@ -177,4 +177,8 @@ public class ChatTweaks {
 		return chatMessage;
 	}
 
+	public static void refreshChat() {
+		instance.persistentChatGUI.refreshChat();
+	}
+
 }

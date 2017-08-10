@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.blay09.mods.chattweaks.ChatManager;
+import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteScanner;
 import net.blay09.mods.chattweaks.chat.emotes.PositionedEmote;
 import net.blay09.mods.chattweaks.image.ChatImageEmote;
@@ -75,7 +76,12 @@ public class ChatView {
 				if (!element.isJsonPrimitive()) {
 					continue;
 				}
-				view.addChannel(ChatManager.getChatChannel(element.getAsString()));
+				ChatChannel channel = ChatManager.getChatChannel(element.getAsString());
+				if(channel != null) {
+					view.addChannel(channel);
+				} else {
+					ChatTweaks.logger.error("Channel {} does no longer exist. Removing it from view {}.", element.getAsString(), view.name);
+				}
 			}
 		}
 
