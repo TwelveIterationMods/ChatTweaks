@@ -179,6 +179,11 @@ public class ChatTweaks {
 		instance.persistentChatGUI.addChatMessage(chatMessage, chatChannel != null ? chatChannel : ChatManager.findChatChannel(chatMessage));
 	}
 
+	public static void addChatMessage(ITextComponent component, @Nullable ChatChannel chatChannel) {
+		ChatMessage chatMessage = createChatMessage(component);
+		instance.persistentChatGUI.addChatMessage(chatMessage, chatChannel != null ? chatChannel : ChatManager.findChatChannel(chatMessage));
+	}
+
 	public static void refreshChat() {
 		instance.persistentChatGUI.refreshChat();
 	}
