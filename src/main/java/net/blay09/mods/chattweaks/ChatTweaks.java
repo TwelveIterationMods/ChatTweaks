@@ -43,7 +43,6 @@ public class ChatTweaks {
 
 	public static final String MOD_ID = "chattweaks";
 	public static final String TEXT_FORMATTING_RGB = "\u00a7#";
-	// TODO FFZ emotes aren't rendering
 	// TODO check if we're using a BufferedReader in the API stuff
 
 	public static Logger logger;

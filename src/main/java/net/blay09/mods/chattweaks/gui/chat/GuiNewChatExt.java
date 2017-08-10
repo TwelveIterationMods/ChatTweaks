@@ -108,9 +108,9 @@ public class GuiNewChatExt extends GuiNewChat {
 					int lastIdx = 0;
 					while(splitMatcher.find()) {
 						String code = splitMatcher.group(1);
-						if(lastIdx > 0) {
+//						if(lastIdx > 0) {
 							regions.add(new TextRenderRegion(formattedText.substring(lastIdx, splitMatcher.start()), chatMessage.getRGBColor(colorIndex)));
-						}
+//						}
 						if(code.equals("#")) {
 							colorIndex++;
 						}
