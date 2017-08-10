@@ -14,6 +14,7 @@ import net.blay09.mods.chattweaks.text.StyledString;
 import net.blay09.mods.chattweaks.text.StyledStringSection;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -190,13 +191,14 @@ public class ChatView {
 					}
 					((TextComponentString) component).text = sb.toString();
 				}
-				component.getSiblings().clear();
 				if(text.length() > 0) {
 					if (newComponent == null) {
 						newComponent = new TextComponentString("");
 						newComponent.setStyle(textComponent.getStyle().createDeepCopy());
 					}
-					newComponent.appendSibling(component);
+					TextComponentString copyComponent = new TextComponentString(((TextComponentString) component).text);
+					copyComponent.setStyle(component.getStyle());
+					newComponent.appendSibling(copyComponent);
 				}
 			}
 		}
