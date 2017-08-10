@@ -103,7 +103,7 @@ public class GuiNewChatExt extends GuiNewChat {
 						this.scroll(1);
 					}
 					String formattedText = chatLine.getFormattedText();
-					String[] split = formattedText.split("\u00a7#");
+					String[] split = formattedText.split("\u00a7[#*]");
 					TextRenderRegion[] regions = new TextRenderRegion[split.length];
 					for (int i = 0; i < regions.length; i++) {
 						if (i > 0) {
