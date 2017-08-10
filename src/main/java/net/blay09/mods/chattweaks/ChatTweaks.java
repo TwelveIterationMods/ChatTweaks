@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.blay09.mods.chattweaks.auth.AuthManager;
 import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
+import net.blay09.mods.chattweaks.chat.ChatView;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchAPI;
 import net.blay09.mods.chattweaks.gui.chat.GuiChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiNewChatExt;
@@ -44,6 +45,7 @@ public class ChatTweaks {
 	public static final String MOD_ID = "chattweaks";
 	public static final String TEXT_FORMATTING_RGB = "\u00a7#";
 	// TODO check if we're using a BufferedReader in the API stuff
+	// TODO consider locking all emotes to 4 spaces to prevent the resizing
 
 	public static Logger logger;
 
@@ -185,6 +187,9 @@ public class ChatTweaks {
 	}
 
 	public static void refreshChat() {
+		for(ChatView chatView : ChatViewManager.getViews()) {
+			chatView.refresh();
+		}
 		instance.persistentChatGUI.refreshChat();
 	}
 
