@@ -108,9 +108,7 @@ public class GuiNewChatExt extends GuiNewChat {
 					int lastIdx = 0;
 					while(splitMatcher.find()) {
 						String code = splitMatcher.group(1);
-//						if(lastIdx > 0) {
-							regions.add(new TextRenderRegion(formattedText.substring(lastIdx, splitMatcher.start()), chatMessage.getRGBColor(colorIndex)));
-//						}
+						regions.add(new TextRenderRegion(formattedText.substring(lastIdx, splitMatcher.start()), chatMessage.getRGBColor(colorIndex)));
 						if(code.equals("#")) {
 							colorIndex++;
 						}
@@ -119,14 +117,6 @@ public class GuiNewChatExt extends GuiNewChat {
 					if(lastIdx < formattedText.length()) {
 						regions.add(new TextRenderRegion(formattedText.substring(lastIdx), chatMessage.getRGBColor(colorIndex)));
 					}
-//					String[] split = formattedText.split("\u00a7#");
-//					TextRenderRegion[] regions = new TextRenderRegion[split.length];
-//					for (int i = 0; i < regions.length; i++) {
-//						if (i > 0) {
-//							colorIndex++;
-//						}
-//						regions[i] = new TextRenderRegion(split[i], chatMessage.getRGBColor(colorIndex));
-//					}
 					String cleanText = FORMATTING_CODE_PATTERN.matcher(chatLine.getUnformattedText()).replaceAll("");
 					Matcher matcher = EMOTE_PATTERN.matcher(cleanText);
 					List<ChatImage> images = null;
@@ -227,7 +217,7 @@ public class GuiNewChatExt extends GuiNewChat {
 									int renderOffset = fontRenderer.getStringWidth(chatLine.cleanText.substring(0, image.getIndex()));
 									int renderWidth = (int) (image.getWidth() * scale);
 									int renderHeight = (int) (image.getHeight() * scale);
-									int renderX = -2 + renderOffset + spaceWidth / 2 - renderWidth / 2;
+									int renderX = renderOffset + spaceWidth / 2 - renderWidth / 2;
 									int renderY = y - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2 - renderHeight / 2;
 									GlStateManager.pushMatrix();
 									GlStateManager.scale(scale, scale, 1f);
