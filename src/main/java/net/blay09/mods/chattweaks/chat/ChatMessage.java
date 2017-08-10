@@ -73,7 +73,7 @@ public class ChatMessage {
 		return images.get(index);
 	}
 
-    public ChatMessage addImage(ChatImage image) {
+    public ChatMessage addImage(ChatImage image) { // TODO maybe make this insertImage to allow providing an index and fix the sorting of non-twitch vs twitch emotes
 		if(images == null) {
 			images = Lists.newArrayList(image);
 		} else {
@@ -132,8 +132,9 @@ public class ChatMessage {
 		ChatMessage out = new ChatMessage(id, chatComponent);
 		out.backgroundColor = backgroundColor;
 		if(images != null) {
-			out.images = images; // TODO bad copy
+			out.images = images; // TODO bad copy, but does it matter?
 		}
+		out.rgbColors = rgbColors; // TODO bad copy, but does it matter?
 		if(customData != null) {
 			out.customData = customData.copy();
 		}
