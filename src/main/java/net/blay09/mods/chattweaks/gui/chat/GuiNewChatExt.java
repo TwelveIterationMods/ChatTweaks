@@ -37,11 +37,11 @@ public class GuiNewChatExt extends GuiNewChat {
 		private final ChatMessage message;
 		private final ITextComponent component;
 		private final String cleanText;
-		private final TextRenderRegion[] regions;
+		private final List<TextRenderRegion> regions;
 		private final List<ChatImage> images;
 		private final boolean alternateBackground;
 
-		public WrappedChatLine(int timeCreated, ChatMessage message, ITextComponent component, String cleanText, TextRenderRegion[] regions, @Nullable List<ChatImage> images, boolean alternateBackground) {
+		public WrappedChatLine(int timeCreated, ChatMessage message, ITextComponent component, String cleanText, List<TextRenderRegion> regions, @Nullable List<ChatImage> images, boolean alternateBackground) {
 			this.timeCreated = timeCreated;
 			this.message = message;
 			this.component = component;
@@ -103,14 +103,27 @@ public class GuiNewChatExt extends GuiNewChat {
 						this.scroll(1);
 					}
 					String formattedText = chatLine.getFormattedText();
-					String[] split = formattedText.split("\u00a7[#*]");
-					TextRenderRegion[] regions = new TextRenderRegion[split.length];
-					for (int i = 0; i < regions.length; i++) {
-						if (i > 0) {
+					Matcher splitMatcher = Pattern.compile("\u00a7([#*])").matcher(formattedText); // TODO cache pattern
+					List<TextRenderRegion> regions = Lists.newArrayList();
+					int lastIdx = 0;
+					while(splitMatcher.find()) {
+						String code = splitMatcher.group(1);
+						if(code.equals("#")) {
 							colorIndex++;
 						}
-						regions[i] = new TextRenderRegion(split[i], chatMessage.getRGBColor(colorIndex));
+						if(formattedText.length() < lastIdx) {
+							regions.add(new TextRenderRegion(formattedText.substring(lastIdx, splitMatcher.start()), chatMessage.getRGBColor(colorIndex)));
+						}
+						lastIdx = splitMatcher.end() + 1;
 					}
+//					String[] split = formattedText.split("\u00a7#");
+//					TextRenderRegion[] regions = new TextRenderRegion[split.length];
+//					for (int i = 0; i < regions.length; i++) {
+//						if (i > 0) {
+//							colorIndex++;
+//						}
+//						regions[i] = new TextRenderRegion(split[i], chatMessage.getRGBColor(colorIndex));
+//					}
 					String cleanText = FORMATTING_CODE_PATTERN.matcher(chatLine.getUnformattedText()).replaceAll("");
 					Matcher matcher = EMOTE_PATTERN.matcher(cleanText);
 					List<ChatImage> images = null;
