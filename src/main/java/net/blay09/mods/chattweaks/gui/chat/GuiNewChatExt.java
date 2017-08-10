@@ -95,7 +95,7 @@ public class GuiNewChatExt extends GuiNewChat {
 				int chatWidth = MathHelper.floor((float) this.getChatWidth() / this.getChatScale());
 				List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getTextComponent(), chatWidth, this.mc.fontRenderer, false, false);
 				boolean isChatOpen = this.getChatOpen();
-				int colorIndex = 0;
+				int colorIndex = -1;
 				int emoteIndex = 0;
 				for (ITextComponent chatLine : wrappedList) {
 					if (isChatOpen && this.scrollPos > 0) {
@@ -108,13 +108,16 @@ public class GuiNewChatExt extends GuiNewChat {
 					int lastIdx = 0;
 					while(splitMatcher.find()) {
 						String code = splitMatcher.group(1);
+						if(lastIdx > 0) {
+							regions.add(new TextRenderRegion(formattedText.substring(lastIdx, splitMatcher.start()), chatMessage.getRGBColor(colorIndex)));
+						}
 						if(code.equals("#")) {
 							colorIndex++;
 						}
-						if(formattedText.length() < lastIdx) {
-							regions.add(new TextRenderRegion(formattedText.substring(lastIdx, splitMatcher.start()), chatMessage.getRGBColor(colorIndex)));
-						}
-						lastIdx = splitMatcher.end() + 1;
+						lastIdx = splitMatcher.end();
+					}
+					if(lastIdx < formattedText.length()) {
+						regions.add(new TextRenderRegion(formattedText.substring(lastIdx), chatMessage.getRGBColor(colorIndex)));
 					}
 //					String[] split = formattedText.split("\u00a7#");
 //					TextRenderRegion[] regions = new TextRenderRegion[split.length];
