@@ -171,10 +171,12 @@ public class ChatTweaks {
 		return Integer.parseInt(hex.startsWith("#") ? hex.substring(1) : hex, 16);
 	}
 
-	public static ChatMessage addChatMessage(ITextComponent component, @Nullable ChatChannel chatChannel) {
-		ChatMessage chatMessage = new ChatMessage(ChatManager.getNextMessageId(), component);
+	public static ChatMessage createChatMessage(ITextComponent component) {
+		return new ChatMessage(ChatManager.getNextMessageId(), component);
+	}
+
+	public static void addChatMessage(ChatMessage chatMessage, @Nullable ChatChannel chatChannel) {
 		instance.persistentChatGUI.addChatMessage(chatMessage, chatChannel != null ? chatChannel : ChatManager.findChatChannel(chatMessage));
-		return chatMessage;
 	}
 
 	public static void refreshChat() {
