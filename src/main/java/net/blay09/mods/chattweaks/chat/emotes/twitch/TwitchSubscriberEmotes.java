@@ -23,7 +23,7 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 	private static final String URL_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v1/{{id}}/1.0";
 
 	public TwitchSubscriberEmotes(String validationRegex) {
-		JsonObject root = TwitchAPI.loadEmotes();
+		JsonObject root = TwitchEmotesAPI.loadEmotes();
 		if(root != null) {
 			Pattern validationPattern;
 			try {
@@ -36,8 +36,8 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 			JsonArray jsonArray = root.getAsJsonArray("emoticons");
 			for(int i = 0; i < jsonArray.size(); i++) {
 				JsonObject entry = jsonArray.get(i).getAsJsonObject();
-				int emoteSet = (!entry.has("emoticon_set") || entry.get("emoticon_set").isJsonNull()) ? TwitchAPI.EMOTESET_GLOBAL : entry.get("emoticon_set").getAsInt();
-				if(emoteSet == TwitchAPI.EMOTESET_GLOBAL || emoteSet == TwitchAPI.EMOTESET_TURBO) {
+				int emoteSet = (!entry.has("emoticon_set") || entry.get("emoticon_set").isJsonNull()) ? TwitchEmotesAPI.EMOTESET_GLOBAL : entry.get("emoticon_set").getAsInt();
+				if(emoteSet == TwitchEmotesAPI.EMOTESET_GLOBAL || emoteSet == TwitchEmotesAPI.EMOTESET_TURBO) {
 					continue;
 				}
 				String code = entry.get("code").getAsString();
@@ -47,13 +47,13 @@ public class TwitchSubscriberEmotes implements IEmoteLoader {
 					IEmoteGroup group = groupMap.computeIfAbsent(emoteSet, s -> ChatTweaksAPI.registerEmoteGroup("Twitch-" + s));
 					IEmote emote = ChatTweaksAPI.registerEmote(code, this);
 					emote.setCustomData(id);
-					String channel = TwitchAPI.getChannelForEmoteSet(emoteSet);
+					String channel = TwitchEmotesAPI.getChannelForEmoteSet(emoteSet);
 					if(channel != null) {
 						emote.addTooltip(TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipEmoteChannel") + " " + channel);
 					}
 					emote.setImageCacheFile("twitch-" + id);
 					group.addEmote(emote);
-					TwitchAPI.registerTwitchEmote(id, emote);
+					TwitchEmotesAPI.registerTwitchEmote(id, emote);
 				}
 			}
 		}

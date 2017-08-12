@@ -325,7 +325,9 @@ public class ChatView {
 		chatLines.clear();
 		for(ChatChannel chatChannel : channels) {
 			for(ChatMessage chatMessage : chatChannel.getChatMessages()) {
-				chatLines.add(addChatLine(chatMessage));
+				if(messageMatches(chatMessage.getTextComponent().getUnformattedText())) {
+					addChatLine(chatMessage);
+				}
 			}
 		}
 		chatLines.sort(Comparator.comparingInt(ChatMessage::getId));

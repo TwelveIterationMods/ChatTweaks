@@ -9,7 +9,7 @@ import net.minecraft.util.IntHashMap;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class TwitchAPI {
+public class TwitchEmotesAPI {
 
 	public static final String CLIENT_ID = "gdhi94otnk7c7746syjv7gkr6bizq4w";
 

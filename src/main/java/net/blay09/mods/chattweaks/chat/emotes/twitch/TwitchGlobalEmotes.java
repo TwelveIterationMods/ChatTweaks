@@ -17,10 +17,10 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 	private static final String URL_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v1/{{id}}/1.0";
 
 	public TwitchGlobalEmotes(boolean includeTurbo, boolean includeSmileys) {
-		JsonObject root = includeTurbo ? TwitchAPI.loadEmotes(TwitchAPI.EMOTESET_GLOBAL, TwitchAPI.EMOTESET_TURBO) : TwitchAPI.loadEmotes(TwitchAPI.EMOTESET_GLOBAL);
+		JsonObject root = includeTurbo ? TwitchEmotesAPI.loadEmotes(TwitchEmotesAPI.EMOTESET_GLOBAL, TwitchEmotesAPI.EMOTESET_TURBO) : TwitchEmotesAPI.loadEmotes(TwitchEmotesAPI.EMOTESET_GLOBAL);
 		if(root != null) {
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_GLOBAL)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchGlobal"));
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchAPI.EMOTESET_TURBO)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchTurboEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchTurbo"));
+			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchEmotesAPI.EMOTESET_GLOBAL)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchGlobal"));
+			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchEmotesAPI.EMOTESET_TURBO)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchTurboEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchTurbo"));
 		}
 	}
 
@@ -45,7 +45,7 @@ public class TwitchGlobalEmotes implements IEmoteLoader {
 			emote.addTooltip(tooltip);
 			emote.setImageCacheFile("twitch-" + id);
 			group.addEmote(emote);
-			TwitchAPI.registerTwitchEmote(id, emote);
+			TwitchEmotesAPI.registerTwitchEmote(id, emote);
 		}
 	}
 

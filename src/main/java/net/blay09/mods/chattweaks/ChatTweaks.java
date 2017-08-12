@@ -5,7 +5,7 @@ import net.blay09.mods.chattweaks.auth.AuthManager;
 import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.blay09.mods.chattweaks.chat.ChatView;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchAPI;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchEmotesAPI;
 import net.blay09.mods.chattweaks.gui.chat.GuiChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiNewChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiSleepMPExt;
@@ -46,6 +46,7 @@ public class ChatTweaks {
 	public static final String TEXT_FORMATTING_RGB = "\u00a7#";
 	public static final String TEXT_FORMATTING_EMOTE = "\u00a7*";
 	// TODO check out the load lag ... probably the buffered reader needs a larger buffer ... and shouldn't it be running on a thread anyways?
+	// TODO refreshChat duplicates all chat lines
 
 	public static Logger logger;
 
@@ -103,7 +104,7 @@ public class ChatTweaks {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
 		try {
-			TwitchAPI.loadEmoteSets();
+			TwitchEmotesAPI.loadEmoteSets();
 		} catch (Exception e) {
 			logger.error("Failed to load Twitch emote set mappings.");
 		}
@@ -122,6 +123,7 @@ public class ChatTweaks {
 
 	@SubscribeEvent
 	public void onOpenGui(GuiOpenEvent event) {
+		refreshChat();
 		if(event.getGui() != null) {
 			if (event.getGui().getClass() == GuiChat.class) {
 				event.setGui(new GuiChatExt(((GuiChat) event.getGui()).defaultInputFieldText));
