@@ -31,7 +31,6 @@ public class ChatTweaksAPI {
 		return EmoteRegistry.registerRegexEmote(pattern, loader);
 	}
 
-	@Nullable
 	public static IChatRenderable loadImage(URI uri, File cacheFile) throws IOException {
 		return ImageLoader.loadImage(uri, cacheFile);
 	}
@@ -55,7 +54,7 @@ public class ChatTweaksAPI {
 	private static boolean loadEmoteImageFromCache(IEmote emote) {
 		if(emote.getImageCacheFile() != null && emote.getImageCacheFile().exists() && emote.getImageCacheFile().lastModified() - System.currentTimeMillis() < IMAGE_CACHE_TIME) {
 			try(FileInputStream in = new FileInputStream(emote.getImageCacheFile())) {
-				emote.setImage(ImageLoader.loadImage(in, null));
+				emote.setImage(ImageLoader.loadImage(in));
 				return true;
 			} catch (IOException e) {
 				System.err.println("Failed to load emote from cache: " + e.getMessage());

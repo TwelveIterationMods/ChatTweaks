@@ -27,8 +27,12 @@ public class ImageLoader {
 
 	private static final int MAX_CACHE_TIME = 1000 * 60 * 60 * 24 * 7;
 
-	public static IChatRenderable loadImage(URI uri, @Nullable String saveToFile) throws IOException {
-		return loadImage(uri, saveToFile != null ? new File(CachedAPI.getCacheDirectory(), saveToFile) : null);
+	public static IChatRenderable loadImage(URI uri) throws IOException {
+		return loadImage(uri, (File) null);
+	}
+
+	public static IChatRenderable loadImage(URI uri, String saveToFile) throws IOException {
+		return loadImage(uri, new File(CachedAPI.getCacheDirectory(), saveToFile));
 	}
 
 	public static IChatRenderable loadImage(URI uri, @Nullable File saveToFile) throws IOException {
@@ -44,8 +48,12 @@ public class ImageLoader {
 		return NullRenderable.INSTANCE;
 	}
 
-	public static IChatRenderable loadImage(InputStream in, @Nullable String saveToFile) throws IOException {
-		return loadImage(in, saveToFile != null ? new File(CachedAPI.getCacheDirectory(), saveToFile) : null);
+	public static IChatRenderable loadImage(InputStream in) throws IOException {
+		return loadImage(in, (File) null);
+	}
+
+	public static IChatRenderable loadImage(InputStream in, String saveToFile) throws IOException {
+		return loadImage(in, new File(CachedAPI.getCacheDirectory(), saveToFile));
 	}
 
 	public static IChatRenderable loadImage(InputStream in, @Nullable File saveToFile) throws IOException {
