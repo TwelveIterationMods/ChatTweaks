@@ -44,8 +44,7 @@ public class ChatTweaks {
 
 	public static final String MOD_ID = "chattweaks";
 	public static final String TEXT_FORMATTING_RGB = "\u00a7#";
-	// TODO check if we're using a BufferedReader in the API stuff
-	// TODO consider locking all emotes to 4 spaces to prevent the resizing
+	public static final String TEXT_FORMATTING_EMOTE = "\u00a7*";
 
 	public static Logger logger;
 

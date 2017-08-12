@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -81,7 +82,7 @@ public class Emote implements IEmote {
 	}
 
 	@Override
-	public void setImage(IChatRenderable image) {
+	public void setImage(@Nullable IChatRenderable image) {
 		if(image == null) {
 			image = NullRenderable.INSTANCE;
 		}
@@ -102,7 +103,7 @@ public class Emote implements IEmote {
 	}
 
 	@Override
-	public void setImageCacheFile(String fileName) {
+	public void setImageCacheFile(@Nullable String fileName) {
 		if(fileName == null) {
 			imageCacheFile = null;
 		} else {

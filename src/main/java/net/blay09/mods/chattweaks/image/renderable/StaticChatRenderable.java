@@ -18,6 +18,7 @@ public class StaticChatRenderable implements IChatRenderable {
 	protected int height;
 	protected float scale = 1f;
 	protected BufferedImage loadBuffer;
+	protected int minWidthInSpaces = 4;
 
 	protected StaticChatRenderable() {}
 
@@ -50,9 +51,9 @@ public class StaticChatRenderable implements IChatRenderable {
 	@Override
     public int getWidthInSpaces() {
 		if(textureId == -1) {
-			return 4; // Texture is not loaded yet - most emotes fit just fine into four spaces though.
+			return minWidthInSpaces; // Texture is not loaded yet - most emotes fit just fine into four spaces though.
 		}
-        return (int) Math.ceil((width * scale) / (float) Minecraft.getMinecraft().fontRenderer.getCharWidth(' '));
+        return Math.max(minWidthInSpaces, (int) Math.ceil((width * scale) / (float) Minecraft.getMinecraft().fontRenderer.getCharWidth(' ')));
     }
 
 	@Override

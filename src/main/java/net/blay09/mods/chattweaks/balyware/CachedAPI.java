@@ -34,7 +34,7 @@ public class CachedAPI {
 			if(result == null) {
 				result = loadLocal(cacheFile, true, maxCacheTime);
 			} else {
-				try(FileWriter writer = new FileWriter(cacheFile)) {
+				try(BufferedWriter writer = new BufferedWriter(new FileWriter(cacheFile))) {
 					gson.toJson(result, writer);
 				} catch (IOException e) {
 					ChatTweaks.logger.error("An error occurred trying to cache an API result: ", e);
@@ -47,7 +47,7 @@ public class CachedAPI {
 	@Nullable
 	private static JsonObject loadLocal(File file, boolean force, long maxCacheTime) {
 		if(file.exists() && (force || System.currentTimeMillis() - file.lastModified() < maxCacheTime)) {
-			try(FileReader reader = new FileReader(file)) {
+			try(BufferedReader reader = new BufferedReader(new FileReader(file))) {
 				return gson.fromJson(reader, JsonObject.class);
 			} catch (IOException e) {
 				ChatTweaks.logger.error("An error occurred trying to load a cached API result: ", e);
@@ -64,7 +64,7 @@ public class CachedAPI {
 			if(accept != null) {
 				connection.setRequestProperty("Accept", accept);
 			}
-			try(InputStreamReader reader = new InputStreamReader(connection.getInputStream())) {
+			try(BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
 				return gson.fromJson(reader, JsonObject.class);
 			} catch (Exception e) {
 				ChatTweaks.logger.error("An error occurred trying to parse a JSON API result: ", e);

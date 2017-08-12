@@ -54,6 +54,7 @@ public class GuiNewChatExt extends GuiNewChat {
 
 	private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)\u00a7[0-9A-FK-OR#]");
 	private static final Pattern EMOTE_PATTERN = Pattern.compile("\u00a7\\*");
+	private static final Pattern CUSTOM_FORMATTING_CODE_PATTERN = Pattern.compile("\u00a7([#*])");
 
 	private final Minecraft mc;
 	private final List<WrappedChatLine> wrappedChatLines = Lists.newArrayList();
@@ -103,7 +104,7 @@ public class GuiNewChatExt extends GuiNewChat {
 						this.scroll(1);
 					}
 					String formattedText = chatLine.getFormattedText();
-					Matcher splitMatcher = Pattern.compile("\u00a7([#*])").matcher(formattedText); // TODO cache pattern
+					Matcher splitMatcher = CUSTOM_FORMATTING_CODE_PATTERN.matcher(formattedText);
 					List<TextRenderRegion> regions = Lists.newArrayList();
 					int lastIdx = 0;
 					while(splitMatcher.find()) {
