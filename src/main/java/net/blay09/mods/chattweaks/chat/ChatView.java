@@ -141,10 +141,16 @@ public class ChatView {
 				if(namedGroup != null) {
 					start = lastMatcher.start(namedGroup);
 					end = lastMatcher.end(namedGroup);
-					try {
-						groupValue = lastMatcher.group(namedGroup);
-					} catch (Exception ignored) {
-						groupValue = chatLine.getOutputVar(namedGroup);
+					if(namedGroup.equals("s") && chatLine.getSender() != null) {
+						groupValue = chatLine.getSender();
+					} else if(namedGroup.equals("m") && chatLine.getMessage() != null) {
+						groupValue = chatLine.getMessage();
+					} else {
+						try {
+							groupValue = lastMatcher.group(namedGroup);
+						} catch (Exception ignored) {
+							groupValue = chatLine.getOutputVar(namedGroup);
+						}
 					}
 				} else {
 					int group = Integer.parseInt(matcher.group(1));
