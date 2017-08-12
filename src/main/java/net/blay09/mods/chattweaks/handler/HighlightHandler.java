@@ -18,15 +18,17 @@ public class HighlightHandler {
 		if(sender != null) {
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			String playerName = player != null ? player.getDisplayNameString() : null;
-			if(true || !sender.equals(playerName)) {
+			if(!sender.equals(playerName)) {
 				String message = event.getChatMessage().getMessage();
-				if(ChatTweaksConfig.highlightName & message.matches(".*(?:[\\p{Punct} ]|^)" + playerName + "(?:[\\p{Punct} ]|$).*")) {
-					event.getChatMessage().setBackgroundColor(ChatTweaksConfig.backgroundColorHighlight);
-				} else {
-					for (String highlight : ChatTweaksConfig.highlightStrings) {
-						if (message.contains(highlight)) {
-							event.getChatMessage().setBackgroundColor(ChatTweaksConfig.backgroundColorHighlight);
-							break;
+				if(message != null) {
+					if (ChatTweaksConfig.highlightName && message.matches(".*(?:[\\p{Punct} ]|^)" + playerName + "(?:[\\p{Punct} ]|$).*")) {
+						event.getChatMessage().setBackgroundColor(ChatTweaksConfig.backgroundColorHighlight);
+					} else {
+						for (String highlight : ChatTweaksConfig.highlightStrings) {
+							if (message.contains(highlight)) {
+								event.getChatMessage().setBackgroundColor(ChatTweaksConfig.backgroundColorHighlight);
+								break;
+							}
 						}
 					}
 				}

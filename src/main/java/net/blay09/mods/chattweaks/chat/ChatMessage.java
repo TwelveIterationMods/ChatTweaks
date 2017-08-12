@@ -1,12 +1,14 @@
 package net.blay09.mods.chattweaks.chat;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.blay09.mods.chattweaks.image.ChatImage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 public class ChatMessage {
 
@@ -21,6 +23,7 @@ public class ChatMessage {
 	private boolean managed;
 	private String sender;
 	private String message;
+	private Map<String, String> outputVars;
 
 	public ChatMessage(int id, ITextComponent chatComponent) {
         this.id = id;
@@ -132,9 +135,10 @@ public class ChatMessage {
 		ChatMessage out = new ChatMessage(id, chatComponent);
 		out.backgroundColor = backgroundColor;
 		if(images != null) {
-			out.images = images; // TODO bad copy, but does it matter?
+			out.images = images;
 		}
-		out.rgbColors = rgbColors; // TODO bad copy, but does it matter?
+		out.rgbColors = rgbColors;
+		out.outputVars = outputVars;
 		if(customData != null) {
 			out.customData = customData.copy();
 		}
@@ -170,5 +174,17 @@ public class ChatMessage {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public void setOutputVar(String key, String value) {
+		if(outputVars == null) {
+			outputVars = Maps.newHashMap();
+		}
+		outputVars.put(key, value);
+	}
+
+	@Nullable
+	public String getOutputVar(String key) {
+		return outputVars.get(key);
 	}
 }

@@ -50,4 +50,8 @@ public class ChatChannel {
 	public Collection<ChatMessage> getChatMessages() {
 		return chatMessages.values();
 	}
+
+	public void clearChatMessages() {
+		chatMessages.clear();
+	}
 }

@@ -144,7 +144,10 @@ public class ChatView {
 					try {
 						groupValue = lastMatcher.group(namedGroup);
 					} catch (Exception ignored) {
-						groupValue = "";
+						groupValue = chatLine.getOutputVar(namedGroup);
+						if(groupValue == null) {
+							groupValue = "";
+						}
 					}
 				} else {
 					int group = Integer.parseInt(matcher.group(1));
