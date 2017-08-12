@@ -47,6 +47,7 @@ public class ChatTweaks {
 	public static final String TEXT_FORMATTING_EMOTE = "\u00a7*";
 	// TODO check out the load lag ... probably the buffered reader needs a larger buffer ... and shouldn't it be running on a thread anyways?
 	// TODO allow custom variables in ChatMessage for chatView to filter
+	// TODO [13:57:30] [main/ERROR]: Coremod LoadingPlugin: Unable to class load the plugin net.blay09.mods.chattweaks.coremod.LoadingPlugin
 
 	public static Logger logger;
 

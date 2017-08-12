@@ -1,6 +1,7 @@
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 apply from: 'gradle/scripts/common.gradle'
+apply from: 'gradle/scripts/with-at.gradle'
 apply from: 'gradle/scripts/with-api.gradle'
 
 apply from: 'dependencies.gradle'
@@ -46,13 +47,5 @@ processResources{
         
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-}
-
-jar {
-    manifest {
-        attributes('FMLAT': 'chattweaks_at.cfg',
-                "FMLCorePlugin": "net.blay09.mods.chattweaks.coremod.LoadingPlugin",
-                "FMLCorePluginContainsFMLMod": "true")
     }
 }

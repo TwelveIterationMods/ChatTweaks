@@ -145,9 +145,6 @@ public class ChatView {
 						groupValue = lastMatcher.group(namedGroup);
 					} catch (Exception ignored) {
 						groupValue = chatLine.getOutputVar(namedGroup);
-						if(groupValue == null) {
-							groupValue = "";
-						}
 					}
 				} else {
 					int group = Integer.parseInt(matcher.group(1));
@@ -159,6 +156,11 @@ public class ChatView {
 						groupValue = "";
 					}
 				}
+
+				if(groupValue == null) {
+					groupValue = "";
+				}
+
 				int dstStart = sb.length() + matcher.start() - last;
 				int dstEnd = dstStart + groupValue.length();
 				last = matcher.end();
