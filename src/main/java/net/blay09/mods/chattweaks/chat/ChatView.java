@@ -10,11 +10,8 @@ import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteScanner;
 import net.blay09.mods.chattweaks.chat.emotes.PositionedEmote;
 import net.blay09.mods.chattweaks.image.ChatImageEmote;
-import net.blay09.mods.chattweaks.text.StyledString;
-import net.blay09.mods.chattweaks.text.StyledStringSection;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -42,7 +39,7 @@ public class ChatView {
 	private boolean isMuted;
 
 	private Pattern compiledFilterPattern = defaultFilterPattern;
-	private String compiledOutputFormat = outputFormat;
+	private String compiledOutputFormat = outputFormat; // TODO name though
 	private Matcher lastMatcher;
 	private final List<ChatMessage> chatLines = Lists.newArrayList();
 	private boolean hasUnread;
@@ -112,6 +109,26 @@ public class ChatView {
 		return lastMatcher.matches();
 	}
 
+	private ITextComponent subTextComponent(ITextComponent component, int startIndex, int endIndex) {
+		int index = 0;
+		ITextComponent result = new TextComponentString("");
+		for(ITextComponent part : component) {
+			String unformatted = part.getUnformattedComponentText();
+			int min = Math.max(0, startIndex - index);
+			int max = Math.min(endIndex - index, unformatted.length());
+			if(unformatted.length() >= min && max > min) {
+				String sub = unformatted.substring(min, max);
+				if(sub.length() > 0) {
+					ITextComponent sibling = new TextComponentString(sub);
+					sibling.setStyle(part.getStyle());
+					result.appendSibling(sibling);
+				}
+			}
+			index += unformatted.length();
+		}
+		return result;
+	}
+
 	public ChatMessage addChatLine(ChatMessage chatLine) {
 		chatLine = chatLine.copy();
 		chatLines.add(chatLine);
@@ -121,68 +138,68 @@ public class ChatView {
 
 		try {
 			if (chatLine.getSender() == null) {
-				chatLine.setSender(lastMatcher.group("s"));
+				chatLine.setSender(subTextComponent(chatLine.getTextComponent(), lastMatcher.start("s"), lastMatcher.end("s")));
 			}
 			if (chatLine.getMessage() == null) {
-				chatLine.setMessage(lastMatcher.group("m"));
+				chatLine.setMessage(subTextComponent(chatLine.getTextComponent(), lastMatcher.start("m"), lastMatcher.end("m")));
 			}
-		} catch (Exception ignored) {
+		} catch (IllegalArgumentException ignored) {
 			if (chatLine.getMessage() == null) {
-				chatLine.setMessage(lastMatcher.group(0));
+				chatLine.setMessage(chatLine.getTextComponent());
 			}
 		}
 
+		ITextComponent source = chatLine.getTextComponent();
 		ITextComponent textComponent = chatLine.getTextComponent();
 		if (!compiledOutputFormat.equals("$0")) {
-			StyledString styledString = new StyledString(textComponent);
-			Matcher matcher = groupPattern.matcher(compiledOutputFormat);
-			StringBuffer sb = new StringBuffer();
-			List<StyledStringSection> sections = Lists.newArrayList();
+			textComponent = new TextComponentString("");
 			int last = 0;
+			Matcher matcher = groupPattern.matcher(compiledOutputFormat);
 			while (matcher.find()) {
-				int start;
-				int end;
-				String groupValue;
+				if(matcher.start() > last) {
+					textComponent.appendText(compiledOutputFormat.substring(last, matcher.start()));
+				}
+
+				ITextComponent groupValue = null;
 				String namedGroup = matcher.group(2);
 				if (namedGroup != null) {
-					start = lastMatcher.start(namedGroup);
-					end = lastMatcher.end(namedGroup);
 					if (namedGroup.equals("s") && chatLine.getSender() != null) {
 						groupValue = chatLine.getSender();
 					} else if (namedGroup.equals("m") && chatLine.getMessage() != null) {
 						groupValue = chatLine.getMessage();
 					} else {
+						int groupStart = -1;
+						int groupEnd = -1;
 						try {
-							groupValue = lastMatcher.group(namedGroup);
-						} catch (Exception ignored) {
+							groupStart = lastMatcher.start(namedGroup);
+							groupEnd = lastMatcher.end(namedGroup);
+						} catch (IllegalArgumentException ignored) {}
+						if(groupStart != -1 && groupEnd != -1) {
+							groupValue = subTextComponent(source, groupStart, groupEnd);
+						} else {
 							groupValue = chatLine.getOutputVar(namedGroup);
 						}
 					}
 				} else {
 					int group = Integer.parseInt(matcher.group(1));
-					start = lastMatcher.start(group);
-					end = lastMatcher.end(group);
-					try {
-						groupValue = lastMatcher.group(group);
-					} catch (Exception ignored) {
-						groupValue = "";
+					if(group >= 0 && group <= lastMatcher.groupCount()) {
+						groupValue = subTextComponent(source, lastMatcher.start(group), lastMatcher.end(group));
 					}
 				}
 
 				if (groupValue == null) {
-					groupValue = "";
+					groupValue = new TextComponentString("missingno"); // TODO test code
 				}
 
-				int dstStart = sb.length() + matcher.start() - last;
-				int dstEnd = dstStart + groupValue.length();
 				last = matcher.end();
-				matcher.appendReplacement(sb, groupValue);
-				sections.addAll(styledString.getStyleSections(start, end, dstStart, dstEnd));
+				textComponent.appendSibling(groupValue);
 			}
-			matcher.appendTail(sb);
-			StyledString output = new StyledString(sb.toString(), sections);
-			textComponent = output.toTextComponent();
+
+			if(last < compiledOutputFormat.length()) {
+				textComponent.appendText(compiledOutputFormat.substring(last, compiledOutputFormat.length()));
+			}
 		}
+
 		ITextComponent newComponent = null;
 		for (ITextComponent component : textComponent) {
 			if (component instanceof TextComponentString) {

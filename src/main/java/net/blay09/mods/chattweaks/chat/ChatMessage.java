@@ -21,9 +21,9 @@ public class ChatMessage {
 	private long timestamp;
 	private ChatView exclusiveView;
 	private boolean managed;
-	private String sender;
-	private String message;
-	private Map<String, String> outputVars;
+	private ITextComponent sender;
+	private ITextComponent message;
+	private Map<String, ITextComponent> outputVars;
 
 	public ChatMessage(int id, ITextComponent chatComponent) {
         this.id = id;
@@ -160,25 +160,25 @@ public class ChatMessage {
 		return exclusiveView;
 	}
 
-	public void setSender(@Nullable String sender) {
+	public void setSender(@Nullable ITextComponent sender) {
 		this.sender = sender;
 	}
 
 	@Nullable
-	public String getSender() {
+	public ITextComponent getSender() {
 		return sender;
 	}
 
 	@Nullable
-	public String getMessage() {
+	public ITextComponent getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(ITextComponent message) {
 		this.message = message;
 	}
 
-	public void setOutputVar(String key, String value) {
+	public void setOutputVar(String key, ITextComponent value) {
 		if(outputVars == null) {
 			outputVars = Maps.newHashMap();
 		}
@@ -186,7 +186,7 @@ public class ChatMessage {
 	}
 
 	@Nullable
-	public String getOutputVar(String key) {
-		return outputVars.get(key);
+	public ITextComponent getOutputVar(String key) {
+		return outputVars != null ? outputVars.get(key) : null;
 	}
 }
