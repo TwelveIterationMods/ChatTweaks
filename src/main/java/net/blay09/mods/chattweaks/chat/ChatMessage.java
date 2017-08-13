@@ -20,7 +20,6 @@ public class ChatMessage {
     private NBTTagCompound customData;
 	private long timestamp;
 	private ChatView exclusiveView;
-	private boolean managed;
 	private ITextComponent sender;
 	private ITextComponent message;
 	private Map<String, ITextComponent> outputVars;
@@ -76,7 +75,7 @@ public class ChatMessage {
 		return images.get(index);
 	}
 
-    public ChatMessage addImage(ChatImage image) { // TODO maybe make this insertImage to allow providing an index and fix the sorting of non-twitch vs twitch emotes
+    public ChatMessage addImage(ChatImage image) {
 		if(images == null) {
 			images = Lists.newArrayList(image);
 		} else {
@@ -117,14 +116,6 @@ public class ChatMessage {
 
 	public long getTimestamp() {
 		return timestamp;
-	}
-
-	public void setManaged(boolean managed) {
-		this.managed = managed;
-	}
-
-	public boolean isManaged() {
-		return managed;
 	}
 
 	public void clearImages() {
@@ -178,7 +169,7 @@ public class ChatMessage {
 		this.message = message;
 	}
 
-	public void setOutputVar(String key, ITextComponent value) {
+	public void setOutputVar(String key, @Nullable ITextComponent value) {
 		if(outputVars == null) {
 			outputVars = Maps.newHashMap();
 		}
