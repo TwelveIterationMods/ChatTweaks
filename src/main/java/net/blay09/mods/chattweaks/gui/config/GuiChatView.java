@@ -59,6 +59,7 @@ public class GuiChatView extends GuiConfig {
 			chatView.setOutgoingPrefix(!outgoingPrefixElement.get().equals("") ? (String) outgoingPrefixElement.get() : null);
 			chatView.setExclusive((boolean) exclusiveElement.get());
 			chatView.setMuted((boolean) mutedElement.get());
+			chatView.setTemporary(false);
 
 			ChatViewManager.save();
 

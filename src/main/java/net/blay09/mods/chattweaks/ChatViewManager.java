@@ -10,7 +10,9 @@ import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.blay09.mods.chattweaks.chat.ChatView;
 import net.blay09.mods.chattweaks.chat.MessageStyle;
+import net.blay09.mods.chattweaks.gui.chat.GuiChatExt;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
@@ -93,7 +95,9 @@ public class ChatViewManager {
 			JsonObject root = new JsonObject();
 			JsonArray jsonViews = new JsonArray();
 			for(ChatView view : sortedViews) {
-				jsonViews.add(view.toJson());
+				if(!view.isTemporary()) {
+					jsonViews.add(view.toJson());
+				}
 			}
 			root.add("views", jsonViews);
 			gson.toJson(root, jsonWriter);
@@ -114,6 +118,11 @@ public class ChatViewManager {
 		views.put(view.getName(), view);
 		sortedViews.add(view);
 		updateNameCache();
+
+		GuiScreen gui = Minecraft.getMinecraft().currentScreen;
+		if(gui instanceof GuiChatExt) {
+			((GuiChatExt) gui).updateChannelButtons();
+		}
 	}
 
 	public static void removeChatView(ChatView view) {
@@ -182,6 +191,7 @@ public class ChatViewManager {
 		return views.get(name);
 	}
 
+	@Deprecated
 	public static ChatView getOrCreateChatView(String name) {
 		ChatView chatView = getChatView(name);
 		if(chatView == null) {

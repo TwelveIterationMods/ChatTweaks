@@ -4,7 +4,9 @@ import com.google.common.collect.Maps;
 import net.blay09.mods.chattweaks.ChatTweaks;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AuthManager {
 
@@ -14,8 +16,8 @@ public class AuthManager {
 		return tokenMap.get(id);
 	}
 
-	public void storeToken(String id, String username, String token) {
-		tokenMap.put(id, new TokenPair(username, token));
+	public void storeToken(String id, String username, String token, boolean doNotSave) {
+		tokenMap.put(id, new TokenPair(username, token, doNotSave));
 		save();
 	}
 
@@ -24,7 +26,7 @@ public class AuthManager {
 		try(DataInputStream in = new DataInputStream(new FileInputStream(new File(userHome, ".chattweaks-auth.dat")))) {
 			int count = in.readByte();
 			for(int i = 0; i < count; i++) {
-				storeToken(in.readUTF(), in.readUTF(), in.readUTF());
+				storeToken(in.readUTF(), in.readUTF(), in.readUTF(), false);
 			}
 		} catch(FileNotFoundException ignored) {
 		} catch (IOException e) {
@@ -35,8 +37,9 @@ public class AuthManager {
 	private void save() {
 		File userHome = new File(System.getProperty("user.home"));
 		try(DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(userHome, ".chattweaks-auth.dat")))) {
-			out.writeByte(tokenMap.size());
-			for(Map.Entry<String, TokenPair> entry : tokenMap.entrySet()) {
+			List<Map.Entry<String, TokenPair>> list = tokenMap.entrySet().stream().filter(p -> !p.getValue().isDoNotStore()).collect(Collectors.toList());
+			out.writeByte(list.size());
+			for(Map.Entry<String, TokenPair> entry : list) {
 				out.writeUTF(entry.getKey());
 				out.writeUTF(entry.getValue().getUsername());
 				out.writeUTF(entry.getValue().getToken());
