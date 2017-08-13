@@ -46,8 +46,6 @@ public class ChatTweaks {
 	public static final String TEXT_FORMATTING_RGB = "\u00a7#";
 	public static final String TEXT_FORMATTING_EMOTE = "\u00a7*";
 	// TODO check out the load lag ... probably the buffered reader needs a larger buffer ... and shouldn't it be running on a thread anyways?
-	// TODO allow custom variables in ChatMessage for chatView to filter
-	// TODO add or edit whateverus
 
 	public static Logger logger;
 

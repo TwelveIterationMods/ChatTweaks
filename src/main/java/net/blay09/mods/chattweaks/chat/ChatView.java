@@ -39,7 +39,7 @@ public class ChatView {
 	private boolean isMuted;
 
 	private Pattern compiledFilterPattern = defaultFilterPattern;
-	private String compiledOutputFormat = outputFormat; // TODO name though
+	private String builtOutputFormat = outputFormat; // TODO name though
 	private Matcher lastMatcher;
 	private final List<ChatMessage> chatLines = Lists.newArrayList();
 	private boolean hasUnread;
@@ -151,13 +151,13 @@ public class ChatView {
 
 		ITextComponent source = chatLine.getTextComponent();
 		ITextComponent textComponent = chatLine.getTextComponent();
-		if (!compiledOutputFormat.equals("$0")) {
+		if (!builtOutputFormat.equals("$0")) {
 			textComponent = new TextComponentString("");
 			int last = 0;
-			Matcher matcher = groupPattern.matcher(compiledOutputFormat);
+			Matcher matcher = groupPattern.matcher(builtOutputFormat);
 			while (matcher.find()) {
 				if(matcher.start() > last) {
-					textComponent.appendText(compiledOutputFormat.substring(last, matcher.start()));
+					textComponent.appendText(builtOutputFormat.substring(last, matcher.start()));
 				}
 
 				ITextComponent groupValue = null;
@@ -188,15 +188,15 @@ public class ChatView {
 				}
 
 				if (groupValue == null) {
-					groupValue = new TextComponentString("missingno"); // TODO test code
+					groupValue = new TextComponentString("missingno");
 				}
 
 				last = matcher.end();
 				textComponent.appendSibling(groupValue);
 			}
 
-			if(last < compiledOutputFormat.length()) {
-				textComponent.appendText(compiledOutputFormat.substring(last, compiledOutputFormat.length()));
+			if(last < builtOutputFormat.length()) {
+				textComponent.appendText(builtOutputFormat.substring(last, builtOutputFormat.length()));
 			}
 		}
 
@@ -292,7 +292,7 @@ public class ChatView {
 			matcher.appendReplacement(sb, "\u00a7" + matcher.group(1));
 		}
 		matcher.appendTail(sb);
-		compiledOutputFormat = sb.toString();
+		builtOutputFormat = sb.toString();
 	}
 
 	public boolean isExclusive() {

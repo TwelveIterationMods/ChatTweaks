@@ -151,7 +151,7 @@ public class GuiNewChatExt extends GuiNewChat {
 	@Override
 	public void clearChatMessages(boolean clearSent) {
 		wrappedChatLines.clear();
-		for(ChatChannel channel : ChatManager.getChatChannels()) { // TODO test me
+		for(ChatChannel channel : ChatManager.getChatChannels()) {
 			channel.clearChatMessages();
 		}
 

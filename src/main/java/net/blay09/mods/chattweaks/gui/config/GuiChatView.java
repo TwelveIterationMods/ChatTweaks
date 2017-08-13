@@ -41,7 +41,7 @@ public class GuiChatView extends GuiConfig {
 	private static String[] channelNames;
 
 	public GuiChatView(GuiScreen parentScreen, ChatView chatView) {
-		super(parentScreen, getConfigElements(chatView), ChatTweaks.MOD_ID, "config", false, false, "Add or Edit whateverus");
+		super(parentScreen, getConfigElements(chatView), ChatTweaks.MOD_ID, "config", false, false, "Manage Chat Views");
 		this.chatView = chatView;
 	}
 
