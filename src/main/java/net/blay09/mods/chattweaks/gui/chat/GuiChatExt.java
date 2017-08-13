@@ -11,6 +11,8 @@ import net.blay09.mods.chattweaks.event.ClientChatEvent;
 import net.blay09.mods.chattweaks.event.TabCompletionEvent;
 import net.blay09.mods.chattweaks.event.ChatComponentClickEvent;
 import net.blay09.mods.chattweaks.event.ChatComponentHoverEvent;
+import net.blay09.mods.chattweaks.gui.config.GuiChatView;
+import net.blay09.mods.chattweaks.gui.config.GuiChatViewsConfig;
 import net.blay09.mods.chattweaks.gui.config.GuiFactory;
 import net.blay09.mods.chattweaks.gui.emotes.GuiButtonEmotes;
 import net.blay09.mods.chattweaks.gui.emotes.GuiOverlayEmotes;
@@ -82,7 +84,11 @@ public class GuiChatExt extends GuiChat {
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		if (button instanceof GuiButtonSettings) {
-			mc.displayGuiScreen(new GuiFactory.ConfigGUI(this));
+			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+				mc.displayGuiScreen(new GuiChatView(null, ChatViewManager.getActiveView()));
+			} else {
+				mc.displayGuiScreen(new GuiFactory.ConfigGUI(this));
+			}
 		} else if(button instanceof GuiButtonChatView) {
 			ChatViewManager.setActiveView(((GuiButtonChatView) button).getView());
 		} else if (button instanceof GuiButtonEmotes) {

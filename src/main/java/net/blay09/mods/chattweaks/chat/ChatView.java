@@ -39,7 +39,7 @@ public class ChatView {
 	private boolean isMuted;
 
 	private Pattern compiledFilterPattern = defaultFilterPattern;
-	private String builtOutputFormat = outputFormat; // TODO name though
+	private String builtOutputFormat = outputFormat;
 	private Matcher lastMatcher;
 	private final List<ChatMessage> chatLines = Lists.newArrayList();
 	private boolean hasUnread;

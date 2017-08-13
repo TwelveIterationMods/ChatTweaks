@@ -84,7 +84,7 @@ public class GuiFactory implements IModGuiFactory {
 				IModGuiFactory factory = FMLClientHandler.instance().getGuiFactoryFor(Loader.instance().getIndexedModList().get(Compat.TWITCH_INTEGRATION));
 				return factory.createConfigGui(owningScreen);
 			}
-			return new GuiOpenIntegrationLink(this, "Twitch", "Chat Tweaks - Twitch Integration", 0);
+			return new GuiOpenIntegrationLink(this, "Twitch", "Chat Tweaks - Twitch Integration", 0, "http://minecraft.curseforge.com/projects/twitch-integration");
 		}
 
 		@Override

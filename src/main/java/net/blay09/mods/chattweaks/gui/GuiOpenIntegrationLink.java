@@ -8,10 +8,18 @@ import net.minecraft.util.text.TextFormatting;
 
 public class GuiOpenIntegrationLink extends GuiConfirmOpenLink {
 
-	public GuiOpenIntegrationLink(GuiYesNoCallback callback, String context, String requiredModule, int id) {
+	private final String url;
+
+	public GuiOpenIntegrationLink(GuiYesNoCallback callback, String context, String requiredModule, int id, String url) {
 		super(callback, TextFormatting.YELLOW + requiredModule + "\n\n" + TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.confirm.optionalModuleInstall"), id, true);
+		this.url = url;
 		messageLine1 = I18n.format(ChatTweaks.MOD_ID + ":gui.confirm.optionalModuleRequired", context);
 		disableSecurityWarning();
+	}
+
+	@Override
+	public void copyLinkToClipboard() {
+		setClipboardString(url);
 	}
 
 }

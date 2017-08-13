@@ -24,6 +24,7 @@ import net.minecraftforge.fml.client.config.GuiEditArrayEntries;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class GuiChatView extends GuiConfig {
@@ -40,7 +41,7 @@ public class GuiChatView extends GuiConfig {
 	private static SmartyListElement channelListElement;
 	private static String[] channelNames;
 
-	public GuiChatView(GuiScreen parentScreen, ChatView chatView) {
+	public GuiChatView(@Nullable GuiScreen parentScreen, ChatView chatView) {
 		super(parentScreen, getConfigElements(chatView), ChatTweaks.MOD_ID, "config", false, false, "Manage Chat Views");
 		this.chatView = chatView;
 	}
