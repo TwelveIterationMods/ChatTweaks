@@ -45,7 +45,6 @@ public class ChatTweaks {
 	public static final String MOD_ID = "chattweaks";
 	public static final String TEXT_FORMATTING_RGB = "\u00a7#";
 	public static final String TEXT_FORMATTING_EMOTE = "\u00a7*";
-	// TODO check out the load lag ... probably the buffered reader needs a larger buffer ... and shouldn't it be running on a thread anyways?
 
 	public static Logger logger;
 
@@ -102,12 +101,6 @@ public class ChatTweaks {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-		try {
-			TwitchEmotesAPI.loadEmoteSets();
-		} catch (Exception e) {
-			logger.error("Failed to load Twitch emote set mappings.");
-		}
-
 		ChatTweaksConfig.postInitLoad(config);
 
 		if(config.hasChanged()) {

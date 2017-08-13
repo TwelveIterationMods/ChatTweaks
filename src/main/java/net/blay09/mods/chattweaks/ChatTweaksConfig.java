@@ -6,6 +6,7 @@ import net.blay09.mods.chattweaks.chat.emotes.twitch.BTTVChannelEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.BTTVEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.FFZChannelEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.FFZEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchEmotesAPI;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchGlobalEmotes;
 import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchSubscriberEmotes;
 import net.minecraft.client.Minecraft;
@@ -44,6 +45,13 @@ public class ChatTweaksConfig {
 		EmoteRegistry.reloadEmoticons();
 		new Thread(() -> {
 			EmoteRegistry.isLoading = true;
+
+			try {
+				TwitchEmotesAPI.loadEmoteSets();
+			} catch (Exception e) {
+				ChatTweaks.logger.error("Failed to load Twitch emote set mappings.");
+			}
+
 			try {
 				if (config.getBoolean("Twitch Global Emotes", "emotes", true, "Should the Twitch Global emotes (ex. Kappa) be enabled?")) {
 					new TwitchGlobalEmotes(
