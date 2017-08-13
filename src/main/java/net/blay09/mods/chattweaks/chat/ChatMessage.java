@@ -143,6 +143,8 @@ public class ChatMessage {
 			out.customData = customData.copy();
 		}
 		out.timestamp = timestamp;
+		out.sender = sender;
+		out.message = message;
 		return out;
 	}
 

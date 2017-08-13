@@ -71,14 +71,14 @@ public class ChatView {
 		view.setMuted(jsonView.get("isMuted").getAsBoolean());
 
 		JsonArray channels = jsonView.getAsJsonArray("channels");
-		if(channels != null) {
+		if (channels != null) {
 			for (int i = 0; i < channels.size(); i++) {
 				JsonElement element = channels.get(i);
 				if (!element.isJsonPrimitive()) {
 					continue;
 				}
 				ChatChannel channel = ChatManager.getChatChannel(element.getAsString());
-				if(channel != null) {
+				if (channel != null) {
 					view.addChannel(channel);
 				} else {
 					ChatTweaks.logger.error("Channel {} does no longer exist. Removing it from view {}.", element.getAsString(), view.name);
@@ -100,7 +100,7 @@ public class ChatView {
 		object.addProperty("isMuted", isMuted);
 
 		JsonArray channels = new JsonArray();
-		for(ChatChannel channel : this.channels) {
+		for (ChatChannel channel : this.channels) {
 			channels.add(new JsonPrimitive(channel.getName()));
 		}
 		object.add("channels", channels);
@@ -115,35 +115,41 @@ public class ChatView {
 	public ChatMessage addChatLine(ChatMessage chatLine) {
 		chatLine = chatLine.copy();
 		chatLines.add(chatLine);
-		if(chatLines.size() > MAX_MESSAGES) {
+		if (chatLines.size() > MAX_MESSAGES) {
 			chatLines.remove(0);
 		}
 
 		try {
-			chatLine.setSender(lastMatcher.group("s"));
-			chatLine.setMessage(lastMatcher.group("m"));
+			if (chatLine.getSender() == null) {
+				chatLine.setSender(lastMatcher.group("s"));
+			}
+			if (chatLine.getMessage() == null) {
+				chatLine.setMessage(lastMatcher.group("m"));
+			}
 		} catch (Exception ignored) {
-			chatLine.setMessage(lastMatcher.group(0));
+			if (chatLine.getMessage() == null) {
+				chatLine.setMessage(lastMatcher.group(0));
+			}
 		}
 
 		ITextComponent textComponent = chatLine.getTextComponent();
-		if(!compiledOutputFormat.equals("$0")) {
+		if (!compiledOutputFormat.equals("$0")) {
 			StyledString styledString = new StyledString(textComponent);
 			Matcher matcher = groupPattern.matcher(compiledOutputFormat);
 			StringBuffer sb = new StringBuffer();
 			List<StyledStringSection> sections = Lists.newArrayList();
 			int last = 0;
-			while(matcher.find()) {
+			while (matcher.find()) {
 				int start;
 				int end;
 				String groupValue;
 				String namedGroup = matcher.group(2);
-				if(namedGroup != null) {
+				if (namedGroup != null) {
 					start = lastMatcher.start(namedGroup);
 					end = lastMatcher.end(namedGroup);
-					if(namedGroup.equals("s") && chatLine.getSender() != null) {
+					if (namedGroup.equals("s") && chatLine.getSender() != null) {
 						groupValue = chatLine.getSender();
-					} else if(namedGroup.equals("m") && chatLine.getMessage() != null) {
+					} else if (namedGroup.equals("m") && chatLine.getMessage() != null) {
 						groupValue = chatLine.getMessage();
 					} else {
 						try {
@@ -163,7 +169,7 @@ public class ChatView {
 					}
 				}
 
-				if(groupValue == null) {
+				if (groupValue == null) {
 					groupValue = "";
 				}
 
@@ -178,14 +184,14 @@ public class ChatView {
 			textComponent = output.toTextComponent();
 		}
 		ITextComponent newComponent = null;
-		for(ITextComponent component : textComponent) {
-			if(component instanceof TextComponentString) {
+		for (ITextComponent component : textComponent) {
+			if (component instanceof TextComponentString) {
 				String text = ((TextComponentString) component).getText();
-				if(text.length() > 1) {
+				if (text.length() > 1) {
 					int index = 0;
 					StringBuilder sb = new StringBuilder();
 					List<PositionedEmote> emotes = emoteScanner.scanForEmotes(text, null);
-					for(PositionedEmote emoteData : emotes) {
+					for (PositionedEmote emoteData : emotes) {
 						if (index < emoteData.getStart()) {
 							sb.append(text.substring(index, emoteData.getStart()));
 						}
@@ -197,12 +203,12 @@ public class ChatView {
 						chatLine.addImage(new ChatImageEmote(imageIndex, emoteData.getEmote()));
 						index = emoteData.getEnd() + 1;
 					}
-					if(index < text.length()) {
+					if (index < text.length()) {
 						sb.append(text.substring(index));
 					}
 					((TextComponentString) component).text = sb.toString();
 				}
-				if(text.length() > 0) {
+				if (text.length() > 0) {
 					if (newComponent == null) {
 						newComponent = new TextComponentString("");
 						newComponent.setStyle(textComponent.getStyle().createDeepCopy());
@@ -213,7 +219,7 @@ public class ChatView {
 				}
 			}
 		}
-		if(newComponent == null) {
+		if (newComponent == null) {
 			newComponent = textComponent;
 		}
 		chatLine.setTextComponent(newComponent);
@@ -242,7 +248,7 @@ public class ChatView {
 
 	public void setFilterPattern(String filterPattern) {
 		this.filterPattern = filterPattern;
-		if(!filterPattern.isEmpty()) {
+		if (!filterPattern.isEmpty()) {
 			try {
 				compiledFilterPattern = Pattern.compile(filterPattern, Pattern.DOTALL);
 			} catch (PatternSyntaxException e) {
@@ -265,7 +271,7 @@ public class ChatView {
 		this.outputFormat = outputFormat;
 		Matcher matcher = outputFormattingPattern.matcher(outputFormat);
 		StringBuffer sb = new StringBuffer();
-		while(matcher.find()) {
+		while (matcher.find()) {
 			matcher.appendReplacement(sb, "\u00a7" + matcher.group(1));
 		}
 		matcher.appendTail(sb);
@@ -334,9 +340,9 @@ public class ChatView {
 
 	public void refresh() {
 		chatLines.clear();
-		for(ChatChannel chatChannel : channels) {
-			for(ChatMessage chatMessage : chatChannel.getChatMessages()) {
-				if(messageMatches(chatMessage.getTextComponent().getUnformattedText())) {
+		for (ChatChannel chatChannel : channels) {
+			for (ChatMessage chatMessage : chatChannel.getChatMessages()) {
+				if (messageMatches(chatMessage.getTextComponent().getUnformattedText())) {
 					addChatLine(chatMessage);
 				}
 			}
