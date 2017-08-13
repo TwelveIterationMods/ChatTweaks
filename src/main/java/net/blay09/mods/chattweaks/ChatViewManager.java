@@ -183,7 +183,12 @@ public class ChatViewManager {
 	}
 
 	public static ChatView getOrCreateChatView(String name) {
-		return views.computeIfAbsent(name, ChatView::new);
+		ChatView chatView = getChatView(name);
+		if(chatView == null) {
+			chatView = new ChatView(name);
+			addChatView(chatView);
+		}
+		return chatView;
 	}
 
 	private static List<String> reservedNames = Lists.newArrayList();
