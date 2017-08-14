@@ -58,7 +58,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 	}
 
 	public static IConfigElement getDummyElement() {
-		SmartyListElement dummy = new SmartyListElement("Views", ChatViewManager.createDefaults(), ConfigGuiType.STRING, "config.category.views");
+		SmartyListElement dummy = new SmartyListElement("Views", ChatViewManager.createDefaults(), ConfigGuiType.STRING, "chattweaks:config.category.views");
 		dummy.setConfigEntryClass(ChatViewConfigEntry.class);
 		dummy.setArrayEntryClass(ChatViewArrayEntry.class);
 		dummy.setCustomEditListEntryClass(ChatViewArrayEntry.class);
@@ -189,10 +189,10 @@ public class GuiChatViewsConfig extends GuiEditArray {
 				}
 				button.displayString = chatView.getName();
 				if(warningCount > 0) {
-					button.displayString += TextFormatting.RED + " (" + warningCount + " warnings)";
+					button.displayString += " " + TextFormatting.RED + I18n.format("chattweaks:config.views.warnings", warningCount);
 				}
 				if(chatView.isMuted()) {
-					button.displayString += TextFormatting.DARK_AQUA + " (muted)";
+					button.displayString += " " + TextFormatting.DARK_AQUA + I18n.format("chattweaks:config.views.muted");
 				} else if(warningCount == 0) {
 					button.displayString += TextFormatting.AQUA + " [" + chatView.getMessageStyle().name() + "]";
 				}

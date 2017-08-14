@@ -26,7 +26,7 @@ public class GuiButtonEmote extends GuiButton {
 			mouseDragged(mc, mouseX, mouseY);
 			Gui.drawRect(xPosition, yPosition, xPosition + width, yPosition + height, (hoverState == 2) ? 0x88333333 : 0x44000000);
 			IChatRenderable image = emote.getImage();
-			if(image != null && image.getTextureId() != -1) {
+			if(image.getTextureId() != -1) {
 				GlStateManager.pushMatrix();
 				GlStateManager.enableAlpha();
 				GlStateManager.enableBlend();

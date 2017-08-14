@@ -1,39 +1,8 @@
-chattweaks:gui.button.deleteConfirm=Delete view?
-chattweaks:gui.textfield.originalFormat=(original format)
-chattweaks:gui.textfield.allMessages=(all messages)
-chattweaks:gui.tabSettings.showTimestamps= Show Timestamps
-chattweaks:gui.tabSettings.muted= Muted
-chattweaks:gui.tabSettings.exclusive= Exclusive
-chattweaks:gui.tabSettings.untitled=untitled
-chattweaks:gui.tabSettings.tabLabel=Tab Label
-chattweaks:gui.tabSettings.filterPattern=Filter Pattern
-chattweaks:gui.tabSettings.outgoingPrefix=Outgoing Prefix
-chattweaks:gui.tabSettings.messageFormat=Message Format
-chattweaks:gui.tabSettings.style=Style
-chattweaks:gui.tabSettings.settingsFor=Settings for %s
-chattweaks:gui.tabSettings.requiredGroups=Required Groups
-chattweaks:gui.tabSettings.sender=Sender
-chattweaks:gui.tabSettings.message=Message
-chattweaks:gui.tabSettings.customGroups=Custom Groups
-chattweaks:gui.tabSettings.originalText=Original Text
-chattweaks:gui.tabSettings.variables=Variables
-chattweaks:gui.tabSettings.messagePrefix=Message Prefix
-chattweaks:gui.tabSettings.messagePrefixDesc=This will be put in front\nof messages you send.\nCommands work as well.
-chattweaks:gui.tabSettings.openHelpInBrowser=Open Help in Browser
-chattweaks:gui.tabSettings.styleHidden=Hidden
-chattweaks:gui.tabSettings.styleHiddenDesc=Messages will not appear\nand the tab will be hidden.
-chattweaks:gui.tabSettings.styleChat=Chat (Default)
-chattweaks:gui.tabSettings.styleChatDesc=Messages will appear\nin Minecraft chat.
-chattweaks:gui.tabSettings.styleSideBar=Side Bar
-chattweaks:gui.tabSettings.styleSideBarDesc=Messages will appear\non the side and fade away.
-chattweaks:gui.tabSettings.styleBottom=Bottom
-chattweaks:gui.tabSettings.styleBottomDesc=Messages will appear on the\nbottom and fade away.
-chattweaks:gui.tabSettings.clickToToggle=Click to toggle
 chattweaks:gui.imagePreview.openInBrowser=Open in Browser
 chattweaks:gui.imagePreview.copyToClipboard=Copy to Clipboard
 chattweaks:gui.imagePreview.close=Close
 chattweaks:gui.imagePreview.loadingPreview=Loading Preview...
-chattweaks:gui.chat.textStoredInMacro=Text stored in Marco #%d.
+
 chattweaks:gui.chat.tooltipEmote=Emote:
 chattweaks:gui.chat.tooltipLocalEmotes=Local Emotes
 chattweaks:gui.chat.tooltipEmoteChannel=Channel:
@@ -41,13 +10,27 @@ chattweaks:gui.chat.tooltipBTTVEmotes=BetterTTV
 chattweaks:gui.chat.tooltipFFZEmotes=FrankerFaceZ
 chattweaks:gui.chat.tooltipTwitchEmotes=Twitch Global
 chattweaks:gui.chat.tooltipTwitchPrimeEmotes=Twitch Prime
+
 chattweaks:gui.confirm.optionalModuleRequired=You need to install an optional module for %s functionality:
 chattweaks:gui.confirm.optionalModuleInstall=Please install the additional mod and restart your game.
 
-chattweaks:config.category.general=General
-chattweaks:config.category.emotes=Emotes
-chattweaks:config.category.theme=Theme
+chattweaks:config.channels.available=available
+chattweaks:config.channels.selected=selected
+chattweaks:config.channels.select_channels=Select Channels
 
-key.category.chattweaks=chattweaks
-key.chattweaks.options=Open Settings
+chattweaks:config.views.warnings=(%d warnings)
+chattweaks:config.views.muted=(muted)
+
+chattweaks:config.category.general=General
+chattweaks:config.category.general.tooltip=§cNo tooltip provided.
+chattweaks:config.category.emotes=Emotes
+chattweaks:config.category.emotes.tooltip=§cNo tooltip provided.
+chattweaks:config.category.theme=Theme
+chattweaks:config.category.theme.tooltip=§cNo tooltip provided.
+chattweaks:config.category.views=Views
+chattweaks:config.category.views.tooltip=§cNo tooltip provided.
+chattweaks:config.category.twitch_integration=Twitch Integration
+chattweaks:config.category.twitch_integration.tooltip=§cNo tooltip provided.
+
+key.categories.chattweaks=Chat Tweaks
 key.chattweaks.switch_chat_view=Switch Chat View

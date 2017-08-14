@@ -5,6 +5,7 @@ import net.blay09.mods.chattweaks.ChatManager;
 import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiEditArray;
@@ -31,11 +32,11 @@ public class GuiChatViewChannels extends GuiEditArray {
 
 		updateList();
 
-		listAvailable = new GuiChatViewChannelsList(mc, 200, height, availableChannels, "available");
+		listAvailable = new GuiChatViewChannelsList(mc, 200, height, availableChannels, I18n.format("chattweaks:config.channels.available"));
 		listAvailable.setSlotXBoundsFromLeft(width / 2 - 4 - 200);
 		listAvailable.registerScrollButtons(7, 8);
 
-		listSelected = new GuiChatViewChannelsList(mc, 200, height, selectedChannels, "selected");
+		listSelected = new GuiChatViewChannelsList(mc, 200, height, selectedChannels, I18n.format("chattweaks:config.channels.selected"));
 		listSelected.setSlotXBoundsFromLeft(width / 2 + 4);
 		listSelected.registerScrollButtons(7, 8);
 	}
@@ -65,7 +66,7 @@ public class GuiChatViewChannels extends GuiEditArray {
 
 		listAvailable.drawScreen(mouseX, mouseY, partialTicks);
 		listSelected.drawScreen(mouseX, mouseY, partialTicks);
-		drawCenteredString(fontRenderer, "Select Channels", width / 2, 16, 0xFFFFFF);
+		drawCenteredString(fontRenderer, "chattweaks:config.channels.select_channels", width / 2, 16, 0xFFFFFF);
 
 		for (GuiButton button : buttonList) {
 			button.drawButton(mc, mouseX, mouseY);
