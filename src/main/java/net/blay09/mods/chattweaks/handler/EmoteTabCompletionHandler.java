@@ -12,7 +12,7 @@ public class EmoteTabCompletionHandler {
 	@SubscribeEvent
 	public void onTabCompletion(TabCompletionEvent event) {
 		if (event.getSide() == Side.CLIENT && ChatTweaksConfig.emoteTabCompletion) {
-			event.getCompletions().addAll(CommandBase.getListOfStringsMatchingLastWord(new String[]{event.getInput()}, EmoteRegistry.getEmoteCodes()));
+			event.getCompletions().addAll(CommandBase.getListOfStringsMatchingLastWord(new String[]{event.getInput()}, EmoteRegistry.getCommonEmoteCodes()));
 		}
 	}
 }

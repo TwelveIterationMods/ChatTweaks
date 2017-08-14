@@ -48,6 +48,8 @@ public class ChatTweaks {
 
 	public static Logger logger;
 
+	// TODO add timestamp variable
+
 	@Mod.Instance(MOD_ID)
     public static ChatTweaks instance;
 

@@ -12,10 +12,13 @@ import net.blay09.mods.chattweaks.chat.emotes.PositionedEmote;
 import net.blay09.mods.chattweaks.image.ChatImageEmote;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +31,7 @@ public class ChatView {
 	public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
 	private static final EmoteScanner emoteScanner = new EmoteScanner();
 	private static final int MAX_MESSAGES = 100;
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("[HH:mm] ");
 
 	private String name;
 	private final List<ChatChannel> channels = Lists.newArrayList();
@@ -167,6 +171,9 @@ public class ChatView {
 						groupValue = chatLine.getSender();
 					} else if (namedGroup.equals("m") && chatLine.getMessage() != null) {
 						groupValue = chatLine.getMessage();
+					} else if(namedGroup.equals("t")) {
+						groupValue = new TextComponentString(DATE_FORMAT.format(new Date(chatLine.getTimestamp())));
+						groupValue.getStyle().setColor(TextFormatting.GRAY);
 					} else {
 						int groupStart = -1;
 						int groupEnd = -1;

@@ -113,7 +113,7 @@ public class ChatTweaksConfig {
 				ChatTweaks.logger.error("Failed to load local emotes: ", e);
 			}
 			EmoteRegistry.isLoading = false;
-		}).run();
+		}).start();
 
 		ChatViewManager.load();
 	}
