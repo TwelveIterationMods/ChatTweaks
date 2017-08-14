@@ -26,6 +26,8 @@ public class ChatTweaksConfig {
 	public static int lineSpacing;
 	public static boolean highlightName;
 	public static String[] highlightStrings;
+	public static boolean preferNewMessages;
+	public static boolean showNewMessageOverlay;
 
 	public static void preInitLoad(Configuration config) {
 		ChatTweaksConfig.config = config;
@@ -37,6 +39,8 @@ public class ChatTweaksConfig {
 		alternateBackground = config.getBoolean("Alternate Background Color", "general", true, "Should uneven lines alternate their background color for easier reading?");
 		smallerEmotes = config.getBoolean("Smaller Emotes", "general", false, "Should emotes be scaled down to perfectly fit into one line?");
 		emoteTabCompletion = config.getBoolean("Emote Tab Completion", "general", false, "Should emotes be considered in tab completion?");
+		preferNewMessages = config.getBoolean("Smart View Navigation", "general", true, "When navigating between views, prefer views with new messages.");
+		showNewMessageOverlay = config.getBoolean("Show New Messages", "general", true, "Highlights views with new messages red even when chat is closed.");
 
 		ChatManager.init();
 	}

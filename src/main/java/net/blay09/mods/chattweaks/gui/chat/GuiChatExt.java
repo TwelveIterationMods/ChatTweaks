@@ -144,7 +144,7 @@ public class GuiChatExt extends GuiChat {
 	@Override
 	public void handleKeyboardInput() throws IOException {
 		if(Keyboard.getEventKeyState() && ChatTweaks.keySwitchChatView.isActiveAndMatches(Keyboard.getEventKey())) {
-			ChatViewManager.setActiveView(ChatViewManager.getNextChatView(ChatViewManager.getActiveView()));
+			ChatViewManager.setActiveView(ChatViewManager.getNextChatView(ChatViewManager.getActiveView(), ChatTweaksConfig.preferNewMessages));
 		} else {
 			super.handleKeyboardInput();
 		}

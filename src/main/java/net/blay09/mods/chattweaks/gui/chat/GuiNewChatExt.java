@@ -254,6 +254,21 @@ public class GuiNewChatExt extends GuiNewChat {
 				GlStateManager.popMatrix();
 			}
 		}
+
+		if(ChatTweaksConfig.showNewMessageOverlay && ChatViewManager.getViews().size() > 1) {
+			int x = 2;
+			int y = mc.displayHeight - 25;
+			for (ChatView chatView : ChatViewManager.getViews()) {
+				if (chatView.getMessageStyle() != MessageStyle.Chat) {
+					continue;
+				}
+				String label = "[" + chatView.getName() + "]";
+				if(chatView.hasUnreadMessages() && !chatView.isMuted()) {
+					mc.fontRenderer.drawStringWithShadow(label, x, y, 0xFFFF0000);
+				}
+				x += mc.fontRenderer.getStringWidth(label) + 2;
+			}
+		}
 	}
 
 	@Nullable

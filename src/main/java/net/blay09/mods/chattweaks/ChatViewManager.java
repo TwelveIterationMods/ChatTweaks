@@ -84,7 +84,7 @@ public class ChatViewManager {
 			addChatView(createSystemView());
 			addChatView(createInteractionView());
 		}
-		setActiveView(getNextChatView(null));
+		setActiveView(getNextChatView(null, false));
 	}
 
 	public static void save() {
@@ -135,11 +135,18 @@ public class ChatViewManager {
 		}
 		updateNameCache();
 		if(view == activeView) {
-			setActiveView(getNextChatView(view));
+			setActiveView(getNextChatView(view, false));
 		}
 	}
 
-	public static ChatView getNextChatView(@Nullable ChatView view) {
+	public static ChatView getNextChatView(@Nullable ChatView view, boolean preferNewMessages) {
+		if(preferNewMessages) {
+			for(ChatView chatView : sortedViews) {
+				if(chatView != view && chatView.hasUnreadMessages()) {
+					return chatView;
+				}
+			}
+		}
 		String[] arr = tabViewNames;
 		if(arr.length == 0) {
 			arr = viewNames;

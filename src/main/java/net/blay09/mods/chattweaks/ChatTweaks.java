@@ -48,7 +48,9 @@ public class ChatTweaks {
 
 	public static Logger logger;
 
-	// TODO add timestamp variable
+	// TODO cleanup lang file
+	// TODO show new message alert when chat is not opened (but make it an option?)
+	// TODO on shift-tab, prefer view with new messages? (but maybe also make that an option?)
 
 	@Mod.Instance(MOD_ID)
     public static ChatTweaks instance;
