@@ -118,8 +118,6 @@ public class ChatTweaksConfig {
 			}
 			EmoteRegistry.isLoading = false;
 		}).start();
-
-		ChatViewManager.load();
 	}
 
 }

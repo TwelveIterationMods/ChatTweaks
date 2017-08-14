@@ -102,6 +102,7 @@ public class ChatTweaks {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
 		ChatTweaksConfig.postInitLoad(config);
+		ChatViewManager.load();
 
 		if(config.hasChanged()) {
 			config.save();
