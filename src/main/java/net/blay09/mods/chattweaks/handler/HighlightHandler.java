@@ -17,7 +17,7 @@ public class HighlightHandler {
 		}
 		ITextComponent senderComponent = event.getChatMessage().getSender();
 		String sender = senderComponent != null ? TextFormatting.getTextWithoutFormattingCodes(senderComponent.getUnformattedText()) : null;
-		if(sender != null) {
+		if(sender != null && !sender.isEmpty()) {
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			String playerName = player != null ? player.getDisplayNameString() : null;
 			if(!sender.equals(playerName)) {

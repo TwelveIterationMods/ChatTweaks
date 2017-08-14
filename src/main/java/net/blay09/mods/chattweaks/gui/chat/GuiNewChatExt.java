@@ -176,12 +176,12 @@ public class GuiNewChatExt extends GuiNewChat {
 	@Override
 	public void drawChat(int updateCounter) {
 		EmoteRegistry.runDisposal();
+		boolean isChatOpen = this.getChatOpen();
 		if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN) {
 			int lineSpacing = ChatTweaksConfig.lineSpacing;
 			float chatOpacity = this.mc.gameSettings.chatOpacity * 0.9f + 0.1f;
 			int wrappedChatLinesCount = wrappedChatLines.size();
 			if (wrappedChatLinesCount > 0) {
-				boolean isChatOpen = this.getChatOpen();
 				float chatScale = this.getChatScale();
 				int chatWidth = MathHelper.ceil((float) this.getChatWidth() / chatScale);
 				GlStateManager.pushMatrix();
@@ -255,9 +255,9 @@ public class GuiNewChatExt extends GuiNewChat {
 			}
 		}
 
-		if(ChatTweaksConfig.showNewMessageOverlay && ChatViewManager.getViews().size() > 1) {
+		if(!isChatOpen && ChatTweaksConfig.showNewMessageOverlay && ChatViewManager.getViews().size() > 1) {
 			int x = 2;
-			int y = mc.displayHeight - 25;
+			int y = 24;
 			for (ChatView chatView : ChatViewManager.getViews()) {
 				if (chatView.getMessageStyle() != MessageStyle.Chat) {
 					continue;
