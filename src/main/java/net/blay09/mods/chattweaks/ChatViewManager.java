@@ -113,8 +113,7 @@ public class ChatViewManager {
 
 	public static void addChatView(ChatView view) {
 		if(views.containsKey(view.getName())) {
-//			throw new IllegalArgumentException("duplicate view " + view.getName());
-			return;
+			throw new IllegalArgumentException("duplicate view " + view.getName());
 		}
 		views.put(view.getName(), view);
 		sortedViews.add(view);

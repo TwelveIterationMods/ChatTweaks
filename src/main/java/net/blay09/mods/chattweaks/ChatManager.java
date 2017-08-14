@@ -3,6 +3,7 @@ package net.blay09.mods.chattweaks;
 import com.google.common.collect.Maps;
 import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
+import net.blay09.mods.chattweaks.chat.ChatView;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -73,7 +74,12 @@ public class ChatManager {
 	}
 
 	public static void removeChatChannel(String name) {
-		channels.remove(name);
+		ChatChannel channel = channels.remove(name);
+		if(channel != null) {
+			for (ChatView chatView : ChatViewManager.getViews()) {
+				chatView.getChannels().remove(channel);
+			}
+		}
 	}
 
 	public static Collection<ChatChannel> getChatChannels() {

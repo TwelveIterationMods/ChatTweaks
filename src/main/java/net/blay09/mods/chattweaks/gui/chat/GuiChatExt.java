@@ -107,7 +107,7 @@ public class GuiChatExt extends GuiChat {
 	@Override
 	public void sendChatMessage(String message, boolean addToSentMessages) {
 		ClientChatEvent event = new ClientChatEvent(message);
-		if (ChatViewManager.getActiveView().getOutgoingPrefix() != null && !event.getMessage().startsWith("/")) {
+		if (ChatViewManager.getActiveView().getOutgoingPrefix() != null && !(event.getMessage().startsWith("/") && !event.getMessage().startsWith("/me "))) {
 			event.setMessage(ChatViewManager.getActiveView().getOutgoingPrefix() + event.getMessage());
 		}
 		String newMessage;
