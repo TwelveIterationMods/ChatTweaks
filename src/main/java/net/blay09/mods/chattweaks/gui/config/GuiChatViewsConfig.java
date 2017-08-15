@@ -175,6 +175,8 @@ public class GuiChatViewsConfig extends GuiEditArray {
 
 		@Override
 		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial) {
+			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
+
 			btnRemoveEntry.enabled = owningEntryList.listEntries.size() > 2;
 
 			button.x = listWidth / 4 + 12;
