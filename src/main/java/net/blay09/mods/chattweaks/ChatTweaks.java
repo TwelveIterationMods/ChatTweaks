@@ -39,7 +39,7 @@ import java.io.File;
 import java.util.List;
 import java.util.function.Function;
 
-@Mod(modid = ChatTweaks.MOD_ID, name = "Chat Tweaks", clientSideOnly = true, guiFactory = "net.blay09.mods.chattweaks.gui.config.GuiFactory")
+@Mod(modid = ChatTweaks.MOD_ID, name = "Chat Tweaks", clientSideOnly = true, guiFactory = "net.blay09.mods.chattweaks.gui.config.GuiFactory", acceptedMinecraftVersions = "[1.12]")
 public class ChatTweaks {
 
 	public static final String MOD_ID = "chattweaks";

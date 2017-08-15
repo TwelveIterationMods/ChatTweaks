@@ -24,26 +24,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 	@Override
 	public void initGui() {
 		super.initGui();
-
-		fixForge();
-	}
-
-	private void fixForge() { // TODO remove in 1.12
-		entryList = new ChatViewEditArrayEntries(this, mc, configElement, beforeValues, currentValues);
-
-		// Workaround for a Forge bug where it would call constructors of existing elements with .toString() ... fixed in 1.12
-		// Basically we just repopulate the entire list with proper constructor calls
-		entryList.listEntries.clear();
-		boolean canDelete = currentValues.length > 1;
-		for (Object chatView : currentValues) {
-			entryList.listEntries.add(new ChatViewArrayEntry(this, entryList, configElement, chatView, canDelete));
-		}
-		entryList.listEntries.add(new GuiEditArrayEntries.BaseEntry(this, entryList, configElement));
-	}
-
-	public void saveAndUpdateList() {
-		((ChatViewEditArrayEntries) entryList).saveList();
-		currentValues = ((GuiConfig) parentScreen).entryList.getListEntry(slotIndex).getCurrentValues();
+		entryList = createEntryList();
 	}
 
 	@Override
@@ -51,10 +32,20 @@ public class GuiChatViewsConfig extends GuiEditArray {
 		super.actionPerformed(button);
 
 		if (button == btnUndoChanges) {
-			fixForge();
+			entryList = createEntryList();
 		} else if(button == btnDefault) {
-			fixForge();
+			entryList = createEntryList();
 		}
+	}
+
+	/** This is still needed since Forge doesn't support custom entry lists by default **/
+	public ChatViewEditArrayEntries createEntryList() {
+		return new ChatViewEditArrayEntries(this, mc, configElement, beforeValues, currentValues);
+	}
+
+	public void saveAndUpdateList() {
+		((ChatViewEditArrayEntries) entryList).saveList();
+		currentValues = ((GuiConfig) parentScreen).entryList.getListEntry(slotIndex).getCurrentValues();
 	}
 
 	public static IConfigElement getDummyElement() {
@@ -160,7 +151,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 
 			btnRemoveEntry.enabled = canDelete;
 
-			if (value.equals("")) { // TODO fix in 1.12, see fixForge()
+			if (value.equals("")) {
 				chatView = new ChatView(ChatViewManager.getFreeChatViewName());
 			} else if (value instanceof ChatView) {
 				chatView = (ChatView) value;
