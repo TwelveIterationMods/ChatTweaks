@@ -26,11 +26,12 @@ public class GuiChannelListEntry implements GuiListExtended.IGuiListEntry {
 	}
 
 	@Override
-	public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_) {
+	public void updatePosition(int p_192633_1_, int p_192633_2_, int p_192633_3_, float p_192633_4_) {
+		// TODO nothing to do here?
 	}
 
 	@Override
-	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
+	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
 		mc.getTextureManager().bindTexture(channel.getIcon());
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		Gui.drawModalRectWithCustomSizedTexture(x, y, 0f, 0f, 32, 32, 32f, 32f);

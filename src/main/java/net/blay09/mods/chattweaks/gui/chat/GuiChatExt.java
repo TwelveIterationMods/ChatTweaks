@@ -6,20 +6,17 @@ import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.ChatViewManager;
 import net.blay09.mods.chattweaks.chat.ChatView;
 import net.blay09.mods.chattweaks.chat.MessageStyle;
-import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.event.ClientChatEvent;
 import net.blay09.mods.chattweaks.event.TabCompletionEvent;
 import net.blay09.mods.chattweaks.event.ChatComponentClickEvent;
 import net.blay09.mods.chattweaks.event.ChatComponentHoverEvent;
 import net.blay09.mods.chattweaks.gui.config.GuiChatView;
-import net.blay09.mods.chattweaks.gui.config.GuiChatViewsConfig;
 import net.blay09.mods.chattweaks.gui.config.GuiFactory;
 import net.blay09.mods.chattweaks.gui.emotes.GuiButtonEmotes;
 import net.blay09.mods.chattweaks.gui.emotes.GuiOverlayEmotes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
-import net.minecraft.command.CommandBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -177,7 +174,7 @@ public class GuiChatExt extends GuiChat {
 	}
 
 	@Override
-	protected boolean handleComponentClick(ITextComponent component) {
+	public boolean handleComponentClick(ITextComponent component) {
 		if(component != null) {
 			if (MinecraftForge.EVENT_BUS.post(new ChatComponentClickEvent(component))) {
 				return true;

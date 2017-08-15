@@ -11,11 +11,11 @@ public class GuiButtonLink extends GuiButton {
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
-			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+			this.hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 			int hoverState = getHoverState(hovered);
-			mc.fontRenderer.drawStringWithShadow(displayString, xPosition, yPosition, hoverState == 2 ? 0xFFFFFF : 0xBBBBBB);
+			mc.fontRenderer.drawStringWithShadow(displayString, x, y, hoverState == 2 ? 0xFFFFFF : 0xBBBBBB);
 		}
 	}
 

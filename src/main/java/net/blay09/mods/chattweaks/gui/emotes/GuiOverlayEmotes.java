@@ -124,8 +124,8 @@ public class GuiOverlayEmotes {
 					button.visible = false;
 					continue;
 				}
-				button.xPosition = buttonX;
-				button.yPosition = buttonY;
+				button.x = buttonX;
+				button.y = buttonY;
 				button.visible = true;
 				buttonX += button.width + 2;
 			} else {

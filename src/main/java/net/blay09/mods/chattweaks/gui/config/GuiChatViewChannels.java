@@ -69,7 +69,7 @@ public class GuiChatViewChannels extends GuiEditArray {
 		drawCenteredString(fontRenderer, "chattweaks:config.channels.select_channels", width / 2, 16, 0xFFFFFF);
 
 		for (GuiButton button : buttonList) {
-			button.drawButton(mc, mouseX, mouseY);
+			button.drawButton(mc, mouseX, mouseY, partialTicks);
 		}
 	}
 

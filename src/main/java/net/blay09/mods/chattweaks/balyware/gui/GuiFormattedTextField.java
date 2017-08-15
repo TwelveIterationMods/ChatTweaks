@@ -39,7 +39,7 @@ public class GuiFormattedTextField extends GuiTextField {
 		super.drawTextBox();
 
 		if (!isFocused() && isEmpty) {
-			fontRenderer.getBaseFontRenderer().drawStringWithShadow(TextFormatting.GRAY + displayTextWhenEmpty, xPosition + 4, yPosition + (height - 8) / 2, 0xE0E0E0);
+			fontRenderer.getBaseFontRenderer().drawStringWithShadow(TextFormatting.GRAY + displayTextWhenEmpty, x + 4, y + (height - 8) / 2, 0xE0E0E0);
 		}
 	}
 

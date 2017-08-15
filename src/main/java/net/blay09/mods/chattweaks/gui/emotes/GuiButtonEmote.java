@@ -19,12 +19,12 @@ public class GuiButtonEmote extends GuiButton {
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
-			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+			this.hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 			int hoverState = getHoverState(hovered);
 			mouseDragged(mc, mouseX, mouseY);
-			Gui.drawRect(xPosition, yPosition, xPosition + width, yPosition + height, (hoverState == 2) ? 0x88333333 : 0x44000000);
+			Gui.drawRect(x, y, x + width, y + height, (hoverState == 2) ? 0x88333333 : 0x44000000);
 			IChatRenderable image = emote.getImage();
 			if(image.getTextureId() != -1) {
 				GlStateManager.pushMatrix();
@@ -32,8 +32,8 @@ public class GuiButtonEmote extends GuiButton {
 				GlStateManager.enableBlend();
 				GlStateManager.bindTexture(image.getTextureId());
 				GlStateManager.color(1f, 1f, 1f, 1f);
-//				GlStateManager.translate(xPosition + width / 2 - (image.getWidth() * image.getScale()) / 2, yPosition, 100f);
-				GlStateManager.translate(xPosition + width / 2 - (image.getWidth() * image.getScale()) / 2, yPosition + height / 2 - (image.getHeight() * image.getScale()) / 2, 100f);
+//				GlStateManager.translate(x + width / 2 - (image.getWidth() * image.getScale()) / 2, y, 100f);
+				GlStateManager.translate(x + width / 2 - (image.getWidth() * image.getScale()) / 2, y + height / 2 - (image.getHeight() * image.getScale()) / 2, 100f);
 				GlStateManager.scale(image.getScale(), image.getScale(), 1f);
 				if(image instanceof IAnimatedChatRenderable) {
 					((IAnimatedChatRenderable) image).updateAnimation();

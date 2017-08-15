@@ -106,13 +106,13 @@ public class GuiChatViewsConfig extends GuiEditArray {
 		}
 
 		@Override
-		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial) {
+			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
 
-			btnValueFixed.xPosition = listWidth / 2 - 150;
-			btnValueFixed.yPosition = y;
+			btnValueFixed.x = listWidth / 2 - 150;
+			btnValueFixed.y = y;
 			btnValueFixed.enabled = enabled();
-			btnValueFixed.drawButton(mc, mouseX, mouseY);
+			btnValueFixed.drawButton(mc, mouseX, mouseY, partial);
 		}
 
 		@Override
@@ -174,13 +174,11 @@ public class GuiChatViewsConfig extends GuiEditArray {
 		}
 
 		@Override
-		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
-
+		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial) {
 			btnRemoveEntry.enabled = owningEntryList.listEntries.size() > 2;
 
-			button.xPosition = listWidth / 4 + 12;
-			button.yPosition = y;
+			button.x = listWidth / 4 + 12;
+			button.y = y;
 
 			if(chatView != null) {
 				int warningCount = 0;
@@ -200,7 +198,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 				button.displayString = "invalid";
 			}
 
-			button.drawButton(owningEntryList.getMC(), mouseX, mouseY);
+			button.drawButton(owningEntryList.getMC(), mouseX, mouseY, partial);
 			if(slotIndex > 0) {
 				buttonUp.drawButton(owningEntryList.getMC(), mouseX, mouseY, x, y, listWidth, slotHeight);
 			}

@@ -16,10 +16,10 @@ public class GuiButtonChatView extends GuiButton {
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
 			FontRenderer fondRenderer = mc.fontRenderer;
-			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+			this.hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 			mouseDragged(mc, mouseX, mouseY);
 			boolean isActiveChannel = (view == ChatViewManager.getActiveView());
 			boolean hasNewMessages = view.hasUnreadMessages();
@@ -30,7 +30,7 @@ public class GuiButtonChatView extends GuiButton {
 			} else if(hoverState == 2 && !isActiveChannel) {
 				textColor = 0xFFCCCCCC;
 			}
-			drawCenteredString(fondRenderer, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, textColor);
+			drawCenteredString(fondRenderer, displayString, x + width / 2, y + (height - 8) / 2, textColor);
 		}
 	}
 

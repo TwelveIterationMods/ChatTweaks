@@ -20,19 +20,19 @@ public class GuiButtonEmoteGroup extends GuiButton {
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
-			this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+			this.hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 			int hoverState = getHoverState(hovered);
 			mouseDragged(mc, mouseX, mouseY);
-			Gui.drawRect(xPosition, yPosition, xPosition + width, yPosition + height, (hoverState == 2) ? 0x88333333 : 0x44000000);
+			Gui.drawRect(x, y, x + width, y + height, (hoverState == 2) ? 0x88333333 : 0x44000000);
 			if(image.getTextureId() != -1) {
 				this.width = (int) (image.getWidth() * image.getScale());
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
 				GlStateManager.bindTexture(image.getTextureId());
 				GlStateManager.color(1f, 1f, 1f, 1f);
-				GlStateManager.translate(xPosition, yPosition, 100f);
+				GlStateManager.translate(x, y, 100f);
 				GlStateManager.scale(image.getScale(), image.getScale(), 1f);
 				if(image instanceof IAnimatedChatRenderable) {
 					((IAnimatedChatRenderable) image).updateAnimation();

@@ -29,7 +29,7 @@ public class GuiButtonSortChatView extends GuiButton {
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		drawButton(mc, mouseX, mouseY, 0, 0, 0, 0);
 	}
 
@@ -37,16 +37,16 @@ public class GuiButtonSortChatView extends GuiButton {
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		mc.getTextureManager().bindTexture(SERVER_SELECTION_BUTTONS);
 		if (visible && mouseY >= slotY && mouseY < slotY + slotHeight) {
-			xPosition = listWidth / 4 - 2;
-			yPosition = slotY + 1;
+			x = listWidth / 4 - 2;
+			y = slotY + 1;
 			if(sortDir == 1) {
-				yPosition += 8;
+				y += 8;
 			}
-			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+			hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 			if (hovered) {
-				Gui.drawModalRectWithCustomSizedTexture(xPosition - 3, yPosition - 5 + (sortDir == 1 ? -15 : 0), 96f - (sortDir == 1 ? 32f : 0f), 32f, 32, 32, 256f, 256f);
+				Gui.drawModalRectWithCustomSizedTexture(x - 3, y - 5 + (sortDir == 1 ? -15 : 0), 96f - (sortDir == 1 ? 32f : 0f), 32f, 32, 32, 256f, 256f);
 			} else {
-				Gui.drawModalRectWithCustomSizedTexture(xPosition - 3, yPosition - 5 + (sortDir == 1 ? -15 : 0), 96f - (sortDir == 1 ? 32f : 0f), 0f, 32, 32, 256f, 256f);
+				Gui.drawModalRectWithCustomSizedTexture(x - 3, y - 5 + (sortDir == 1 ? -15 : 0), 96f - (sortDir == 1 ? 32f : 0f), 0f, 32, 32, 256f, 256f);
 			}
 		}
 	}

@@ -131,10 +131,10 @@ public class GuiChatView extends GuiConfig {
 		}
 
 		@Override
-		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
-			textField.xPosition = owningEntryList.controlX + 2;
-			textField.yPosition = y + 1;
+		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial) {
+			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
+			textField.x = owningEntryList.controlX + 2;
+			textField.y = y + 1;
 			textField.width = owningEntryList.controlWidth - 4;
 			textField.setEnabled(enabled());
 			textField.drawTextBox();
@@ -233,12 +233,12 @@ public class GuiChatView extends GuiConfig {
 		}
 
 		@Override
-		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
-			checkBox.xPosition = listWidth / 4;
-			checkBox.yPosition = y;
+		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial) {
+			super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
+			checkBox.x = listWidth / 4;
+			checkBox.y = y;
 			checkBox.displayString = " " + GuiChatView.channelNames[slotIndex];
-			checkBox.drawButton(owningScreen.mc, mouseX, mouseY);
+			checkBox.drawButton(owningScreen.mc, mouseX, mouseY, partial);
 		}
 
 		@Override
