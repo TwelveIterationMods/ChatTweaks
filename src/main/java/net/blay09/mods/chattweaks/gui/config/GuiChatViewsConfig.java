@@ -151,7 +151,7 @@ public class GuiChatViewsConfig extends GuiEditArray {
 
 			btnRemoveEntry.enabled = canDelete;
 
-			if (value.equals("")) {
+			if (value.equals("")) { // empty string means 'new'
 				chatView = new ChatView(ChatViewManager.getFreeChatViewName());
 			} else if (value instanceof ChatView) {
 				chatView = (ChatView) value;
