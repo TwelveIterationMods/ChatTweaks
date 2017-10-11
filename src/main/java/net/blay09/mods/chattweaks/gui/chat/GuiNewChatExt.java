@@ -205,18 +205,18 @@ public class GuiNewChatExt extends GuiNewChat {
 							percentage = percentage * percentage;
 							alpha = (int) (255f * percentage);
 						}
-						alpha = (int) ((float) alpha * chatOpacity);
-						if (alpha > 3) {
+						int scaledAlpha = (int) ((float) alpha * chatOpacity);
+						if (scaledAlpha > 3) {
 							int x = 0;
 							int y = -lineIdx * (fontRenderer.FONT_HEIGHT + lineSpacing);
 							if (chatLine.message.hasBackgroundColor()) {
-								drawRect(-2, y - fontRenderer.FONT_HEIGHT + lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), (chatLine.message.getBackgroundColor() & 0x00FFFFFF) + (alpha << 24));
+								drawRect(-2, y - fontRenderer.FONT_HEIGHT + lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), (chatLine.message.getBackgroundColor() & 0x00FFFFFF) + ((scaledAlpha / 2) << 24));
 							} else {
-								drawRect(-2, y - fontRenderer.FONT_HEIGHT - lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), (((!ChatTweaksConfig.alternateBackground || !chatLine.alternateBackground) ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) & 0x00FFFFFF) + (alpha << 24));
+								drawRect(-2, y - fontRenderer.FONT_HEIGHT - lineSpacing / 2, chatWidth + 4, y + (int) Math.ceil((float) lineSpacing / 2f), (((!ChatTweaksConfig.alternateBackground || !chatLine.alternateBackground) ? ChatTweaksConfig.backgroundColor1 : ChatTweaksConfig.backgroundColor2) & 0x00FFFFFF) + ((scaledAlpha / 2) << 24));
 							}
 							GlStateManager.enableBlend();
 							for (TextRenderRegion region : chatLine.regions) {
-								x = fontRenderer.drawString(region.getText(), x, y - fontRenderer.FONT_HEIGHT + 1, (region.getColor() & 0x00FFFFFF) + (alpha << 24), true);
+								x = fontRenderer.drawString(region.getText(), x, y - fontRenderer.FONT_HEIGHT + 1, (region.getColor() & 0x00FFFFFF) + (((ChatTweaksConfig.chatTextOpacity) ? alpha : scaledAlpha) << 24), true);
 							}
 							if (chatLine.images != null) {
 								for (ChatImage image : chatLine.images) {
@@ -229,7 +229,7 @@ public class GuiNewChatExt extends GuiNewChat {
 									int renderY = y - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2 - renderHeight / 2;
 									GlStateManager.pushMatrix();
 									GlStateManager.scale(scale, scale, 1f);
-									image.draw((int) (renderX / scale), (int) (renderY / scale), alpha);
+									image.draw((int) (renderX / scale), (int) (renderY / scale), scaledAlpha);
 									GlStateManager.popMatrix();
 								}
 							}
