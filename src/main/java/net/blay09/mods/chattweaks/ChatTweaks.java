@@ -73,6 +73,7 @@ public class ChatTweaks {
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
 		ChatTweaksConfig.preInitLoad(config);
+		ChatManager.init();
 
 		authManager = new AuthManager();
 		authManager.load();
