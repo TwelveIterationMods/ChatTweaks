@@ -76,7 +76,7 @@ public class ChatViewManager {
 				addChatView(ChatView.fromJson(jsonViews.get(i).getAsJsonObject()));
 			}
 		} catch (FileNotFoundException ignored) {
-		} catch (IOException e) {
+		} catch (Exception e) {
 			ChatTweaks.logger.error("An error occurred trying to load the chat views: ", e);
 		}
 		if(views.isEmpty()) {

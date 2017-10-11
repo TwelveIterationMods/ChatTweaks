@@ -66,7 +66,7 @@ public class GuiChatViewChannels extends GuiEditArray {
 
 		listAvailable.drawScreen(mouseX, mouseY, partialTicks);
 		listSelected.drawScreen(mouseX, mouseY, partialTicks);
-		drawCenteredString(fontRenderer, "chattweaks:config.channels.select_channels", width / 2, 16, 0xFFFFFF);
+		drawCenteredString(fontRenderer, I18n.format("chattweaks:config.channels.select_channels"), width / 2, 16, 0xFFFFFF);
 
 		for (GuiButton button : buttonList) {
 			button.drawButton(mc, mouseX, mouseY, partialTicks);
