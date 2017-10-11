@@ -87,6 +87,7 @@ public class Emote implements IEmote {
 			image = NullRenderable.INSTANCE;
 		}
 		this.image = image;
+		loadRequested = false;
 	}
 
 	@Override

@@ -69,6 +69,7 @@ public class StaticChatRenderable implements IChatRenderable {
 	public void disposeTexture() {
 		if(textureId != -1) {
 			TextureUtil.deleteTexture(textureId);
+			textureId = -1;
 		}
 	}
 

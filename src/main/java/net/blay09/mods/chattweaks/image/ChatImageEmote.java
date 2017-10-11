@@ -27,6 +27,7 @@ public class ChatImageEmote extends ChatImage {
 			emote.requestLoad();
 			return;
 		}
+
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.bindTexture(textureId);
