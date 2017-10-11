@@ -140,10 +140,14 @@ public class GuiNewChatExt extends GuiNewChat {
 				alternateBackground = !alternateBackground;
 				break;
 			case Side:
-				ChatTweaks.getSideChatHandler().addMessage(chatMessage);
+				if(!view.isMuted()) {
+					ChatTweaks.getSideChatHandler().addMessage(chatMessage);
+				}
 				break;
 			case Bottom:
-				ChatTweaks.getBottomChatHandler().setMessage(chatMessage);
+				if(!view.isMuted()) {
+					ChatTweaks.getBottomChatHandler().setMessage(chatMessage);
+				}
 				break;
 		}
 	}
