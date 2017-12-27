@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.blay09.mods.chattweaks.ChatManager;
 import net.blay09.mods.chattweaks.ChatTweaks;
+import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteScanner;
 import net.blay09.mods.chattweaks.chat.emotes.PositionedEmote;
 import net.blay09.mods.chattweaks.image.ChatImageEmote;
@@ -15,7 +16,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -31,7 +31,6 @@ public class ChatView {
 	public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
 	private static final EmoteScanner emoteScanner = new EmoteScanner();
 	private static final int MAX_MESSAGES = 100;
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("[HH:mm] ");
 
 	private String name;
 	private final List<ChatChannel> channels = Lists.newArrayList();
@@ -172,7 +171,7 @@ public class ChatView {
 					} else if (namedGroup.equals("m") && chatLine.getMessage() != null) {
 						groupValue = chatLine.getMessage();
 					} else if(namedGroup.equals("t")) {
-						groupValue = new TextComponentString(DATE_FORMAT.format(new Date(chatLine.getTimestamp())));
+						groupValue = new TextComponentString(ChatTweaksConfig.timestampFormat.format(new Date(chatLine.getTimestamp())));
 						groupValue.getStyle().setColor(TextFormatting.GRAY);
 					} else {
 						int groupStart = -1;

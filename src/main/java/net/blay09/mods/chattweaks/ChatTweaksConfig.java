@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 
 public class ChatTweaksConfig {
 
@@ -29,6 +30,8 @@ public class ChatTweaksConfig {
 	public static boolean preferNewMessages;
 	public static boolean showNewMessageOverlay;
 	public static boolean chatTextOpacity;
+	public static SimpleDateFormat timestampFormat;
+	private static final SimpleDateFormat DEFAULT_TIMESTAMP_FORMAT = new SimpleDateFormat("[HH:mm]");
 
 	public static void preInitLoad(Configuration config) {
 		ChatTweaksConfig.config = config;
@@ -43,6 +46,13 @@ public class ChatTweaksConfig {
 		preferNewMessages = config.getBoolean("Smart View Navigation", "general", true, "When navigating between views, prefer views with new messages.");
 		showNewMessageOverlay = config.getBoolean("Show New Messages", "general", true, "Highlights views with new messages red even when chat is closed.");
 		chatTextOpacity = config.getBoolean("Chat Text Full Opacity", "general", true, "Vanilla Minecraft makes the text in chat transparent too, when opacity is set. Set this to false to restore that behaviour.");
+		String timestampFormatString = config.getString("Timestamp Format", "general", "[HH:mm]", "The format for the timestamp to be displayed in.");
+		try {
+			timestampFormat = new SimpleDateFormat(timestampFormatString);
+		} catch (IllegalArgumentException e) {
+			ChatTweaks.logger.error("Invalid timestamp format - reverting to default");
+			timestampFormat = DEFAULT_TIMESTAMP_FORMAT;
+		}
 	}
 
 	public static void postInitLoad(Configuration config) {
