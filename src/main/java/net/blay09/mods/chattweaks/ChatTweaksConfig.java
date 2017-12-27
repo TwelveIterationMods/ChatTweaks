@@ -30,6 +30,7 @@ public class ChatTweaksConfig {
 	public static boolean preferNewMessages;
 	public static boolean showNewMessageOverlay;
 	public static boolean chatTextOpacity;
+	public static boolean hideEmotesMenu;
 	public static SimpleDateFormat timestampFormat;
 	private static final SimpleDateFormat DEFAULT_TIMESTAMP_FORMAT = new SimpleDateFormat("[HH:mm]");
 
@@ -46,6 +47,7 @@ public class ChatTweaksConfig {
 		preferNewMessages = config.getBoolean("Smart View Navigation", "general", true, "When navigating between views, prefer views with new messages.");
 		showNewMessageOverlay = config.getBoolean("Show New Messages", "general", true, "Highlights views with new messages red even when chat is closed.");
 		chatTextOpacity = config.getBoolean("Chat Text Full Opacity", "general", true, "Vanilla Minecraft makes the text in chat transparent too, when opacity is set. Set this to false to restore that behaviour.");
+		hideEmotesMenu = config.getBoolean("Hide Emotes Menu", "general", false, "Set to true to hide the emote menu button in the chat.");
 		String timestampFormatString = config.getString("Timestamp Format", "general", "[HH:mm]", "The format for the timestamp to be displayed in.");
 		try {
 			timestampFormat = new SimpleDateFormat(timestampFormatString);

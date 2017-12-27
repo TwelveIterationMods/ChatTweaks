@@ -52,7 +52,9 @@ public class GuiChatExt extends GuiChat {
 		}
 
 		buttonList.add(new GuiButtonSettings(0, width - 16, height - 14));
-		buttonList.add(new GuiButtonEmotes(0, width - 30, height - 14));
+		if (!ChatTweaksConfig.hideEmotesMenu) {
+			buttonList.add(new GuiButtonEmotes(0, width - 30, height - 14));
+		}
 
 		if (emoteMenu != null) {
 			emoteMenu.initGui();
@@ -63,7 +65,7 @@ public class GuiChatExt extends GuiChat {
 
 	public void updateChannelButtons() {
 		buttonList.removeIf(p -> p instanceof GuiButtonChatView);
-		if(ChatViewManager.getViews().size() > 1) {
+		if (ChatViewManager.getViews().size() > 1) {
 			int x = 2;
 			int y = height - 25;
 			for (ChatView chatView : ChatViewManager.getViews()) {
@@ -81,12 +83,12 @@ public class GuiChatExt extends GuiChat {
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		if (button instanceof GuiButtonSettings) {
-			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
 				mc.displayGuiScreen(new GuiChatView(null, ChatViewManager.getActiveView()));
 			} else {
 				mc.displayGuiScreen(new GuiFactory.ConfigGUI(this));
 			}
-		} else if(button instanceof GuiButtonChatView) {
+		} else if (button instanceof GuiButtonChatView) {
 			ChatViewManager.setActiveView(((GuiButtonChatView) button).getView());
 		} else if (button instanceof GuiButtonEmotes) {
 			if (emoteMenu == null) {
@@ -124,7 +126,7 @@ public class GuiChatExt extends GuiChat {
 
 	@Override
 	public void handleMouseInput() throws IOException {
-		if(emoteMenu != null && emoteMenu.isMouseInside()) {
+		if (emoteMenu != null && emoteMenu.isMouseInside()) {
 			int delta = Mouse.getEventDWheel();
 			if (delta != 0) {
 				delta = MathHelper.clamp(delta, -1, 1);
@@ -140,7 +142,7 @@ public class GuiChatExt extends GuiChat {
 
 	@Override
 	public void handleKeyboardInput() throws IOException {
-		if(Keyboard.getEventKeyState() && ChatTweaks.keySwitchChatView.isActiveAndMatches(Keyboard.getEventKey())) {
+		if (Keyboard.getEventKeyState() && ChatTweaks.keySwitchChatView.isActiveAndMatches(Keyboard.getEventKey())) {
 			ChatViewManager.setActiveView(ChatViewManager.getNextChatView(ChatViewManager.getActiveView(), ChatTweaksConfig.preferNewMessages));
 		} else {
 			super.handleKeyboardInput();
@@ -175,7 +177,7 @@ public class GuiChatExt extends GuiChat {
 
 	@Override
 	public boolean handleComponentClick(ITextComponent component) {
-		if(component != null) {
+		if (component != null) {
 			if (MinecraftForge.EVENT_BUS.post(new ChatComponentClickEvent(component))) {
 				return true;
 			}
