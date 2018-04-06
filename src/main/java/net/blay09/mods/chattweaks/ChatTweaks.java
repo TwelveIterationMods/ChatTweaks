@@ -13,6 +13,7 @@ import net.blay09.mods.chattweaks.gui.BottomChatRenderer;
 import net.blay09.mods.chattweaks.gui.SideChatRenderer;
 import net.blay09.mods.chattweaks.handler.EmoteTabCompletionHandler;
 import net.blay09.mods.chattweaks.handler.HighlightHandler;
+import net.blay09.mods.chattweaks.handler.OpenScreenshotFolderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiSleepMP;
@@ -69,6 +70,7 @@ public class ChatTweaks {
 		MinecraftForge.EVENT_BUS.register((bottomChatRenderer = new BottomChatRenderer()));
 		MinecraftForge.EVENT_BUS.register(new EmoteTabCompletionHandler());
 		MinecraftForge.EVENT_BUS.register(new HighlightHandler());
+		MinecraftForge.EVENT_BUS.register(new OpenScreenshotFolderHandler());
 
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
