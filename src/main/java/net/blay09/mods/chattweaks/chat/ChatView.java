@@ -196,7 +196,7 @@ public class ChatView {
                 }
 
                 if (groupValue == null) {
-                    groupValue = new TextComponentString("missingno");
+                    groupValue = new TextComponentString("*");
                 }
 
                 last = matcher.end();
