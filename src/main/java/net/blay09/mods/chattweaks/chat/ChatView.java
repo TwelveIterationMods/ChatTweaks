@@ -11,10 +11,7 @@ import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteScanner;
 import net.blay09.mods.chattweaks.chat.emotes.PositionedEmote;
 import net.blay09.mods.chattweaks.image.ChatImageEmote;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -210,50 +207,54 @@ public class ChatView {
 
         ITextComponent newComponent = null;
         for (ITextComponent component : textComponent) {
-            if (component instanceof TextComponentString) {
-                String text = ((TextComponentString) component).getText();
-                if (text.length() > 1) {
-                    int index = 0;
-                    StringBuilder sb = new StringBuilder();
-                    List<PositionedEmote> emotes = emoteScanner.scanForEmotes(text, null);
-                    for (PositionedEmote emoteData : emotes) {
-                        if (index < emoteData.getStart()) {
-                            sb.append(text.substring(index, emoteData.getStart()));
-                        }
-                        int imageIndex = sb.length() + 1;
-                        sb.append("\u00a7*");
-                        for (int i = 0; i < emoteData.getEmote().getWidthInSpaces(); i++) {
-                            sb.append(' ');
-                        }
-                        chatLine.addImage(new ChatImageEmote(imageIndex, emoteData.getEmote()));
-                        index = emoteData.getEnd() + 1;
+            String text = component.getUnformattedComponentText();
+            String resultText = text;
+            if (text.length() > 1 && component instanceof TextComponentString) {
+                int index = 0;
+                StringBuilder sb = new StringBuilder();
+                List<PositionedEmote> emotes = emoteScanner.scanForEmotes(text, null);
+                for (PositionedEmote emoteData : emotes) {
+                    if (index < emoteData.getStart()) {
+                        sb.append(text, index, emoteData.getStart());
                     }
-                    if (index < text.length()) {
-                        sb.append(text.substring(index));
+                    int imageIndex = sb.length() + 1;
+                    sb.append("\u00a7*");
+                    for (int i = 0; i < emoteData.getEmote().getWidthInSpaces(); i++) {
+                        sb.append(' ');
                     }
-                    ((TextComponentString) component).text = sb.toString();
+                    chatLine.addImage(new ChatImageEmote(imageIndex, emoteData.getEmote()));
+                    index = emoteData.getEnd() + 1;
                 }
-                if (text.length() > 0) {
-                    if (newComponent == null) {
-                        newComponent = new TextComponentString("");
-                        newComponent.setStyle(textComponent.getStyle().createDeepCopy());
-                    }
-                    TextComponentString copyComponent = new TextComponentString(((TextComponentString) component).text);
-                    // Guard against ugly hacks implementing createDeepCopy incorrectly, to prevent StackOverflowException
-                    // https://github.com/BuildCraft/BuildCraft/blob/c6b869f6a345784a1b2c5afb79e0dd733798b150/common/buildcraft/lib/BCLibEventDist.java#L140-L171
-                    if (newComponent.getStyle() == component.getStyle()) {
-                        // Simply preventing the recursive style isn't enough as they also add side-effects to a getter... just get rid of the dumb thing.
-                        newComponent.setStyle(new Style());
-                    } else {
-                        copyComponent.setStyle(component.getStyle());
-                    }
-                    newComponent.appendSibling(copyComponent);
+
+                if (index < text.length()) {
+                    sb.append(text.substring(index));
                 }
+
+                resultText = sb.toString();
+            }
+
+            if (text.length() > 0) {
+                if (newComponent == null) {
+                    newComponent = new TextComponentString("");
+                    newComponent.setStyle(textComponent.getStyle().createDeepCopy());
+                }
+                TextComponentString copyComponent = new TextComponentString(resultText);
+                // Guard against ugly hacks implementing createDeepCopy incorrectly, to prevent StackOverflowException
+                // https://github.com/BuildCraft/BuildCraft/blob/c6b869f6a345784a1b2c5afb79e0dd733798b150/common/buildcraft/lib/BCLibEventDist.java#L140-L171
+                if (newComponent.getStyle() == component.getStyle()) {
+                    // Simply preventing the recursive style isn't enough as they also add side-effects to a getter... just get rid of the dumb thing.
+                    newComponent.setStyle(new Style());
+                } else {
+                    copyComponent.setStyle(component.getStyle());
+                }
+                newComponent.appendSibling(copyComponent);
             }
         }
+
         if (newComponent == null) {
             newComponent = textComponent;
         }
+
         chatLine.setTextComponent(newComponent);
         return chatLine;
     }
