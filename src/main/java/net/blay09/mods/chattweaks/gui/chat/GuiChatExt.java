@@ -145,7 +145,11 @@ public class GuiChatExt extends GuiChat {
 		if (Keyboard.getEventKeyState() && ChatTweaks.keySwitchChatView.isActiveAndMatches(Keyboard.getEventKey())) {
 			ChatViewManager.setActiveView(ChatViewManager.getNextChatView(ChatViewManager.getActiveView(), ChatTweaksConfig.preferNewMessages));
 		} else {
-			super.handleKeyboardInput();
+			if (Keyboard.getEventKeyState() && ChatTweaks.keyOpenSettings.isActiveAndMatches(Keyboard.getEventKey())) {
+				mc.displayGuiScreen(new GuiFactory.ConfigGUI(this));
+			} else {
+				super.handleKeyboardInput();
+			}
 		}
 	}
 
