@@ -56,6 +56,7 @@ public class ChatTweaks {
     public static ChatTweaks instance;
 
     public static final KeyBinding keySwitchChatView = new KeyBinding("key.chattweaks.switch_chat_view", KeyConflictContext.GUI, KeyModifier.SHIFT, Keyboard.KEY_TAB, "key.categories.chattweaks");
+    public static final KeyBinding keyOpenSettings = new KeyBinding("key.chattweaks.open_settins", KeyConflictContext.GUI, KeyModifier.ALT, Keyboard.KEY_C, "key.categories.chattweaks");
 
     private Configuration config;
     private GuiNewChatExt persistentChatGUI;
@@ -102,6 +103,7 @@ public class ChatTweaks {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         ClientRegistry.registerKeyBinding(keySwitchChatView);
+        ClientRegistry.registerKeyBinding(keyOpenSettings);
         persistentChatGUI = new GuiNewChatExt(Minecraft.getMinecraft());
     }
 

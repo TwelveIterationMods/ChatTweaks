@@ -34,3 +34,4 @@ chattweaks:config.category.twitch_integration.tooltip=§cNo tooltip provided.
 
 key.categories.chattweaks=Chat Tweaks
 key.chattweaks.switch_chat_view=Switch Chat View
+key.chattweaks.open_settins=Open Chat Tweaks Settings
