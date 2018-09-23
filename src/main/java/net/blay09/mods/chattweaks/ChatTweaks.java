@@ -5,14 +5,13 @@ import net.blay09.mods.chattweaks.auth.AuthManager;
 import net.blay09.mods.chattweaks.chat.ChatChannel;
 import net.blay09.mods.chattweaks.chat.ChatMessage;
 import net.blay09.mods.chattweaks.chat.ChatView;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchEmotesAPI;
 import net.blay09.mods.chattweaks.compat.BlurCompat;
 import net.blay09.mods.chattweaks.compat.Compat;
+import net.blay09.mods.chattweaks.gui.BottomChatRenderer;
+import net.blay09.mods.chattweaks.gui.SideChatRenderer;
 import net.blay09.mods.chattweaks.gui.chat.GuiChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiNewChatExt;
 import net.blay09.mods.chattweaks.gui.chat.GuiSleepMPExt;
-import net.blay09.mods.chattweaks.gui.BottomChatRenderer;
-import net.blay09.mods.chattweaks.gui.SideChatRenderer;
 import net.blay09.mods.chattweaks.handler.EmoteTabCompletionHandler;
 import net.blay09.mods.chattweaks.handler.HighlightHandler;
 import net.blay09.mods.chattweaks.handler.OpenScreenshotFolderHandler;
@@ -49,6 +48,8 @@ public class ChatTweaks {
     public static final String MOD_ID = "chattweaks";
     public static final String TEXT_FORMATTING_RGB = "\u00a7#";
     public static final String TEXT_FORMATTING_EMOTE = "\u00a7*";
+
+    public static final int MAX_MESSAGES = 100;
 
     public static Logger logger;
 
@@ -194,6 +195,7 @@ public class ChatTweaks {
         for (ChatView chatView : ChatViewManager.getViews()) {
             chatView.refresh();
         }
+
         instance.persistentChatGUI.refreshChat();
     }
 

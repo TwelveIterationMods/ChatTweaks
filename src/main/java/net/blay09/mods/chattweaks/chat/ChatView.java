@@ -11,7 +11,10 @@ import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteScanner;
 import net.blay09.mods.chattweaks.chat.emotes.PositionedEmote;
 import net.blay09.mods.chattweaks.image.ChatImageEmote;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -28,7 +31,6 @@ public class ChatView {
     public static final Pattern groupPattern = Pattern.compile("\\$(?:([0-9])|\\{([\\w])\\})");
     public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
     private static final EmoteScanner emoteScanner = new EmoteScanner();
-    private static final int MAX_MESSAGES = 100;
 
     private String name;
     private final List<ChatChannel> channels = Lists.newArrayList();
@@ -41,7 +43,6 @@ public class ChatView {
 
     private Pattern compiledFilterPattern = defaultFilterPattern;
     private String builtOutputFormat = outputFormat;
-    private Matcher lastMatcher;
     private final List<ChatMessage> chatLines = Lists.newArrayList();
     private boolean hasUnread;
 
@@ -106,8 +107,8 @@ public class ChatView {
     }
 
     public boolean messageMatches(String message) {
-        lastMatcher = compiledFilterPattern.matcher(message);
-        return lastMatcher.matches();
+        Matcher matcher = compiledFilterPattern.matcher(message);
+        return matcher.matches();
     }
 
     private ITextComponent subTextComponent(ITextComponent component, int startIndex, int endIndex) {
@@ -133,16 +134,21 @@ public class ChatView {
     public ChatMessage addChatLine(ChatMessage chatLine) {
         chatLine = chatLine.copy();
         chatLines.add(chatLine);
-        if (chatLines.size() > MAX_MESSAGES) {
+        if (chatLines.size() > ChatTweaks.MAX_MESSAGES) {
             chatLines.remove(0);
+        }
+
+        Matcher matcher = compiledFilterPattern.matcher(chatLine.getTextComponent().getUnformattedText());
+        if (matcher.matches()) {
+            return chatLine;
         }
 
         try {
             if (chatLine.getSender() == null) {
-                chatLine.setSender(subTextComponent(chatLine.getTextComponent(), lastMatcher.start("s"), lastMatcher.end("s")));
+                chatLine.setSender(subTextComponent(chatLine.getTextComponent(), matcher.start("s"), matcher.end("s")));
             }
             if (chatLine.getMessage() == null) {
-                chatLine.setMessage(subTextComponent(chatLine.getTextComponent(), lastMatcher.start("m"), lastMatcher.end("m")));
+                chatLine.setMessage(subTextComponent(chatLine.getTextComponent(), matcher.start("m"), matcher.end("m")));
             }
         } catch (IllegalArgumentException ignored) {
             if (chatLine.getMessage() == null) {
@@ -155,14 +161,14 @@ public class ChatView {
         if (!builtOutputFormat.equals("$0")) {
             textComponent = new TextComponentString("");
             int last = 0;
-            Matcher matcher = groupPattern.matcher(builtOutputFormat);
-            while (matcher.find()) {
-                if (matcher.start() > last) {
-                    textComponent.appendText(builtOutputFormat.substring(last, matcher.start()));
+            Matcher outputMatcher = groupPattern.matcher(builtOutputFormat);
+            while (outputMatcher.find()) {
+                if (outputMatcher.start() > last) {
+                    textComponent.appendText(builtOutputFormat.substring(last, outputMatcher.start()));
                 }
 
                 ITextComponent groupValue = null;
-                String namedGroup = matcher.group(2);
+                String namedGroup = outputMatcher.group(2);
                 if (namedGroup != null) {
                     if (namedGroup.equals("s") && chatLine.getSender() != null) {
                         groupValue = chatLine.getSender();
@@ -175,8 +181,8 @@ public class ChatView {
                         int groupStart = -1;
                         int groupEnd = -1;
                         try {
-                            groupStart = lastMatcher.start(namedGroup);
-                            groupEnd = lastMatcher.end(namedGroup);
+                            groupStart = matcher.start(namedGroup);
+                            groupEnd = matcher.end(namedGroup);
                         } catch (IllegalArgumentException ignored) {
                         }
                         if (groupStart != -1 && groupEnd != -1) {
@@ -186,9 +192,9 @@ public class ChatView {
                         }
                     }
                 } else {
-                    int group = Integer.parseInt(matcher.group(1));
-                    if (group >= 0 && group <= lastMatcher.groupCount()) {
-                        groupValue = subTextComponent(source, lastMatcher.start(group), lastMatcher.end(group));
+                    int group = Integer.parseInt(outputMatcher.group(1));
+                    if (group >= 0 && group <= matcher.groupCount()) {
+                        groupValue = subTextComponent(source, matcher.start(group), matcher.end(group));
                     }
                 }
 
@@ -196,12 +202,12 @@ public class ChatView {
                     groupValue = new TextComponentString("*");
                 }
 
-                last = matcher.end();
+                last = outputMatcher.end();
                 textComponent.appendSibling(groupValue);
             }
 
             if (last < builtOutputFormat.length()) {
-                textComponent.appendText(builtOutputFormat.substring(last, builtOutputFormat.length()));
+                textComponent.appendText(builtOutputFormat.substring(last));
             }
         }
 
@@ -373,13 +379,13 @@ public class ChatView {
 
     public void refresh() {
         chatLines.clear();
-        for (ChatChannel chatChannel : channels) {
-            for (ChatMessage chatMessage : chatChannel.getChatMessages()) {
-                if (messageMatches(chatMessage.getTextComponent().getUnformattedText())) {
-                    addChatLine(chatMessage);
-                }
-            }
-        }
-        chatLines.sort(Comparator.comparingInt(ChatMessage::getId));
+
+        channels.stream()
+                .flatMap(it -> it.getChatMessages().stream())
+                .filter(it -> messageMatches(it.getTextComponent().getUnformattedText()))
+                .sorted(Comparator.comparingInt(ChatMessage::getId).reversed())
+                .limit(ChatTweaks.MAX_MESSAGES)
+                .sorted(Comparator.comparingInt(ChatMessage::getId))
+                .forEach(this::addChatLine);
     }
 }

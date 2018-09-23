@@ -94,7 +94,7 @@ public class ChatManager {
 	}
 
 	public static void removeChatLine(int chatLineId) {
-		for(ChatChannel channel : channels.values()) {
+		for (ChatChannel channel : channels.values()) {
 			channel.removeChatMessage(chatLineId);
 		}
 	}

@@ -180,4 +180,9 @@ public class ChatMessage {
 	public ITextComponent getOutputVar(String key) {
 		return outputVars != null ? outputVars.get(key) : null;
 	}
+
+	@Override
+	public String toString() {
+		return chatComponent.getUnformattedText();
+	}
 }

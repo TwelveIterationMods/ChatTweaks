@@ -5,11 +5,7 @@ import net.blay09.mods.chattweaks.ChatManager;
 import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.ChatViewManager;
-import net.blay09.mods.chattweaks.chat.ChatChannel;
-import net.blay09.mods.chattweaks.chat.ChatView;
-import net.blay09.mods.chattweaks.chat.ChatMessage;
-import net.blay09.mods.chattweaks.chat.MessageStyle;
-import net.blay09.mods.chattweaks.chat.TextRenderRegion;
+import net.blay09.mods.chattweaks.chat.*;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.event.PrintChatMessageEvent;
 import net.blay09.mods.chattweaks.image.ChatImage;
@@ -140,9 +136,11 @@ public class GuiNewChatExt extends GuiNewChat {
                     }
                     this.wrappedChatLines.add(0, new WrappedChatLine(mc.ingameGUI.getUpdateCounter(), chatMessage, chatLine, cleanText, regions, images, alternateBackground));
                 }
-                while (this.wrappedChatLines.size() > 100) {
+
+                while (this.wrappedChatLines.size() > ChatTweaks.MAX_MESSAGES) {
                     this.wrappedChatLines.remove(this.wrappedChatLines.size() - 1);
                 }
+
                 alternateBackground = !alternateBackground;
                 break;
             case Side:

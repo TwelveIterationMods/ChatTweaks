@@ -6,10 +6,10 @@ import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.ChatViewManager;
 import net.blay09.mods.chattweaks.chat.ChatView;
 import net.blay09.mods.chattweaks.chat.MessageStyle;
-import net.blay09.mods.chattweaks.event.ClientChatEvent;
-import net.blay09.mods.chattweaks.event.TabCompletionEvent;
 import net.blay09.mods.chattweaks.event.ChatComponentClickEvent;
 import net.blay09.mods.chattweaks.event.ChatComponentHoverEvent;
+import net.blay09.mods.chattweaks.event.ClientChatEvent;
+import net.blay09.mods.chattweaks.event.TabCompletionEvent;
 import net.blay09.mods.chattweaks.gui.config.GuiChatView;
 import net.blay09.mods.chattweaks.gui.config.GuiFactory;
 import net.blay09.mods.chattweaks.gui.emotes.GuiButtonEmotes;
@@ -165,7 +165,7 @@ public class GuiChatExt extends GuiChat {
 		Collections.addAll(list, newCompletions);
 
 		MinecraftForge.EVENT_BUS.post(new TabCompletionEvent(Side.CLIENT, Minecraft.getMinecraft().player, input.split(" ")[0], pos, pos != null, list));
-		super.setCompletions(list.toArray(new String[list.size()]));
+		super.setCompletions(list.toArray(new String[0]));
 	}
 
 	@Override
