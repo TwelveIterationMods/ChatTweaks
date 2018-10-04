@@ -139,7 +139,7 @@ public class ChatView {
         }
 
         Matcher matcher = compiledFilterPattern.matcher(chatLine.getTextComponent().getUnformattedText());
-        if (matcher.matches()) {
+        if (!matcher.matches()) {
             return chatLine;
         }
 
