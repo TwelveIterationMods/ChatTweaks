@@ -49,6 +49,7 @@ public class GuiNewChatExt extends GuiNewChat {
     }
 
     private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)\u00a7[0-9A-FK-OR#]");
+    private static final Pattern UNDERLINE_CODE_PATTERN = Pattern.compile("(?i)\u00a7n");
     private static final Pattern EMOTE_PATTERN = Pattern.compile("\u00a7\\*");
     private static final Pattern CUSTOM_FORMATTING_CODE_PATTERN = Pattern.compile("\u00a7([#*])");
 
@@ -69,6 +70,7 @@ public class GuiNewChatExt extends GuiNewChat {
         if (chatLineId == 0) {
             chatLineId = ChatManager.getNextMessageId();
         }
+
         ChatMessage message = new ChatMessage(chatLineId, chatComponent);
         addChatMessage(message, ChatManager.findChatChannel(message));
     }
@@ -89,6 +91,7 @@ public class GuiNewChatExt extends GuiNewChat {
 
     private void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
         MinecraftForge.EVENT_BUS.post(new PrintChatMessageEvent(chatMessage, view));
+
         switch (view.getMessageStyle()) {
             case Chat:
                 if (view != ChatViewManager.getActiveView()) {
@@ -105,7 +108,12 @@ public class GuiNewChatExt extends GuiNewChat {
                         this.isScrolled = true;
                         this.scroll(1);
                     }
+
                     String formattedText = chatLine.getFormattedText();
+                    if (ChatTweaksConfig.disableUnderlines) {
+                        formattedText = UNDERLINE_CODE_PATTERN.matcher(formattedText).replaceAll("");
+                    }
+
                     Matcher splitMatcher = CUSTOM_FORMATTING_CODE_PATTERN.matcher(formattedText);
                     List<TextRenderRegion> regions = Lists.newArrayList();
                     int lastIdx = 0;
@@ -115,11 +123,14 @@ public class GuiNewChatExt extends GuiNewChat {
                         if (code.equals("#")) {
                             colorIndex++;
                         }
+
                         lastIdx = splitMatcher.end();
                     }
+
                     if (lastIdx < formattedText.length()) {
                         regions.add(new TextRenderRegion(formattedText.substring(lastIdx), chatMessage.getRGBColor(colorIndex)));
                     }
+
                     String cleanText = FORMATTING_CODE_PATTERN.matcher(chatLine.getUnformattedText()).replaceAll("");
                     Matcher matcher = EMOTE_PATTERN.matcher(cleanText);
                     List<ChatImage> images = null;
@@ -134,6 +145,7 @@ public class GuiNewChatExt extends GuiNewChat {
                             emoteIndex++;
                         }
                     }
+
                     this.wrappedChatLines.add(0, new WrappedChatLine(mc.ingameGUI.getUpdateCounter(), chatMessage, chatLine, cleanText, regions, images, alternateBackground));
                 }
 

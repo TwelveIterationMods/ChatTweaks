@@ -2,17 +2,11 @@ package net.blay09.mods.chattweaks;
 
 import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.chat.emotes.LocalEmotes;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.BTTVChannelEmotes;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.BTTVEmotes;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.FFZChannelEmotes;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.FFZEmotes;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchEmotesAPI;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchGlobalEmotes;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchSubscriberEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.*;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
 
-import java.io.*;
+import java.io.File;
 import java.text.SimpleDateFormat;
 
 public class ChatTweaksConfig {
@@ -31,6 +25,7 @@ public class ChatTweaksConfig {
 	public static boolean showNewMessageOverlay;
 	public static boolean chatTextOpacity;
 	public static boolean hideEmotesMenu;
+	public static boolean disableUnderlines;
 	public static SimpleDateFormat timestampFormat;
 	private static final SimpleDateFormat DEFAULT_TIMESTAMP_FORMAT = new SimpleDateFormat("[HH:mm]");
 
@@ -48,6 +43,7 @@ public class ChatTweaksConfig {
 		showNewMessageOverlay = config.getBoolean("Show New Messages", "general", true, "Highlights views with new messages red even when chat is closed.");
 		chatTextOpacity = config.getBoolean("Chat Text Full Opacity", "general", true, "Vanilla Minecraft makes the text in chat transparent too, when opacity is set. Set this to false to restore that behaviour.");
 		hideEmotesMenu = config.getBoolean("Hide Emotes Menu", "general", false, "Set to true to hide the emote menu button in the chat.");
+		disableUnderlines = config.getBoolean("Disable Underlines", "general", false, "Set to true to disable underlines in all chat messages, because they simply don't look good.");
 		String timestampFormatString = config.getString("Timestamp Format", "general", "[HH:mm]", "The format for the timestamp to be displayed in.");
 		try {
 			timestampFormat = new SimpleDateFormat(timestampFormatString);
