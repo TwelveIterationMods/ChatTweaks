@@ -1,0 +1,36 @@
+chattweaks:gui.imagePreview.openInBrowser=Im Netznavigator öffnen
+chattweaks:gui.imagePreview.copyToClipboard=In die Zwischenablage kopieren
+chattweaks:gui.imagePreview.close=Schließen
+chattweaks:gui.imagePreview.loadingPreview=Vorschau lädt...
+
+chattweaks:gui.chat.tooltipEmote=Emote:
+chattweaks:gui.chat.tooltipLocalEmotes=Lokale Emotes
+chattweaks:gui.chat.tooltipEmoteChannel=Kanal:
+chattweaks:gui.chat.tooltipBTTVEmotes=BetterTTV
+chattweaks:gui.chat.tooltipFFZEmotes=FrankerFaceZ
+chattweaks:gui.chat.tooltipTwitchEmotes=Twitch Global
+chattweaks:gui.chat.tooltipTwitchPrimeEmotes=Twitch Prime
+
+chattweaks:gui.confirm.optionalModuleRequired=Du muss einen optionalen Modul installieren für die Funktionalität von %s:
+chattweaks:gui.confirm.optionalModuleInstall=Bitte installiere die zusätzliche Modifikation und starte das Spiel neu.
+
+chattweaks:config.channels.available=verfügbar
+chattweaks:config.channels.selected=ausgewählt
+chattweaks:config.channels.select_channels=Kanäle Auswählen
+
+chattweaks:config.views.warnings=(%d Warnungen)
+chattweaks:config.views.muted=(stummgeschaltet)
+
+chattweaks:config.category.general=Allgemein
+chattweaks:config.category.general.tooltip=§cKeine Schnellinfo vorausgesetzt.
+chattweaks:config.category.emotes=Emotes
+chattweaks:config.category.emotes.tooltip=§cKeine Schnellinfo vorausgesetzt.
+chattweaks:config.category.theme=Thema
+chattweaks:config.category.theme.tooltip=§cKeine Schnellinfo vorausgesetzt.
+chattweaks:config.category.views=Zuschauer
+chattweaks:config.category.views.tooltip=§cKeine Schnellinfo vorausgesetzt.
+chattweaks:config.category.twitch_integration=Twitch-Integration
+chattweaks:config.category.twitch_integration.tooltip=§cKeine Schnellinfo vorausgesetzt.
+
+key.categories.chattweaks=Chat-Optimierungen
+key.chattweaks.switch_chat_view=Chat-Darstellung wechseln
