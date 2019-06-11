@@ -85,7 +85,7 @@ public class ChatTweaksConfig {
             }
 
             try {
-                if (config.getBoolean("Twitch Subscriber Emotes", "emotes", false, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled? This will increase the memory required by this mod!")) {
+                if (config.getBoolean("Twitch Subscriber Emotes", "emotes", true, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled? This will increase the memory required by this mod!")) {
                     new TwitchSubscriberEmotes(
                             config.getString("Twitch Subscriber Emote Regex", "emotes", "[a-z0-9][a-z0-9]+[A-Z0-9].*", "The regex pattern to match for Twitch Subscriber Emotes to be included. By default includes all that follow prefixCode convention.")
                     );
