@@ -2,60 +2,31 @@ package net.blay09.mods.chattweaks.chat.emotes.twitch;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.ChatTweaksAPI;
 import net.blay09.mods.chattweaks.chat.emotes.IEmote;
 import net.blay09.mods.chattweaks.chat.emotes.IEmoteGroup;
-import net.blay09.mods.chattweaks.chat.emotes.IEmoteLoader;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.TextFormatting;
 
-import java.net.URI;
+public class TwitchGlobalEmotes {
 
-public class TwitchGlobalEmotes implements IEmoteLoader {
+    public TwitchGlobalEmotes(boolean includeTurbo) {
+        JsonObject root = includeTurbo ? TwitchEmotesAPI.loadEmotes(TwitchEmotesAPI.EMOTESET_GLOBAL, TwitchEmotesAPI.EMOTESET_TURBO) : TwitchEmotesAPI.loadEmotes(TwitchEmotesAPI.EMOTESET_GLOBAL);
+        if (root != null) {
+            JsonObject emoticonSets = root.getAsJsonObject("emoticon_sets");
+            loadEmotes(emoticonSets.getAsJsonArray(String.valueOf(TwitchEmotesAPI.EMOTESET_GLOBAL)), ChatTweaksAPI.registerEmoteGroup("TwitchGlobal"));
+            loadEmotes(emoticonSets.getAsJsonArray(String.valueOf(TwitchEmotesAPI.EMOTESET_TURBO)), ChatTweaksAPI.registerEmoteGroup("TwitchTurbo"));
+        }
+    }
 
-	private static final String URL_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v1/{{id}}/1.0";
+    private void loadEmotes(JsonArray jsonArray, IEmoteGroup group) {
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject entry = jsonArray.get(i).getAsJsonObject();
+            int id = entry.get("id").getAsInt();
+            String code = entry.get("code").getAsString();
+            IEmote emote = ChatTweaksAPI.registerEmote(code, TwitchGlobalEmoteSource.INSTANCE, id);
+            group.addEmote(emote);
 
-	public TwitchGlobalEmotes(boolean includeTurbo, boolean includeSmileys) {
-		JsonObject root = includeTurbo ? TwitchEmotesAPI.loadEmotes(TwitchEmotesAPI.EMOTESET_GLOBAL, TwitchEmotesAPI.EMOTESET_TURBO) : TwitchEmotesAPI.loadEmotes(TwitchEmotesAPI.EMOTESET_GLOBAL);
-		if(root != null) {
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchEmotesAPI.EMOTESET_GLOBAL)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchGlobal"));
-			loadEmotes(root.getAsJsonObject("emoticon_sets").getAsJsonArray(String.valueOf(TwitchEmotesAPI.EMOTESET_TURBO)), TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchTurboEmotes"), includeSmileys, ChatTweaksAPI.registerEmoteGroup("TwitchTurbo"));
-		}
-	}
+            TwitchEmotesAPI.registerTwitchEmote(id, emote);
+        }
+    }
 
-	private void loadEmotes(JsonArray jsonArray, String tooltip, boolean includeSmileys, IEmoteGroup group) {
-		for(int i = 0; i < jsonArray.size(); i++) {
-			JsonObject entry = jsonArray.get(i).getAsJsonObject();
-			int id = entry.get("id").getAsInt();
-			String code = entry.get("code").getAsString();
-			IEmote emote;
-			if(code.matches(".*\\p{Punct}.*")) {
-				if(!includeSmileys) {
-					continue;
-				}
-				code = code.replace("\\\\", "\\");
-				code = code.replace("&lt\\;", "<");
-				code = code.replace("&gt\\;", ">");
-				emote = ChatTweaksAPI.registerRegexEmote(code, this);
-			} else {
-				emote = ChatTweaksAPI.registerEmote(code, this);
-			}
-			emote.setCustomData(id);
-			emote.addTooltip(tooltip);
-			emote.setImageCacheFile("twitch-" + id);
-			group.addEmote(emote);
-			TwitchEmotesAPI.registerTwitchEmote(id, emote);
-		}
-	}
-
-	@Override
-	public void loadEmoteImage(IEmote emote) throws Exception {
-		ChatTweaksAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", String.valueOf(emote.getCustomData()))));
-	}
-
-	@Override
-	public boolean isCommonEmote(String name) {
-		return true;
-	}
 }

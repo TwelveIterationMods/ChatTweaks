@@ -2,10 +2,10 @@ package net.blay09.mods.chattweaks.gui.emotes;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.chattweaks.ChatTweaks;
+import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.chat.emotes.IEmote;
 import net.blay09.mods.chattweaks.chat.emotes.IEmoteGroup;
 import net.blay09.mods.chattweaks.image.renderable.IChatRenderable;
-import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.image.renderable.ImageLoader;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -140,7 +140,7 @@ public class GuiOverlayEmotes {
 	public void displayGroup(IEmoteGroup group) {
 		clear();
 		for (IEmote emote : group.getEmotes()) {
-			if (!emote.isRegex() && !ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
+			if (!ArrayUtils.contains(BANNED_EMOTES, emote.getCode())) {
 				GuiButtonEmote button = new GuiButtonEmote(-1, x, y, emote);
 				emoteButtons.add(button);
 				parentScreen.buttonList.add(button);

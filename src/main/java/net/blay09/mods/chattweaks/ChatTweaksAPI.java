@@ -3,11 +3,10 @@ package net.blay09.mods.chattweaks;
 import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
 import net.blay09.mods.chattweaks.chat.emotes.IEmote;
 import net.blay09.mods.chattweaks.chat.emotes.IEmoteGroup;
-import net.blay09.mods.chattweaks.chat.emotes.IEmoteLoader;
+import net.blay09.mods.chattweaks.chat.emotes.IEmoteSource;
 import net.blay09.mods.chattweaks.image.renderable.IChatRenderable;
 import net.blay09.mods.chattweaks.image.renderable.ImageLoader;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,12 +22,8 @@ public class ChatTweaksAPI {
 		return EmoteRegistry.registerEmoteGroup(name);
 	}
 
-	public static IEmote registerEmote(String code, IEmoteLoader loader) {
-		return EmoteRegistry.registerEmote(code, loader);
-	}
-
-	public static IEmote registerRegexEmote(String pattern, IEmoteLoader loader) {
-		return EmoteRegistry.registerRegexEmote(pattern, loader);
+	public static <T> IEmote<T> registerEmote(String code, IEmoteSource<T> source, T data) {
+		return EmoteRegistry.registerEmote(code, source, data);
 	}
 
 	public static IChatRenderable loadImage(URI uri, File cacheFile) throws IOException {

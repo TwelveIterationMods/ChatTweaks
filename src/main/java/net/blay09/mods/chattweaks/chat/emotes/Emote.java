@@ -10,110 +10,74 @@ import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
-public class Emote implements IEmote {
+public class Emote<T> implements IEmote<T> {
 
-	private final List<String> tooltip = Lists.newArrayList();
-	private final IEmoteLoader loader;
-	private final String code;
-	private final Pattern pattern;
+    private final String code;
+    private final IEmoteSource<T> source;
+    private final T customData;
 
-	private File imageCacheFile;
-	private Object customData;
-	private IChatRenderable image = NullRenderable.INSTANCE;
-	private boolean loadRequested;
+    private IChatRenderable image = NullRenderable.INSTANCE;
+    private boolean loadRequested;
 
-	public Emote(String code, IEmoteLoader loader, boolean isRegex) {
-		this.code = code;
-		this.pattern = isRegex ? Pattern.compile("(?: |^)" + code + "(?: |$)") : null;
-		this.loader = loader;
+    public Emote(String code, IEmoteSource<T> source, T customData) {
+        this.code = code;
+        this.source = source;
+        this.customData = customData;
+    }
 
-		if(!isRegex) {
-			tooltip.add(TextFormatting.YELLOW + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipEmote") + " " + TextFormatting.WHITE + code);
-		}
-	}
+    @Override
+    public T getCustomData() {
+        return customData;
+    }
 
-	@Override
-	public boolean isRegex() {
-		return pattern != null;
-	}
+    @Override
+    public List<String> getTooltip() {
+        String mainTooltip = TextFormatting.YELLOW + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipEmote") + " " + TextFormatting.WHITE + code;
+        return Lists.newArrayList(mainTooltip, source.getTooltip(customData));
+    }
 
-	@Override
-	public Object getCustomData() {
-		return customData;
-	}
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-	@Override
-	public void setCustomData(Object customData) {
-		this.customData = customData;
-	}
+    @Override
+    public IEmoteSource<T> getSource() {
+        return source;
+    }
 
-	@Override
-	public List<String> getTooltip() {
-		return tooltip;
-	}
+    @Override
+    public IChatRenderable getImage() {
+        return image;
+    }
 
-	@Override
-	public void addTooltip(String... tooltip) {
-		Collections.addAll(this.tooltip, tooltip);
-	}
+    @Override
+    public void setImage(@Nullable IChatRenderable image) {
+        if (image == null) {
+            image = NullRenderable.INSTANCE;
+        }
 
-	@Override
-	public String getCode() {
-		return code;
-	}
+        this.image = image;
+        loadRequested = false;
+    }
 
-	@Override
-	public Pattern getPattern() {
-		return pattern;
-	}
+    @Override
+    public int getWidthInSpaces() {
+        return image != null ? image.getWidthInSpaces() : 4;
+    }
 
-	@Override
-	public IEmoteLoader getLoader() {
-		return loader;
-	}
+    @Override
+    public void requestLoad() {
+        if (!loadRequested) {
+            loadRequested = true;
+            AsyncEmoteLoader.getInstance().loadAsync(this);
+        }
+    }
 
-	@Override
-	public IChatRenderable getImage() {
-		return image;
-	}
-
-	@Override
-	public void setImage(@Nullable IChatRenderable image) {
-		if(image == null) {
-			image = NullRenderable.INSTANCE;
-		}
-		this.image = image;
-		loadRequested = false;
-	}
-
-	@Override
-	public int getWidthInSpaces() {
-		return image != null ? image.getWidthInSpaces() : 4;
-	}
-
-	@Override
-	public void requestLoad() {
-		if(!loadRequested) {
-			loadRequested = true;
-			AsyncEmoteLoader.getInstance().loadAsync(this);
-		}
-	}
-
-	@Override
-	public void setImageCacheFile(@Nullable String fileName) {
-		if(fileName == null) {
-			imageCacheFile = null;
-		} else {
-			imageCacheFile = new File(Minecraft.getMinecraft().mcDataDir, "chattweaks/cache/" + fileName);
-		}
-	}
-
-	@Override
-	public File getImageCacheFile() {
-		return imageCacheFile;
-	}
+    @Override
+    public File getImageCacheFile() {
+        return new File(Minecraft.getMinecraft().mcDataDir, "chattweaks/cache/" + source.getCacheFileName(customData));
+    }
 }

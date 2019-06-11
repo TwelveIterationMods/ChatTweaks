@@ -1,15 +1,14 @@
-package net.blay09.mods.chattweaks.chat.emotes;
+package net.blay09.mods.chattweaks.chat.emotes.localfile;
 
 import com.google.common.io.Files;
-import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.ChatTweaksAPI;
 import net.blay09.mods.chattweaks.ChatTweaksConfig;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.TextFormatting;
+import net.blay09.mods.chattweaks.chat.emotes.IEmote;
+import net.blay09.mods.chattweaks.chat.emotes.IEmoteGroup;
 
 import java.io.File;
 
-public class LocalEmotes implements IEmoteLoader {
+public class LocalEmotes {
 
     public LocalEmotes(File directory) throws Exception {
         if (!directory.exists() && !directory.mkdirs()) {
@@ -19,9 +18,7 @@ public class LocalEmotes implements IEmoteLoader {
         File[] files = directory.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".gif"));
         if (files != null) {
             for (File file : files) {
-                IEmote emote = ChatTweaksAPI.registerEmote(Files.getNameWithoutExtension(file.getName()), this);
-                emote.addTooltip(TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipLocalEmotes"));
-                emote.setCustomData(file);
+                IEmote emote = ChatTweaksAPI.registerEmote(Files.getNameWithoutExtension(file.getName()), LocalFileSource.INSTANCE, file);
                 group.addEmote(emote);
             }
         }
@@ -41,16 +38,9 @@ public class LocalEmotes implements IEmoteLoader {
                 continue;
             }
 
-            IEmote emote = ChatTweaksAPI.registerEmote(alias, this);
-            emote.addTooltip(TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipLocalEmotes"));
-            emote.setCustomData(file);
+            IEmote emote = ChatTweaksAPI.registerEmote(alias, LocalFileSource.INSTANCE, file);
             group.addEmote(emote);
         }
-    }
-
-    @Override
-    public void loadEmoteImage(IEmote emote) throws Exception {
-        ChatTweaksAPI.loadEmoteImage(emote, ((File) emote.getCustomData()).toURI());
     }
 
 }

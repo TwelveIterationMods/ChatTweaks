@@ -1,8 +1,14 @@
 package net.blay09.mods.chattweaks;
 
 import net.blay09.mods.chattweaks.chat.emotes.EmoteRegistry;
-import net.blay09.mods.chattweaks.chat.emotes.LocalEmotes;
-import net.blay09.mods.chattweaks.chat.emotes.twitch.*;
+import net.blay09.mods.chattweaks.chat.emotes.bttv.BTTVChannelEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.bttv.BTTVEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.ffz.FFZChannelEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.ffz.FFZEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.localfile.LocalEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchEmotesAPI;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchGlobalEmotes;
+import net.blay09.mods.chattweaks.chat.emotes.twitch.TwitchSubscriberEmotes;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
 
@@ -71,8 +77,7 @@ public class ChatTweaksConfig {
             try {
                 if (config.getBoolean("Twitch Global Emotes", "emotes", true, "Should the Twitch Global emotes (ex. Kappa) be enabled?")) {
                     new TwitchGlobalEmotes(
-                            config.getBoolean("Include Twitch Prime Emotes", "emotes", true, "Should Prime emotes (ex. KappaHD) be included with the Twitch Global Emotes?"),
-                            config.getBoolean("Include Twitch Smileys", "emotes", false, "Should smileys (ex. :-D) be included with the Twitch Global Emotes?")
+                            config.getBoolean("Include Twitch Prime Emotes", "emotes", true, "Should Prime emotes (ex. KappaHD) be included with the Twitch Global Emotes?")
                     );
                 }
             } catch (Exception e) {
@@ -80,7 +85,7 @@ public class ChatTweaksConfig {
             }
 
             try {
-                if (config.getBoolean("Twitch Subscriber Emotes", "emotes", true, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled?")) {
+                if (config.getBoolean("Twitch Subscriber Emotes", "emotes", false, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled? This will increase the memory required by this mod!")) {
                     new TwitchSubscriberEmotes(
                             config.getString("Twitch Subscriber Emote Regex", "emotes", "[a-z0-9][a-z0-9]+[A-Z0-9].*", "The regex pattern to match for Twitch Subscriber Emotes to be included. By default includes all that follow prefixCode convention.")
                     );
@@ -90,7 +95,7 @@ public class ChatTweaksConfig {
             }
 
             try {
-                if (config.getBoolean("BTTV Emotes", "emotes", true, "Should the BTTV emotes (ex. AngelThump) be enabled?")) {
+                if (config.getBoolean("BTTV Emotes", "emotes", false, "Should the BTTV emotes (ex. AngelThump) be enabled?")) {
                     new BTTVEmotes();
                 }
             } catch (Exception e) {
@@ -107,7 +112,7 @@ public class ChatTweaksConfig {
             }
 
             try {
-                if (config.getBoolean("FFZ Emotes", "emotes", true, "Should the FrankerFaceZ emotes (ex. ZreknarF) be enabled?")) {
+                if (config.getBoolean("FFZ Emotes", "emotes", false, "Should the FrankerFaceZ emotes (ex. ZreknarF) be enabled?")) {
                     new FFZEmotes();
                 }
             } catch (Exception e) {
@@ -128,6 +133,11 @@ public class ChatTweaksConfig {
             } catch (Exception e) {
                 ChatTweaks.logger.error("Failed to load local emotes: ", e);
             }
+
+            if (config.hasChanged()) {
+                config.save();
+            }
+
             EmoteRegistry.isLoading = false;
         }).start();
     }
