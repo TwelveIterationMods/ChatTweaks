@@ -150,7 +150,7 @@ public class GuiOverlayEmotes {
 	}
 
 	public void mouseScrolled(int delta) {
-		final int emoteColumns = width / 22;
+        final int emoteColumns = width / 22 - 1;
 		final int emoteRows = height / 16;
 		if (delta > 0) {
 			scrollOffset = Math.max(0, scrollOffset - emoteColumns);
