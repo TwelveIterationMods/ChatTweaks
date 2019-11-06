@@ -36,6 +36,15 @@ public class ChatTweaksConfig {
     public static SimpleDateFormat timestampFormat;
     private static final SimpleDateFormat DEFAULT_TIMESTAMP_FORMAT = new SimpleDateFormat("[HH:mm]");
 
+    public static boolean twitchGlobalEmotes;
+    public static boolean twitchPrimeEmotes;
+    public static boolean twitchSubscriberEmotes;
+    public static String twitchSubscriberEmoteRegex;
+    public static boolean bttvEmotes;
+    public static String[] bttvChannels;
+    public static boolean ffzEmotes;
+    public static String[] ffzChannels;
+
     public static void preInitLoad(Configuration config) {
         ChatTweaksConfig.config = config;
         backgroundColor1 = ChatTweaks.colorFromHex(config.getString("Background Color 1", "theme", "000000", "The background color to use for even line numbers in HEX."));
@@ -61,6 +70,15 @@ public class ChatTweaksConfig {
         }
 
         localEmoteAliases = config.getStringList("Local Emote Aliases", "emotes", new String[0], "List of aliases for local emotes, in alias=filename format. Example: :hmm:=thinking.png");
+
+        twitchGlobalEmotes = config.getBoolean("Twitch Global Emotes", "emotes", true, "Should the Twitch Global emotes (ex. Kappa) be enabled?");
+        twitchPrimeEmotes = config.getBoolean("Include Twitch Prime Emotes", "emotes", true, "Should Prime emotes (ex. KappaHD) be included with the Twitch Global Emotes?");
+        twitchSubscriberEmotes = config.getBoolean("Twitch Subscriber Emotes", "emotes", true, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled? This will increase the memory required by this mod!");
+        twitchSubscriberEmoteRegex = config.getString("Twitch Subscriber Emote Regex", "emotes", "[a-z0-9][a-z0-9]+[A-Z0-9].*", "The regex pattern to match for Twitch Subscriber Emotes to be included. By default includes all that follow prefixCode convention.");
+        bttvEmotes = config.getBoolean("BTTV Emotes", "emotes", false, "Should the BTTV emotes (ex. AngelThump) be enabled?");
+        bttvChannels = config.getStringList("BTTV Emote Channels", "emotes", new String[]{"ZeekDaGeek"}, "A list of channels to postInitLoad BTTV channel emotes from.");
+        ffzEmotes = config.getBoolean("FFZ Emotes", "emotes", false, "Should the FrankerFaceZ emotes (ex. ZreknarF) be enabled?");
+        ffzChannels = config.getStringList("FFZ Emote Channels", "emotes", new String[]{"tehbasshunter"}, "A list of channels to load FrankerFaceZ channel emotes from.");
     }
 
     public static void postInitLoad(Configuration config) {
@@ -75,27 +93,23 @@ public class ChatTweaksConfig {
             }
 
             try {
-                if (config.getBoolean("Twitch Global Emotes", "emotes", true, "Should the Twitch Global emotes (ex. Kappa) be enabled?")) {
-                    new TwitchGlobalEmotes(
-                            config.getBoolean("Include Twitch Prime Emotes", "emotes", true, "Should Prime emotes (ex. KappaHD) be included with the Twitch Global Emotes?")
-                    );
+                if (twitchGlobalEmotes) {
+                    new TwitchGlobalEmotes(twitchPrimeEmotes);
                 }
             } catch (Exception e) {
                 ChatTweaks.logger.error("Failed to load Twitch global emotes: ", e);
             }
 
             try {
-                if (config.getBoolean("Twitch Subscriber Emotes", "emotes", true, "Should the Twitch Subscriber emotes (ex. geekPraise) be enabled? This will increase the memory required by this mod!")) {
-                    new TwitchSubscriberEmotes(
-                            config.getString("Twitch Subscriber Emote Regex", "emotes", "[a-z0-9][a-z0-9]+[A-Z0-9].*", "The regex pattern to match for Twitch Subscriber Emotes to be included. By default includes all that follow prefixCode convention.")
-                    );
+                if (twitchSubscriberEmotes) {
+                    new TwitchSubscriberEmotes(twitchSubscriberEmoteRegex);
                 }
             } catch (Exception e) {
                 ChatTweaks.logger.error("Failed to load Twitch subscriber emotes: ", e);
             }
 
             try {
-                if (config.getBoolean("BTTV Emotes", "emotes", false, "Should the BTTV emotes (ex. AngelThump) be enabled?")) {
+                if (bttvEmotes) {
                     new BTTVEmotes();
                 }
             } catch (Exception e) {
@@ -103,7 +117,6 @@ public class ChatTweaksConfig {
             }
 
             try {
-                String[] bttvChannels = config.getStringList("BTTV Emote Channels", "emotes", new String[]{"ZeekDaGeek"}, "A list of channels to postInitLoad BTTV channel emotes from.");
                 for (String channel : bttvChannels) {
                     new BTTVChannelEmotes(channel);
                 }
@@ -112,7 +125,7 @@ public class ChatTweaksConfig {
             }
 
             try {
-                if (config.getBoolean("FFZ Emotes", "emotes", false, "Should the FrankerFaceZ emotes (ex. ZreknarF) be enabled?")) {
+                if (ffzEmotes) {
                     new FFZEmotes();
                 }
             } catch (Exception e) {
@@ -120,7 +133,6 @@ public class ChatTweaksConfig {
             }
 
             try {
-                String[] ffzChannels = config.getStringList("FFZ Emote Channels", "emotes", new String[]{"tehbasshunter"}, "A list of channels to load FrankerFaceZ channel emotes from.");
                 for (String channel : ffzChannels) {
                     new FFZChannelEmotes(channel);
                 }
