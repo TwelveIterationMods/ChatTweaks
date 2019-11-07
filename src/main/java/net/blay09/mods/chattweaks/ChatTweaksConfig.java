@@ -87,7 +87,9 @@ public class ChatTweaksConfig {
             EmoteRegistry.isLoading = true;
 
             try {
-                TwitchEmotesAPI.loadEmoteSets();
+                if (twitchSubscriberEmotes) {
+                    TwitchEmotesAPI.loadEmoteSets();
+                }
             } catch (Exception e) {
                 ChatTweaks.logger.error("Failed to load Twitch emote set mappings.");
             }

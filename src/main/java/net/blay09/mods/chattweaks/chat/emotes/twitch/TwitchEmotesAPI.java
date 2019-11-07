@@ -42,7 +42,7 @@ public class TwitchEmotesAPI {
 			}
 			sb.append(emoteset);
 		}
-		String url = "https://api.twitch.tv/kraken/chat/emoticon_images?client_id=" + CLIENT_ID;
+		String url = "https://api.twitch.tv/kraken/chat/emoticon_images?api_version=5&client_id=" + CLIENT_ID;
 		if(emotesets.length > 0) {
 			url += "&emotesets=" + sb.toString();
 		}
