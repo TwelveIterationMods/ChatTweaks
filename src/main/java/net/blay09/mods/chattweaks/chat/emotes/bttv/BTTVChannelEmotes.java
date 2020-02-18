@@ -12,7 +12,7 @@ public class BTTVChannelEmotes {
     public BTTVChannelEmotes(String channelName) throws Exception {
         JsonObject root = CachedAPI.loadCachedAPI("https://api.betterttv.net/2/channels/" + channelName, "bttv_emotes_" + channelName + ".json", null);
         if (root != null) {
-            if (!root.has("status") && root.get("status").getAsInt() != 200) {
+            if (!root.has("urlTemplate") || !root.has("emotes")) {
                 throw new Exception("Failed to grab BTTV channel emotes.");
             }
             IEmoteGroup group = ChatTweaksAPI.registerEmoteGroup("BTTV-" + channelName);
