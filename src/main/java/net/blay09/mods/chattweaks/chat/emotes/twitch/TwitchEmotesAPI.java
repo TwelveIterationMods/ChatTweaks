@@ -1,17 +1,21 @@
 package net.blay09.mods.chattweaks.chat.emotes.twitch;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import net.blay09.mods.chattweaks.chat.emotes.IEmote;
-import net.blay09.mods.chattweaks.balyware.CachedAPI;
-import net.minecraft.util.IntHashMap;
+
+import java.util.Map;
 
 import javax.annotation.Nullable;
-import java.util.Map;
+
+import net.blay09.mods.chattweaks.balyware.CachedAPI;
+import net.blay09.mods.chattweaks.chat.emotes.IEmote;
+import net.minecraft.util.IntHashMap;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 
 public class TwitchEmotesAPI {
 
-	public static final String CLIENT_ID = "gdhi94otnk7c7746syjv7gkr6bizq4w";
+	public static final String CLIENT_ID = "10napoemcms7qf9j0dxf28ndl2ltc3";
 
 	public static final int EMOTESET_GLOBAL = 0;
 	public static final int EMOTESET_TURBO = 19194;
@@ -20,8 +24,8 @@ public class TwitchEmotesAPI {
 	private static final IntHashMap<IEmote> twitchEmotes = new IntHashMap<>();
 
 	public static void loadEmoteSets() throws Exception {
-		JsonObject sets = CachedAPI.loadCachedAPI("https://twitchemotes.com/api_cache/v3/sets.json", "twitch_emotesets_v3.json", null);
-		if(sets != null) {
+		JsonObject sets = CachedAPI.loadCachedAPI( "https://twitchemotes.com/api_cache/v3/sets.json", "twitch_emotesets_v3.json", null );
+		if( sets != null ) {
 			for(Map.Entry<String, JsonElement> entry : sets.entrySet()) {
 				emoteSets.addKey(Integer.parseInt(entry.getKey()), entry.getValue().getAsJsonObject().get("channel_name").getAsString());
 			}
