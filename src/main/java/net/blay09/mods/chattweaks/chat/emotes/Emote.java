@@ -78,6 +78,6 @@ public class Emote<T> implements IEmote<T> {
 
     @Override
     public File getImageCacheFile() {
-        return new File(Minecraft.getMinecraft().mcDataDir, "chattweaks/cache/" + source.getCacheFileName(customData));
+        return new File(Minecraft.getMinecraft().mcDataDir, "ChatTweaks/cache/" + source.getCacheFileName(customData));
     }
 }
