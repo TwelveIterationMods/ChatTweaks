@@ -143,7 +143,7 @@ public class ChatTweaksConfig {
             }
 
             try {
-                new LocalEmotes(new File(Minecraft.getMinecraft().mcDataDir, "chattweaks/emotes/"));
+                new LocalEmotes(new File(Minecraft.getMinecraft().mcDataDir, "ChatTweaks/emotes/"));
             } catch (Exception e) {
                 ChatTweaks.logger.error("Failed to load local emotes: ", e);
             }
