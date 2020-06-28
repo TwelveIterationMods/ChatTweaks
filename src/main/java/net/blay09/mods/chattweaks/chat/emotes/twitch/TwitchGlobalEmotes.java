@@ -20,9 +20,9 @@ public class TwitchGlobalEmotes {
     private void loadEmotes(JsonArray jsonArray, IEmoteGroup group) {
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject entry = jsonArray.get(i).getAsJsonObject();
-            int id = entry.get("id").getAsInt();
+            String id = entry.get("id").getAsString();
             String code = entry.get("code").getAsString();
-            IEmote emote = ChatTweaksAPI.registerEmote(code, TwitchGlobalEmoteSource.INSTANCE, id);
+            IEmote<?> emote = ChatTweaksAPI.registerEmote(code, TwitchGlobalEmoteSource.INSTANCE, id);
             group.addEmote(emote);
 
             TwitchEmotesAPI.registerTwitchEmote(id, emote);

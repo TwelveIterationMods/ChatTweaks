@@ -11,6 +11,7 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
 
 apply from: 'gradle/scripts/common.gradle'
 apply from: 'gradle/scripts/with-at.gradle'
@@ -18,7 +19,7 @@ apply from: 'gradle/scripts/with-api.gradle'
 
 apply from: 'dependencies.gradle'
 
-def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: "0"
+def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: "24"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
@@ -48,5 +49,48 @@ processResources{
         
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+task("uploadJars", dependsOn: "build") {
+    description = "uploads JARs"
+    if (project.hasProperty("local_maven")) {
+        apply plugin: "maven"
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    repository(url: "file://${local_maven}")
+                }
+            }
+        }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            def releasesRepoUrl = 'https://artifactory.blay09.net/artifactory/libs-release-local'
+            def snapshotsRepoUrl = 'https://artifactory.blay09.net/artifactory/libs-snapshot-local'
+            repository(url: version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl) {
+                authentication(userName: project.mavenUsername, password: project.mavenPassword)
+            }
+
+            pom {
+                groupId = project.group
+                version = project.version
+                artifactId = project.archivesBaseName
+            }
+
+            pom.withXml {
+                asNode().dependencies.dependency.findAll {
+                    it.scope.text() == "compile"
+                }.each {
+                    if(it.optional)
+                        it.optional.value = 'true'
+                    else
+                        it.appendNode('optional', 'true');
+                }
+            }
+        }
     }
 }

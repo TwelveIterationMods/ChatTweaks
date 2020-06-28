@@ -1,15 +1,15 @@
 package net.blay09.mods.chattweaks.chat.emotes.twitch;
 
 public class TwitchChannelEmoteData {
-    private final int id;
+    private final String id;
     private final String channel;
 
-    public TwitchChannelEmoteData(int id, String channel) {
+    public TwitchChannelEmoteData(String id, String channel) {
         this.id = id;
         this.channel = channel;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

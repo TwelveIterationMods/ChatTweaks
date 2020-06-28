@@ -40,7 +40,7 @@ public class TwitchSubscriberEmotes {
                 String code = entry.get("code").getAsString();
                 matcher.reset(code);
                 if (matcher.matches()) {
-                    int id = entry.get("id").getAsInt();
+                    String id = entry.get("id").getAsString();
                     IEmoteGroup group = groupMap.computeIfAbsent(emoteSet, s -> ChatTweaksAPI.registerEmoteGroup("Twitch-" + s));
                     String channel = TwitchEmotesAPI.getChannelForEmoteSet(emoteSet);
                     TwitchChannelEmoteData emoteData = new TwitchChannelEmoteData(id, channel);

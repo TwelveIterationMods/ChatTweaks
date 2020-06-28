@@ -9,24 +9,24 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.net.URI;
 
-public enum TwitchGlobalEmoteSource implements IEmoteSource<Integer> {
+public enum TwitchGlobalEmoteSource implements IEmoteSource<String> {
     INSTANCE;
 
     private static final String URL_TEMPLATE = "https://static-cdn.jtvnw.net/emoticons/v1/{{id}}/1.0";
 
     @Override
-    public String getCacheFileName(Integer data) {
+    public String getCacheFileName(String data) {
         return "twitch-" + data;
     }
 
     @Override
-    public String getTooltip(Integer data) {
+    public String getTooltip(String data) {
         return TextFormatting.GRAY + I18n.format(ChatTweaks.MOD_ID + ":gui.chat.tooltipTwitchEmotes");
     }
 
     @Override
-    public void loadEmoteImage(IEmote<Integer> emote) throws Exception {
-        ChatTweaksAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", String.valueOf(emote.getCustomData()))));
+    public void loadEmoteImage(IEmote<String> emote) throws Exception {
+        ChatTweaksAPI.loadEmoteImage(emote, new URI(URL_TEMPLATE.replace("{{id}}", emote.getCustomData())));
     }
 
     @Override
