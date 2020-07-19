@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[24,)"
+issueTrackerURL="https://github.com/blay09/ChatTweaks/issues"
+displayURL="https://minecraft.curseforge.com/projects/chat-tweaks"
+authors="BlayTheNinth"
+
+[[mods]]
+modId="chattweaks"
+version="${file.jarVersion}"
+displayName="Chat Tweaks"
+description='''
+Chat Tabs, Filters, Image Preview.
+'''

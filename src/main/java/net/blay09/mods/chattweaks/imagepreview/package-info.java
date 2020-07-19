@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package net.blay09.mods.chattweaks.chat;
+package net.blay09.mods.chattweaks.imagepreview;
 
 import mcp.MethodsReturnNonnullByDefault;
 

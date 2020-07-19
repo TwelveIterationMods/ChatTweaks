@@ -1,25 +1,19 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        maven { url = "http://files.minecraftforge.net/maven" }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'maven'
 
-apply from: 'gradle/scripts/common.gradle'
-apply from: 'gradle/scripts/with-at.gradle'
-apply from: 'gradle/scripts/with-api.gradle'
+apply plugin: "net.minecraftforge.gradle"
+apply plugin: "idea"
+apply plugin: "maven"
 
-apply from: 'dependencies.gradle'
-
-def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: "24"
+def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: patch_version
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
@@ -30,38 +24,80 @@ version = major_version + "." + minor_version + "." + BUILD_NUMBER
 group = "net.blay09.mods"
 archivesBaseName = mod_name + "_" + minecraft_version
 
+repositories {
+    maven {
+        // for unofficial mappings
+        url 'https://www.dogforce-games.com/maven/'
+    }
+}
+
 minecraft {
-    version = minecraft_version + "-" + forge_version
-    runDir = "run"
-    useDepAts = true
-    mappings = mappings_version
-}
+    mappings channel: mappings_channel, version: mappings_version
 
-processResources{
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
 
-task("uploadJars", dependsOn: "build") {
-    description = "uploads JARs"
-    if (project.hasProperty("local_maven")) {
-        apply plugin: "maven"
-        uploadArchives {
-            repositories {
-                mavenDeployer {
-                    repository(url: "file://${local_maven}")
+            mods {
+                chattweaks {
+                    source sourceSets.main
                 }
             }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                chattweaks {
+                    source sourceSets.main
+                }
+            }
+        }
+        data {
+            workingDirectory project.file('run')
+//            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                chattweaks {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft([
+            group  : "${forge_group}",
+            name   : "forge",
+            version: "${minecraft_version}-${forge_version}"
+    ])
+}
+
+jar {
+    manifest {
+        attributes(["Specification-Title"     : mod_id,
+                    "Specification-Vendor"    : "BlayTheNinth",
+                    "Specification-Version"   : "1",
+                    "Implementation-Title"    : project.name,
+                    "Implementation-Version"  : "${version}",
+                    "Implementation-Vendor"   : "BlayTheNinth",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+    }
+}
+
+idea {
+    module {
+        for (String excludeDirName in ["run", "out", "gradle"]) {
+            File excludeDir = new File(projectDir, excludeDirName)
+            excludeDirs.add(excludeDir)
         }
     }
 }
