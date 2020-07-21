@@ -23,4 +23,9 @@ public interface ChatMessage {
 
     @Nullable
     ChatView getExclusiveView();
+
+    void setVariable(String key, @Nullable ITextComponent value);
+
+    @Nullable
+    ITextComponent getVariable(String key);
 }

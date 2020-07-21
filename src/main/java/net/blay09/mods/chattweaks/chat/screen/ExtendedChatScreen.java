@@ -1,9 +1,10 @@
-package net.blay09.mods.chattweaks.chat;
+package net.blay09.mods.chattweaks.chat.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blay09.mods.chattweaks.api.event.ChatComponentClickEvent;
 import net.blay09.mods.chattweaks.api.event.ChatComponentHoverEvent;
 import net.blay09.mods.chattweaks.api.event.ExtendedClientChatEvent;
+import net.blay09.mods.chattweaks.chat.widget.ChatSettingsButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.util.text.Style;
@@ -19,6 +20,15 @@ public class ExtendedChatScreen extends ChatScreen  {
 
     public ExtendedChatScreen(String defaultText) {
         super(defaultText);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        width -= 16;
+        inputField.setWidth(width - 4);
+        addButton(new ChatSettingsButton(inputField.x + inputField.getWidth(), inputField.y - 2));
     }
 
     @Override

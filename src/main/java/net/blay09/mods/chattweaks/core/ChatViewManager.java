@@ -70,6 +70,7 @@ public class ChatViewManager {
     public static void init() {
         views.put("*", createDefaultView());
         views.put("system", createSystemView());
+        activeView = views.get("*");
     }
 
     @SubscribeEvent

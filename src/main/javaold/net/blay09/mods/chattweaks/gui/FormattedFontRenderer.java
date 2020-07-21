@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
  * THIS CLASS IS QUITE SPECIFIC FOR THE FORMATTED TEXT BOX
  * FOR EXAMPLE IT WILL NOT FORMAT THE CURSOR ("_")
  */
-public class FormattedFontRenderer extends FontRenderer {
+public class HighlightingFontRenderer extends FontRenderer {
 
 	private static final ResourceLocation texture = new ResourceLocation("textures/font/ascii.png");
 
@@ -23,7 +23,7 @@ public class FormattedFontRenderer extends FontRenderer {
 	private String lastFormattedText;
 	private boolean isVisible;
 
-	public FormattedFontRenderer(Minecraft mc, FontRenderer fontRenderer, IStringFormatter formatter) {
+	public HighlightingFontRenderer(Minecraft mc, FontRenderer fontRenderer, IStringFormatter formatter) {
 		super(mc.gameSettings, texture, mc.renderEngine, fontRenderer.getUnicodeFlag());
 		setBidiFlag(fontRenderer.getBidiFlag());
 		this.baseFontRenderer = fontRenderer;

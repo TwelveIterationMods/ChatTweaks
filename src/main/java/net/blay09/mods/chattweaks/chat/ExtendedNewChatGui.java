@@ -1,10 +1,12 @@
 package net.blay09.mods.chattweaks.chat;
 
+import net.blay09.mods.chattweaks.api.ChatDisplay;
 import net.blay09.mods.chattweaks.api.ChatMessage;
+import net.blay09.mods.chattweaks.api.ChatView;
 import net.blay09.mods.chattweaks.api.ClearChatEvent;
 import net.blay09.mods.chattweaks.api.event.PrintChatMessageEvent;
-import net.blay09.mods.chattweaks.api.ChatDisplay;
-import net.blay09.mods.chattweaks.api.ChatView;
+import net.blay09.mods.chattweaks.core.ChatManager;
+import net.blay09.mods.chattweaks.core.ChatViewManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.NewChatGui;
 import net.minecraft.util.text.ITextComponent;
@@ -13,6 +15,8 @@ import net.minecraftforge.common.MinecraftForge;
 public class ExtendedNewChatGui extends NewChatGui implements ChatDisplay {
 
     protected final Minecraft mc;
+
+    private boolean alternateBackground;
 
     public ExtendedNewChatGui(Minecraft minecraft) {
         super(minecraft);
@@ -36,17 +40,30 @@ public class ExtendedNewChatGui extends NewChatGui implements ChatDisplay {
     }
 
     @Override
+    public void refreshChat() {
+        this.drawnChatLines.clear();
+        this.resetScroll();
+
+        ChatView activeView = ChatViewManager.getActiveView();
+        for (ChatMessage chatMessage : activeView.getChatMessages()) {
+            ChatManager.addChatMessageForDisplay(chatMessage, activeView);
+        }
+    }
+
+    @Override
     public String getName() {
         return "chat";
     }
 
     @Override
     public void addChatMessage(ChatMessage chatMessage, ChatView view) {
-        this.func_238493_a_(chatMessage.getTextComponent(), chatMessage.getChatLineId(), mc.ingameGUI.getTicks(), false);
-        /*if (view != ChatViewManager.getActiveView()) {
+        if (view != ChatViewManager.getActiveView()) {
             return;
         }
 
+        this.func_238493_a_(chatMessage.getTextComponent(), chatMessage.getChatLineId(), mc.ingameGUI.getTicks(), false);
+        alternateBackground = !alternateBackground;
+        /*
         int chatWidth = MathHelper.floor((float) this.getChatWidth() / this.getChatScale());
         List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getTextComponent(), chatWidth, this.mc.fontRenderer, false, false);
         boolean isChatOpen = this.getChatOpen();

@@ -18,7 +18,7 @@ public class ChatViewImpl implements ChatView {
     public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
 
     private final Set<String> channels = new HashSet<>();
-    private final List<ChatMessage> chatLines = new ArrayList<>();
+    private final List<ChatMessage> chatMessages = new ArrayList<>();
 
     private final String name;
     private String display;
@@ -112,8 +112,22 @@ public class ChatViewImpl implements ChatView {
     }
 
     @Override
-    public ChatMessage addChatLine(ChatMessage chatMessage) {
+    public ChatMessage addChatMessage(ChatMessage chatMessage) {
+        ChatMessage processedMessage = ChatViewProcessor.processMessage(chatMessage, this);
+        if (processedMessage != null) {
+            chatMessages.add(processedMessage);
+            if (chatMessages.size() > ChatTweaksConfig.CLIENT.messageHistory.get()) {
+                chatMessages.remove(0);
+            }
+            return processedMessage;
+        }
+
         return chatMessage;
+    }
+
+    @Override
+    public Collection<ChatMessage> getChatMessages() {
+        return chatMessages;
     }
 
     @Override
@@ -164,7 +178,7 @@ public class ChatViewImpl implements ChatView {
 
     @Override
     public void refresh() {
-        chatLines.clear();
+        chatMessages.clear();
 
         channels.stream()
                 .map(ChatManager::getChatChannel)
@@ -174,6 +188,14 @@ public class ChatViewImpl implements ChatView {
                 .sorted(Comparator.comparingInt(ChatMessage::getChatLineId).reversed())
                 .limit(ChatTweaksConfig.CLIENT.messageHistory.get())
                 .sorted(Comparator.comparingInt(ChatMessage::getChatLineId))
-                .forEach(this::addChatLine);
+                .forEach(this::addChatMessage);
+    }
+
+    public Pattern getCompiledFilterPattern() {
+        return compiledFilterPattern;
+    }
+
+    public String getBuiltOutputFormat() {
+        return builtOutputFormat;
     }
 }

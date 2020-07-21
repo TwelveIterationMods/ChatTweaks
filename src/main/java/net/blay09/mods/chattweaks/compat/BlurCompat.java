@@ -1,8 +1,8 @@
 package net.blay09.mods.chattweaks.compat;
 
 import net.blay09.mods.chattweaks.ChatTweaks;
-import net.blay09.mods.chattweaks.chat.ExtendedChatScreen;
-import net.blay09.mods.chattweaks.chat.ExtendedSleepScreen;
+import net.blay09.mods.chattweaks.chat.screen.ExtendedChatScreen;
+import net.blay09.mods.chattweaks.chat.screen.ExtendedSleepScreen;
 import net.minecraftforge.fml.ModList;
 import org.apache.commons.lang3.ArrayUtils;
 

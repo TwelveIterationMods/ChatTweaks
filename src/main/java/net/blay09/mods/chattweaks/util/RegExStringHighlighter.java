@@ -1,12 +1,12 @@
-package net.blay09.mods.chattweaks.gui.formatter;
+package net.blay09.mods.chattweaks.util;
 
-import net.blay09.mods.chattweaks.gui.formatter.IStringFormatter;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegExStringFormatter implements IStringFormatter {
+public class RegExStringHighlighter implements Function<String, String> {
 
 	private static final Matcher GROUPS = Pattern.compile("(?<=(?:^|[^\\\\]))([\\(\\)\\^]+|\\(\\?:)").matcher("");
 	private static final Matcher QUANTIFIERS = Pattern.compile("(?<=(?:^|[^\\\\]))([\\+\\?\\*]+)").matcher("");
@@ -14,7 +14,7 @@ public class RegExStringFormatter implements IStringFormatter {
 	private static final Matcher ESCAPED = Pattern.compile("(\\\\.)").matcher("");
 
 	@Override
-	public String applyFormatting(String text) {
+	public String apply(String text) {
 		GROUPS.reset(text);
 		StringBuffer sb = new StringBuffer();
 		while (GROUPS.find()) {

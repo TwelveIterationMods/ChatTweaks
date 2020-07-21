@@ -48,28 +48,6 @@ public class ExtendedNewChatGui extends NewChatGui {
 
     private final Minecraft mc;
     private final List<WrappedChatLine> wrappedChatLines = Lists.newArrayList();
-    private FontRenderer fontRenderer;
-    private boolean alternateBackground;
-
-    public ExtendedNewChatGui(Minecraft mc) {
-        super(mc);
-        this.mc = mc;
-        this.fontRenderer = mc.fontRenderer;
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @Override
-    public void refreshChat() {
-        wrappedChatLines.clear();
-        resetScroll();
-
-        ChatView activeView = ChatViewManager.getActiveView();
-        if (activeView.getMessageStyle() == MessageStyle.Chat) {
-            for (ChatMessage chatMessage : activeView.getChatLines()) {
-                addChatMessageForDisplay(chatMessage, activeView);
-            }
-        }
-    }
 
     @Override
     public void drawChat(int updateCounter) {

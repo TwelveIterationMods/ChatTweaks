@@ -1,6 +1,9 @@
-package net.blay09.mods.chattweaks.chat;
+package net.blay09.mods.chattweaks.chat.handler;
 
 import net.blay09.mods.chattweaks.ChatTweaks;
+import net.blay09.mods.chattweaks.chat.VanillaNewChatGui;
+import net.blay09.mods.chattweaks.chat.screen.ExtendedChatScreen;
+import net.blay09.mods.chattweaks.chat.screen.ExtendedSleepScreen;
 import net.blay09.mods.chattweaks.core.ChatManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ChatScreen;

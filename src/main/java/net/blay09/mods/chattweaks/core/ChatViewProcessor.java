@@ -1,70 +1,42 @@
-package net.blay09.mods.chattweaks.chat;
+package net.blay09.mods.chattweaks.core;
 
-import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.ChatTweaksConfig;
-import net.minecraft.util.text.*;
+import net.blay09.mods.chattweaks.api.ChatMessage;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
-public class ChatView {
-
-    private ITextComponent subTextComponent(ITextComponent component, int startIndex, int endIndex) {
-        int index = 0;
-        TextComponent result = new StringTextComponent("");
-        for (ITextComponent part : component) {
-            String unformatted = part.getUnformattedComponentText();
-            int min = Math.max(0, startIndex - index);
-            int max = Math.min(endIndex - index, unformatted.length());
-            if (unformatted.length() >= min && max > min) {
-                String sub = unformatted.substring(min, max);
-                if (sub.length() > 0) {
-                    TextComponent sibling = new StringTextComponent(sub);
-                    sibling.func_230530_a_(part.getStyle()); // setStyle
-                    result.func_230529_a_(sibling); // appendSibling
-                }
-            }
-            index += unformatted.length();
-        }
-        return result;
-    }
-
-    public ChatMessage addChatLine(ChatMessage chatLine) {
-        chatLine = chatLine.copy();
-        chatLines.add(chatLine);
-        if (chatLines.size() > ChatTweaks.MAX_MESSAGES) {
-            chatLines.remove(0);
-        }
-
-        Matcher matcher = compiledFilterPattern.matcher(chatLine.getTextComponent().getString());
+public class ChatViewProcessor {
+    public static ChatMessage processMessage(ChatMessage chatMessage, ChatViewImpl chatView) {
+        final Pattern compiledFilterPattern = chatView.getCompiledFilterPattern();
+        Matcher matcher = compiledFilterPattern.matcher(chatMessage.getTextComponent().getString());
         if (!matcher.matches()) {
-            return chatLine;
+            return null;
         }
 
+        ChatMessageImpl copiedMessage = new ChatMessageImpl(chatMessage.getChatLineId(), chatMessage.getTextComponent());
         try {
-            if (chatLine.getSender() == null) {
-                chatLine.setSender(subTextComponent(chatLine.getTextComponent(), matcher.start("s"), matcher.end("s")));
+            if (copiedMessage.getSenderComponent() == null) {
+                copiedMessage.setSenderComponent(subTextComponent(copiedMessage.getTextComponent(), matcher.start("s"), matcher.end("s")));
             }
-            if (chatLine.getMessage() == null) {
-                chatLine.setMessage(subTextComponent(chatLine.getTextComponent(), matcher.start("m"), matcher.end("m")));
+            if (copiedMessage.getMessageComponent() == null) {
+                copiedMessage.setMessageComponent(subTextComponent(copiedMessage.getTextComponent(), matcher.start("m"), matcher.end("m")));
             }
         } catch (IllegalArgumentException ignored) {
-            if (chatLine.getMessage() == null) {
-                chatLine.setMessage(chatLine.getTextComponent());
+            if (copiedMessage.getMessageComponent() == null) {
+                copiedMessage.setMessageComponent(copiedMessage.getTextComponent());
             }
         }
 
-        ITextComponent source = chatLine.getTextComponent();
-        ITextComponent textComponent = chatLine.getTextComponent();
-        if (!builtOutputFormat.equals("$0")) {
+        ITextComponent source = copiedMessage.getTextComponent();
+        ITextComponent textComponent = copiedMessage.getTextComponent();
+        final String builtOutputFormat = chatView.getBuiltOutputFormat();
+        /* TODO if (!builtOutputFormat.equals("$0")) {
             TextComponent formattedTextComponent = new StringTextComponent("");
             int last = 0;
             Matcher outputMatcher = groupPattern.matcher(builtOutputFormat);
@@ -77,11 +49,11 @@ public class ChatView {
                 String namedGroup = outputMatcher.group(2);
                 if (namedGroup != null) {
                     if (namedGroup.equals("s") && chatLine.getSender() != null) {
-                        groupValue = chatLine.getSender();
+                        groupValue = copiedMessage.getSender();
                     } else if (namedGroup.equals("m") && chatLine.getMessage() != null) {
-                        groupValue = chatLine.getMessage();
+                        groupValue = copiedMessage.getMessage();
                     } else if (namedGroup.equals("t")) {
-                        final StringTextComponent timeStampComponent = new StringTextComponent(ChatTweaksConfig.cachedTimestampFormat.format(new Date(chatLine.getTimestamp())));
+                        final StringTextComponent timeStampComponent = new StringTextComponent(ChatTweaksConfig.cachedTimestampFormat.format(new Date(copiedMessage.getTimestamp())));
                         timeStampComponent.func_240699_a_(TextFormatting.GRAY);
                         groupValue = timeStampComponent;
                     } else {
@@ -95,7 +67,7 @@ public class ChatView {
                         if (groupStart != -1 && groupEnd != -1) {
                             groupValue = subTextComponent(source, groupStart, groupEnd);
                         } else {
-                            groupValue = chatLine.getOutputVar(namedGroup);
+                            groupValue = copiedMessage.getOutputVar(namedGroup);
                         }
                     }
                 } else {
@@ -135,8 +107,30 @@ public class ChatView {
             }
         }
 
-        chatLine.setTextComponent(resultComponent != null ? resultComponent : textComponent);
-        return chatLine;
+        copiedMessage.setTextComponent(resultComponent != null ? resultComponent : textComponent);*/
+        return copiedMessage;
     }
 
+    private static ITextComponent subTextComponent(ITextComponent textComponent, int start, int end) {
+        /* TODO
+        int index = 0;
+        TextComponent result = new StringTextComponent("");
+        for (ITextComponent part : component) {
+            String unformatted = part.getUnformattedComponentText();
+            int min = Math.max(0, startIndex - index);
+            int max = Math.min(endIndex - index, unformatted.length());
+            if (unformatted.length() >= min && max > min) {
+                String sub = unformatted.substring(min, max);
+                if (sub.length() > 0) {
+                    TextComponent sibling = new StringTextComponent(sub);
+                    sibling.func_230530_a_(part.getStyle()); // setStyle
+                    result.func_230529_a_(sibling); // appendSibling
+                }
+            }
+            index += unformatted.length();
+        }
+        return result;
+         */
+        return null; // TODO big oof
+    }
 }

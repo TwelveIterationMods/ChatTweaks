@@ -15,7 +15,6 @@ public class ChatMessage {
     private List<ChatImage> images;
 	private int[] rgbColors;
     private CompoundNBT customData;
-	private Map<String, ITextComponent> outputVars;
 
     public CompoundNBT getCustomData() {
         return customData;
@@ -98,15 +97,4 @@ public class ChatMessage {
 		return out;
 	}
 
-	public void setOutputVar(String key, @Nullable ITextComponent value) {
-		if(outputVars == null) {
-			outputVars = Maps.newHashMap();
-		}
-		outputVars.put(key, value);
-	}
-
-	@Nullable
-	public ITextComponent getOutputVar(String key) {
-		return outputVars != null ? outputVars.get(key) : null;
-	}
 }

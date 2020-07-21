@@ -1,7 +1,7 @@
 package net.blay09.mods.chattweaks;
 
 import net.blay09.mods.chattweaks.api.ChatTweaksAPI;
-import net.blay09.mods.chattweaks.chat.ChatScreenReplacementHandler;
+import net.blay09.mods.chattweaks.chat.handler.ChatScreenReplacementHandler;
 import net.blay09.mods.chattweaks.compat.BlurCompat;
 import net.blay09.mods.chattweaks.core.ChatManager;
 import net.blay09.mods.chattweaks.core.ChatViewManager;

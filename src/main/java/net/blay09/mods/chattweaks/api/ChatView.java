@@ -1,6 +1,6 @@
 package net.blay09.mods.chattweaks.api;
 
-import net.minecraft.util.text.ITextComponent;
+import java.util.Collection;
 
 public interface ChatView {
     String getName();
@@ -31,7 +31,9 @@ public interface ChatView {
 
     boolean matchesFilter(ChatMessage chatMessage);
 
-    ChatMessage addChatLine(ChatMessage chatMessage);
+    ChatMessage addChatMessage(ChatMessage chatMessage);
+
+    Collection<ChatMessage> getChatMessages();
 
     String getFilterPattern();
 

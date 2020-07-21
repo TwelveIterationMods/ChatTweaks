@@ -7,15 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class PasswordTextFieldWidget extends FormattedTextFieldWidget {
 
-	private static class PasswordFormatter implements IStringFormatter {
-		@Override
-		public String applyFormatting(String input) {
-			return StringUtils.repeat('*', input.length());
-		}
-	}
-
 	public PasswordTextFieldWidget(Minecraft mc, int x, int y, int width, int height) {
-		super(new FormattedFontRenderer(mc, mc.fontRenderer, new PasswordFormatter()), x, y, width, height);
+		super(new FormattedFontRenderer(mc, mc.fontRenderer, new PasswordStringFormatter()), x, y, width, height);
 	}
 
 }

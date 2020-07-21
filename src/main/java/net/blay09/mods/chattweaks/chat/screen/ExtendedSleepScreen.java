@@ -1,4 +1,4 @@
-package net.blay09.mods.chattweaks.chat;
+package net.blay09.mods.chattweaks.chat.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blay09.mods.chattweaks.api.event.ChatComponentClickEvent;

@@ -8,7 +8,6 @@ import net.blay09.mods.chattweaks.api.ChatView;
 import net.blay09.mods.chattweaks.api.event.PrintChatMessageEvent;
 import net.blay09.mods.chattweaks.bottombar.BottomChatDisplay;
 import net.blay09.mods.chattweaks.sidebar.SideChatDisplay;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,6 +29,7 @@ public class ChatManager {
 
     private static final String[] systemLang = new String[]{
             "gameMode.changed",
+            "commands.gamemode.success.self",
             "commands.time.set",
             "chat.type.admin",
     };
@@ -102,7 +102,7 @@ public class ChatManager {
         List<ChatView> views = ChatViewManager.findChatViews(message, channel);
         boolean hasReadMessage = views.contains(ChatViewManager.getActiveView());
         for (ChatView view : views) {
-            ChatMessage viewMessage = view.addChatLine(message);
+            ChatMessage viewMessage = view.addChatMessage(message);
             if (!hasReadMessage) {
                 view.markAsUnread();
             }
@@ -130,7 +130,7 @@ public class ChatManager {
         return channels.get(name);
     }
 
-    private static void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
+    public static void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
         final ChatDisplay display = displays.getOrDefault(view.getDisplay(), displays.get("chat"));
         display.addChatMessage(chatMessage, view);
     }
