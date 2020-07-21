@@ -30,6 +30,7 @@ public class ChatTweaksConfig {
         public final ForgeConfigSpec.BooleanValue chatTextOpacity;
         public final ForgeConfigSpec.BooleanValue disableUnderlines;
         public final ForgeConfigSpec.ConfigValue<String> timestampFormat;
+        public final ForgeConfigSpec.IntValue messageHistory;
 
         Client(ForgeConfigSpec.Builder builder) {
             smallerEmotes = builder
@@ -91,6 +92,11 @@ public class ChatTweaksConfig {
                     .comment("List of words that are highlighted in chat.")
                     .translation("config.chattweaks.highlightWords")
                     .defineList("highlightWords", Lists.newArrayList(), it -> it instanceof String);
+
+            messageHistory = builder
+                    .comment("The amount of messages to keep available in a view.")
+                    .translation("config.chattweaks.messageHistory")
+                    .defineInRange("messageHistory", 100, 1, Integer.MAX_VALUE);
         }
     }
 

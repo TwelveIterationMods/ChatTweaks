@@ -30,7 +30,6 @@ public class ChatViewManager {
     private static final List<ChatView> sortedViews = Lists.newArrayList();
     private static String[] viewNames;
     private static String[] tabViewNames;
-    private static ChatView activeView;
 
     public static void load() {
         removeAllChatViews();

@@ -139,15 +139,4 @@ public class ChatView {
         return chatLine;
     }
 
-    public void refresh() {
-        chatLines.clear();
-
-        channels.stream()
-                .flatMap(it -> it.getChatMessages().stream())
-                .filter(it -> messageMatches(it.getTextComponent().getString()))
-                .sorted(Comparator.comparingInt(ChatMessage::getId).reversed())
-                .limit(ChatTweaks.MAX_MESSAGES)
-                .sorted(Comparator.comparingInt(ChatMessage::getId))
-                .forEach(this::addChatLine);
-    }
 }

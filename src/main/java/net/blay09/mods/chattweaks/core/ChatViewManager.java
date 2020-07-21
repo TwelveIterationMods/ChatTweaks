@@ -36,10 +36,9 @@ public class ChatViewManager {
     }
 
     public static List<ChatView> findChatViews(ChatMessage message, ChatChannel channel) {
-        String unformattedText = TextFormatting.getTextWithoutFormattingCodes(message.getTextComponent().getString());
         List<ChatView> result = new ArrayList<>();
         for (ChatView view : views.values()) {
-            if (view.containsChannel(channel.getName()) && view.messageMatches(unformattedText)) {
+            if (view.containsChannel(channel.getName()) && view.matchesFilter(message)) {
                 if (view.isExclusive()) {
                     result.clear();
                     result.add(view);

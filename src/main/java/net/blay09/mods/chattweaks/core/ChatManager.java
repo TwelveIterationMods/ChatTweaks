@@ -92,7 +92,7 @@ public class ChatManager {
         event.setCanceled(true);
     }
 
-    private static int getNextMessageId() {
+    public static int getNextMessageId() {
         return chatLineIdCounter.incrementAndGet();
     }
 

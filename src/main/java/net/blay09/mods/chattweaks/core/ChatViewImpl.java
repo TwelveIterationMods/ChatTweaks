@@ -1,12 +1,12 @@
 package net.blay09.mods.chattweaks.core;
 
+import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.api.ChatMessage;
 import net.blay09.mods.chattweaks.api.ChatView;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -103,8 +103,11 @@ public class ChatViewImpl implements ChatView {
     }
 
     @Override
-    public boolean messageMatches(String message) {
-        Matcher matcher = compiledFilterPattern.matcher(message);
+    public boolean matchesFilter(ChatMessage chatMessage) {
+        final ITextComponent textComponent = chatMessage.getTextComponent();
+        final String unformattedText = TextFormatting.getTextWithoutFormattingCodes(textComponent.getString());
+        //noinspection ConstantConditions
+        Matcher matcher = compiledFilterPattern.matcher(unformattedText);
         return matcher.matches();
     }
 
@@ -157,5 +160,20 @@ public class ChatViewImpl implements ChatView {
     @Override
     public void setOutgoingPrefix(String outgoingPrefix) {
         this.outgoingPrefix = outgoingPrefix;
+    }
+
+    @Override
+    public void refresh() {
+        chatLines.clear();
+
+        channels.stream()
+                .map(ChatManager::getChatChannel)
+                .filter(Objects::nonNull)
+                .flatMap(channel -> channel.getChatMessages().stream())
+                .filter(this::matchesFilter)
+                .sorted(Comparator.comparingInt(ChatMessage::getChatLineId).reversed())
+                .limit(ChatTweaksConfig.CLIENT.messageHistory.get())
+                .sorted(Comparator.comparingInt(ChatMessage::getChatLineId))
+                .forEach(this::addChatLine);
     }
 }

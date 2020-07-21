@@ -1,5 +1,7 @@
 package net.blay09.mods.chattweaks.api;
 
+import net.minecraft.util.text.ITextComponent;
+
 public interface ChatView {
     String getName();
 
@@ -27,7 +29,7 @@ public interface ChatView {
 
     void markAsRead();
 
-    boolean messageMatches(String message);
+    boolean matchesFilter(ChatMessage chatMessage);
 
     ChatMessage addChatLine(ChatMessage chatMessage);
 
@@ -42,4 +44,6 @@ public interface ChatView {
     String getOutgoingPrefix();
 
     void setOutgoingPrefix(String outgoingPrefix);
+
+    void refresh();
 }

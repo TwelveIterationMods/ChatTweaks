@@ -6,6 +6,7 @@ import net.blay09.mods.chattweaks.compat.BlurCompat;
 import net.blay09.mods.chattweaks.core.ChatManager;
 import net.blay09.mods.chattweaks.core.ChatViewManager;
 import net.blay09.mods.chattweaks.imagepreview.PatternImageURLTransformer;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -16,6 +17,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
 
 @Mod(ChatTweaks.MOD_ID)
 public class ChatTweaks {
@@ -47,5 +50,13 @@ public class ChatTweaks {
 
     private void loadComplete(FMLLoadCompleteEvent event) {
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ChatScreenReplacementHandler::replaceNewChatGui);
+    }
+
+    public static File getDataDir() {
+        File dataDir = new File(Minecraft.getInstance().gameDir, "ChatTweaks");
+        if (!dataDir.exists() && !dataDir.mkdirs()) {
+            logger.error("Failed to create ChatTweaks data directory.");
+        }
+        return dataDir;
     }
 }
