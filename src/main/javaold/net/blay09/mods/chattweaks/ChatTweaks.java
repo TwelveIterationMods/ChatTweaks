@@ -29,23 +29,11 @@ public class ChatTweaks {
     public static final String TEXT_FORMATTING_RGB = "\u00a7#";
     public static final String TEXT_FORMATTING_EMOTE = "\u00a7*";
 
-    public static final int MAX_MESSAGES = 100;
-
     public ChatTweaks() {
-        ChatManager.init();
-
         File chatTweaksData = new File(Minecraft.getInstance().gameDir, "ChatTweaks");
         if (!chatTweaksData.exists() && !chatTweaksData.mkdirs()) {
             logger.error("Failed to create ChatTweaks data directory.");
         }
-
-        // TODO postInit:
-        ChatViewManager.load();
-        BlurCompat.enableBlurCompat();
-    }
-
-    private void setupClient(FMLClientSetupEvent event) {
-        // persistentChatGUI = new GuiNewChatExt(Minecraft.getInstance());
     }
 
     public static ChatMessage createChatMessage(ITextComponent component) {

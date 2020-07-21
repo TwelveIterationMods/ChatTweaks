@@ -1,7 +1,7 @@
 package net.blay09.mods.chattweaks.tweaks;
 
 import net.blay09.mods.chattweaks.ChatTweaks;
-import net.blay09.mods.chattweaks.api.ChatComponentClickEvent;
+import net.blay09.mods.chattweaks.api.event.ChatComponentClickEvent;
 import net.blay09.mods.chattweaks.util.DesktopUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.event.ClickEvent;

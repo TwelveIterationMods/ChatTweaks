@@ -1,18 +1,19 @@
-package net.blay09.mods.chattweaks.gui.overlay;
+package net.blay09.mods.chattweaks.sidebar;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.blay09.mods.chattweaks.ChatTweaks;
-import net.blay09.mods.chattweaks.chat.ChatMessage;
+import net.blay09.mods.chattweaks.api.ChatMessage;
+import net.blay09.mods.chattweaks.api.ChatDisplay;
+import net.blay09.mods.chattweaks.api.ChatView;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = ChatTweaks.MOD_ID)
-public class SideChatRenderer {
+public class SideChatDisplay implements ChatDisplay {
 
     private static final int MAX_MESSAGES = 10;
     private static final float MESSAGE_TIME = 120;
@@ -30,21 +31,32 @@ public class SideChatRenderer {
         }
     }
 
-    private static final List<SideChatMessage> messages = Lists.newArrayList();
+    private final List<SideChatMessage> messages = Lists.newArrayList();
 
-    public static void addMessage(ChatMessage chatMessage) {
-        for (SideChatMessage message : messages) {
-            message.y -= Minecraft.getInstance().fontRenderer.FONT_HEIGHT + 2;
-        }
-        messages.add(new SideChatMessage(chatMessage, 0, MESSAGE_TIME));
-        if (messages.size() > MAX_MESSAGES) {
-            messages.remove(0);
+    public SideChatDisplay() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @Override
+    public String getName() {
+        return "side";
+    }
+
+    @Override
+    public void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
+        if (!view.isMuted()) {
+            for (SideChatMessage message : messages) {
+                message.y -= Minecraft.getInstance().fontRenderer.FONT_HEIGHT + 2;
+            }
+            messages.add(new SideChatMessage(chatMessage, 0, MESSAGE_TIME));
+            if (messages.size() > MAX_MESSAGES) {
+                messages.remove(0);
+            }
         }
     }
 
     @SubscribeEvent
-    @SuppressWarnings("unused")
-    public static void onDrawOverlayChat(RenderGameOverlayEvent.Post event) {
+    public void onDrawOverlayChat(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL || messages.isEmpty()) {
             return;
         }
@@ -68,8 +80,8 @@ public class SideChatRenderer {
                 messages.remove(i);
             }
 
-            String formattedText = message.chatMessage.getTextComponent().getFormattedText();
-            Minecraft.getInstance().fontRenderer.drawString(formattedText, -Minecraft.getInstance().fontRenderer.getStringWidth(formattedText) - 16, message.y, 0xFFFFFF + (alpha << 24), true);
+            final ITextComponent textComponent = message.chatMessage.getTextComponent();
+            Minecraft.getInstance().fontRenderer.func_238422_b_(event.getMatrixStack(), textComponent, -Minecraft.getInstance().fontRenderer.func_238414_a_(textComponent) - 16, message.y, 0xFFFFFF + (alpha << 24));
         }
         RenderSystem.disableBlend();
         RenderSystem.popMatrix();

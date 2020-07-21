@@ -27,44 +27,10 @@ import java.util.Map;
 
 public class ChatViewManager {
 
-    private static final Map<String, ChatView> views = Maps.newHashMap();
     private static final List<ChatView> sortedViews = Lists.newArrayList();
     private static String[] viewNames;
     private static String[] tabViewNames;
     private static ChatView activeView;
-
-    public static ChatView createDefaultView() {
-        ChatView defaultView = new ChatView("*");
-        defaultView.addChannel(ChatManager.mainChannel);
-        defaultView.addChannel(ChatManager.interactionChannel);
-        defaultView.addChannel(ChatManager.systemChannel);
-        defaultView.addChannel(ChatManager.deathChannel);
-        return defaultView;
-    }
-
-    public static ChatView createSystemView() {
-        ChatView systemView = new ChatView("system");
-        systemView.addChannel(ChatManager.systemChannel);
-        systemView.setMessageStyle(MessageStyle.Side);
-        systemView.setExclusive(true);
-        return systemView;
-    }
-
-    public static ChatView createInteractionView() {
-        ChatView interactionView = new ChatView("interaction");
-        interactionView.addChannel(ChatManager.interactionChannel);
-        interactionView.setMessageStyle(MessageStyle.Bottom);
-        interactionView.setExclusive(true);
-        return interactionView;
-    }
-
-    public static ChatView[] createDefaults() {
-        return new ChatView[]{
-                createDefaultView(),
-                createSystemView(),
-                createInteractionView()
-        };
-    }
 
     public static void load() {
         removeAllChatViews();
@@ -165,40 +131,8 @@ public class ChatViewManager {
         return views.get(arr[index]);
     }
 
-    public static List<ChatView> findChatViews(ChatMessage message, ChatChannel channel) {
-        String unformattedText = message.getTextComponent().getString();
-        List<ChatView> result = Lists.newArrayList();
-        for (ChatView view : sortedViews) {
-            if (view.getChannels().contains(channel) && view.messageMatches(unformattedText)) {
-                if (view.isExclusive()) {
-                    result.clear();
-                    result.add(view);
-                    message.setExclusiveView(view);
-                    break;
-                }
-                result.add(view);
-            }
-        }
-        return result;
-    }
-
-    public static void setActiveView(ChatView view) {
-        activeView = view;
-        view.markAsUnread(false);
-        // TODO ChatTweaks.getChatDisplay().refreshChat();
-    }
-
-    public static ChatView getActiveView() {
-        return activeView;
-    }
-
     public static Collection<ChatView> getViews() {
         return sortedViews;
-    }
-
-    @Nullable
-    public static ChatView getChatView(String name) {
-        return views.get(name);
     }
 
     @Deprecated

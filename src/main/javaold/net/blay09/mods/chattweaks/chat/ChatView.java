@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import net.blay09.mods.chattweaks.ChatManager;
 import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.minecraft.util.text.*;
@@ -22,79 +21,15 @@ public class ChatView {
     public static final Pattern groupPattern = Pattern.compile("\\$(?:([0-9])|\\{([\\w])\\})");
     public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
 
-    private String name;
-    private final List<ChatChannel> channels = Lists.newArrayList();
     private String filterPattern = "";
     private String outputFormat = "$0";
-    private MessageStyle messageStyle = MessageStyle.Chat;
     private String outgoingPrefix;
-    private boolean isExclusive;
-    private boolean isMuted;
 
     private Pattern compiledFilterPattern = defaultFilterPattern;
     private String builtOutputFormat = outputFormat;
     private final List<ChatMessage> chatLines = Lists.newArrayList();
-    private boolean hasUnread;
 
     private boolean isTemporary;
-
-    public ChatView(String name) {
-        this.name = name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public static ChatView fromJson(JsonObject jsonView) {
-        ChatView view = new ChatView(jsonView.get("name").getAsString());
-        view.setFilterPattern(jsonView.has("filterPattern") ? jsonView.get("filterPattern").getAsString() : "");
-        view.setOutputFormat(jsonView.get("outputFormat").getAsString());
-        view.setMessageStyle(MessageStyle.valueOf(jsonView.get("style").getAsString()));
-        view.setOutgoingPrefix(jsonView.has("outgoingPrefix") ? jsonView.get("outgoingPrefix").getAsString() : null);
-        view.setExclusive(jsonView.get("isExclusive").getAsBoolean());
-        view.setMuted(jsonView.get("isMuted").getAsBoolean());
-
-        JsonArray channels = jsonView.getAsJsonArray("channels");
-        if (channels != null) {
-            for (int i = 0; i < channels.size(); i++) {
-                JsonElement element = channels.get(i);
-                if (!element.isJsonPrimitive()) {
-                    continue;
-                }
-                ChatChannel channel = ChatManager.getChatChannel(element.getAsString());
-                if (channel != null) {
-                    view.addChannel(channel);
-                } else {
-                    ChatTweaks.logger.error("Channel {} does no longer exist. Removing it from view {}.", element.getAsString(), view.name);
-                }
-            }
-        }
-
-        return view;
-    }
-
-    public JsonObject toJson() {
-        JsonObject object = new JsonObject();
-        object.addProperty("name", name);
-        object.addProperty("filterPattern", filterPattern);
-        object.addProperty("outputFormat", outputFormat);
-        object.addProperty("style", messageStyle.name());
-        object.addProperty("outgoingPrefix", outgoingPrefix);
-        object.addProperty("isExclusive", isExclusive);
-        object.addProperty("isMuted", isMuted);
-
-        JsonArray channels = new JsonArray();
-        for (ChatChannel channel : this.channels) {
-            channels.add(new JsonPrimitive(channel.getName()));
-        }
-        object.add("channels", channels);
-        return object;
-    }
 
     public boolean messageMatches(String message) {
         Matcher matcher = compiledFilterPattern.matcher(message);
@@ -227,18 +162,6 @@ public class ChatView {
         return chatLines;
     }
 
-    public boolean hasUnreadMessages() {
-        return hasUnread;
-    }
-
-    public void markAsUnread(boolean hasUnread) {
-        this.hasUnread = hasUnread;
-    }
-
-    public void addChannel(ChatChannel channel) {
-        channels.add(channel);
-    }
-
     public Collection<ChatChannel> getChannels() {
         return channels;
     }
@@ -275,26 +198,6 @@ public class ChatView {
         builtOutputFormat = sb.toString();
     }
 
-    public boolean isExclusive() {
-        return isExclusive;
-    }
-
-    public void setExclusive(boolean exclusive) {
-        isExclusive = exclusive;
-    }
-
-    public MessageStyle getMessageStyle() {
-        return messageStyle;
-    }
-
-    public void setMessageStyle(MessageStyle messageStyle) {
-        this.messageStyle = messageStyle;
-    }
-
-    public boolean isMuted() {
-        return isMuted;
-    }
-
     public void setMuted(boolean isMuted) {
         this.isMuted = isMuted;
     }
@@ -314,25 +217,6 @@ public class ChatView {
 
     public void setTemporary(boolean temporary) {
         isTemporary = temporary;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ChatView chatView = (ChatView) o;
-        return name.equals(chatView.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
     }
 
     public void refresh() {

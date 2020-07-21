@@ -1,4 +1,4 @@
-package net.blay09.mods.chattweaks.api;
+package net.blay09.mods.chattweaks.api.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.text.Style;

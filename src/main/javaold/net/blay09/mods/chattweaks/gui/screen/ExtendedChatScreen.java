@@ -83,22 +83,8 @@ public class ExtendedChatScreen extends ChatScreen {
 
 	@Override
 	public void sendChatMessage(String message, boolean addToSentMessages) {
-		ClientChatEvent event = new ClientChatEvent(message);
 		if (ChatViewManager.getActiveView().getOutgoingPrefix() != null && !(event.getMessage().startsWith("/") && !event.getMessage().startsWith("/me "))) {
 			event.setMessage(ChatViewManager.getActiveView().getOutgoingPrefix() + event.getMessage());
-		}
-		String newMessage;
-		if (MinecraftForge.EVENT_BUS.post(event)) {
-			newMessage = null;
-		} else {
-			newMessage = event.getMessage();
-		}
-		if (!Strings.isNullOrEmpty(newMessage)) {
-			if (addToSentMessages) {
-				// Store the originally typed message, not the potentially prefixed one.
-				mc.ingameGUI.getChatGUI().addToSentMessages(message);
-			}
-			super.sendChatMessage(newMessage, false);
 		}
 	}
 

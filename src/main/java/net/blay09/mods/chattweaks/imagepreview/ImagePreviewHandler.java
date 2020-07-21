@@ -1,7 +1,7 @@
 package net.blay09.mods.chattweaks.imagepreview;
 
 import net.blay09.mods.chattweaks.ChatTweaks;
-import net.blay09.mods.chattweaks.api.ChatComponentClickEvent;
+import net.blay09.mods.chattweaks.api.event.ChatComponentClickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.api.distmarker.Dist;

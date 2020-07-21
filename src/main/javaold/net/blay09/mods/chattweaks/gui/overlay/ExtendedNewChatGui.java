@@ -1,7 +1,6 @@
 package net.blay09.mods.chattweaks.gui.overlay;
 
 import com.google.common.collect.Lists;
-import net.blay09.mods.chattweaks.ChatManager;
 import net.blay09.mods.chattweaks.ChatTweaks;
 import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.ChatViewManager;
@@ -57,121 +56,6 @@ public class ExtendedNewChatGui extends NewChatGui {
         this.mc = mc;
         this.fontRenderer = mc.fontRenderer;
         MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @Override
-    public void printChatMessageWithOptionalDeletion(ITextComponent chatComponent, int chatLineId) {
-        if (chatLineId == 0) {
-            chatLineId = ChatManager.getNextMessageId();
-        }
-
-        ChatMessage message = new ChatMessage(chatLineId, chatComponent);
-        addChatMessage(message, ChatManager.findChatChannel(message));
-    }
-
-    public void addChatMessage(ChatMessage message, ChatChannel channel) {
-        channel.addChatMessage(message);
-        List<ChatView> views = ChatViewManager.findChatViews(message, channel);
-        boolean hasReadMessage = views.contains(ChatViewManager.getActiveView());
-        for (ChatView view : views) {
-            ChatMessage viewMessage = view.addChatLine(message);
-            if (!hasReadMessage && view.getMessageStyle() == MessageStyle.Chat) {
-                view.markAsUnread(true);
-            }
-            addChatMessageForDisplay(viewMessage, view);
-        }
-
-    }
-
-    private void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
-        MinecraftForge.EVENT_BUS.post(new PrintChatMessageEvent(chatMessage, view));
-
-        switch (view.getMessageStyle()) {
-            case Chat:
-                if (view != ChatViewManager.getActiveView()) {
-                    return;
-                }
-
-                int chatWidth = MathHelper.floor((float) this.getChatWidth() / this.getChatScale());
-                List<ITextComponent> wrappedList = GuiUtilRenderComponents.splitText(chatMessage.getTextComponent(), chatWidth, this.mc.fontRenderer, false, false);
-                boolean isChatOpen = this.getChatOpen();
-                int colorIndex = -1;
-                int emoteIndex = 0;
-                for (ITextComponent chatLine : wrappedList) {
-                    if (isChatOpen && this.scrollPos > 0) {
-                        this.isScrolled = true;
-                        this.scroll(1);
-                    }
-
-                    String formattedText = chatLine.getFormattedText();
-                    if (ChatTweaksConfig.CLIENT.disableUnderlines.get()) {
-                        formattedText = UNDERLINE_CODE_PATTERN.matcher(formattedText).replaceAll("");
-                    }
-
-                    Matcher splitMatcher = CUSTOM_FORMATTING_CODE_PATTERN.matcher(formattedText);
-                    List<TextRenderRegion> regions = Lists.newArrayList();
-                    int lastIdx = 0;
-                    while (splitMatcher.find()) {
-                        String code = splitMatcher.group(1);
-                        regions.add(new TextRenderRegion(formattedText.substring(lastIdx, splitMatcher.start()), chatMessage.getRGBColor(colorIndex)));
-                        if (code.equals("#")) {
-                            colorIndex++;
-                        }
-
-                        lastIdx = splitMatcher.end();
-                    }
-
-                    if (lastIdx < formattedText.length()) {
-                        regions.add(new TextRenderRegion(formattedText.substring(lastIdx), chatMessage.getRGBColor(colorIndex)));
-                    }
-
-                    String cleanText = FORMATTING_CODE_PATTERN.matcher(chatLine.getUnformattedText()).replaceAll("");
-                    Matcher matcher = EMOTE_PATTERN.matcher(cleanText);
-                    List<ChatImage> images = null;
-                    if (chatMessage.hasImages()) {
-                        images = Lists.newArrayList();
-                        while (matcher.find()) {
-                            ChatImage image = chatMessage.getImage(emoteIndex);
-                            if (image != null) {
-                                image.setIndex(matcher.start());
-                                images.add(image);
-                            }
-                            emoteIndex++;
-                        }
-                    }
-
-                    this.wrappedChatLines.add(0, new WrappedChatLine(mc.ingameGUI.getUpdateCounter(), chatMessage, chatLine, cleanText, regions, images, alternateBackground));
-                }
-
-                while (this.wrappedChatLines.size() > ChatTweaks.MAX_MESSAGES) {
-                    this.wrappedChatLines.remove(this.wrappedChatLines.size() - 1);
-                }
-
-                alternateBackground = !alternateBackground;
-                break;
-            case Side:
-                if (!view.isMuted()) {
-                    SideChatRenderer.addMessage(chatMessage);
-                }
-                break;
-            case Bottom:
-                if (!view.isMuted()) {
-                    BottomChatRenderer.setMessage(chatMessage);
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void clearChatMessages(boolean clearSent) {
-        wrappedChatLines.clear();
-        for (ChatChannel channel : ChatManager.getChatChannels()) {
-            channel.clearChatMessages();
-        }
-
-        if (clearSent) {
-            getSentMessages().clear();
-        }
     }
 
     @Override

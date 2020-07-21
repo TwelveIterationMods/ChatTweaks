@@ -1,4 +1,4 @@
-package net.blay09.mods.chattweaks.api;
+package net.blay09.mods.chattweaks.api.event;
 
 import net.minecraft.util.text.Style;
 import net.minecraftforge.eventbus.api.Cancelable;
