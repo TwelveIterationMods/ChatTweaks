@@ -43,7 +43,7 @@ public class SideChatDisplay implements ChatDisplay {
     }
 
     @Override
-    public void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
+    public void addChatMessage(ChatMessage chatMessage, ChatView view) {
         if (!view.isMuted()) {
             for (SideChatMessage message : messages) {
                 message.y -= Minecraft.getInstance().fontRenderer.FONT_HEIGHT + 2;

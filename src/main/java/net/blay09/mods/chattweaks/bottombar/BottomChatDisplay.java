@@ -30,7 +30,7 @@ public class BottomChatDisplay implements ChatDisplay {
     }
 
     @Override
-    public void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
+    public void addChatMessage(ChatMessage chatMessage, ChatView view) {
         if (!view.isMuted()) {
             this.chatMessage = chatMessage;
             timeLeft = MESSAGE_TIME;

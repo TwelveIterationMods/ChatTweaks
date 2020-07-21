@@ -5,6 +5,8 @@ public interface ChatView {
 
     boolean isMuted();
 
+    void setMuted(boolean muted);
+
     void setExclusive(boolean exclusive);
 
     boolean isExclusive();
@@ -15,11 +17,29 @@ public interface ChatView {
 
     void addChannel(String channelName);
 
-    boolean hasUnreadMessages();
-    void markAsUnread();
-    void markAsRead();
-
     boolean containsChannel(String channelName);
 
+    void removeChannel(String channelName);
+
+    boolean hasUnreadMessages();
+
+    void markAsUnread();
+
+    void markAsRead();
+
     boolean messageMatches(String message);
+
+    ChatMessage addChatLine(ChatMessage chatMessage);
+
+    String getFilterPattern();
+
+    void setFilterPattern(String filterPattern);
+
+    String getOutputFormat();
+
+    void setOutputFormat(String outputFormat);
+
+    String getOutgoingPrefix();
+
+    void setOutgoingPrefix(String outgoingPrefix);
 }

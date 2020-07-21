@@ -8,6 +8,7 @@ import net.blay09.mods.chattweaks.api.ChatView;
 import net.blay09.mods.chattweaks.api.event.PrintChatMessageEvent;
 import net.blay09.mods.chattweaks.bottombar.BottomChatDisplay;
 import net.blay09.mods.chattweaks.sidebar.SideChatDisplay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,15 +28,9 @@ public class ChatManager {
 
     public static final ChatChannel mainChannel = new ChatChannelImpl("main", "Default", new ResourceLocation("chattweaks:textures/channel_main.png"), null);
 
-    private static final String[] interactionLang = new String[]{
-            "tile.bed.noSleep",
-            "tile.bed.notSafe",
-            "tile.bed.occupied",
-    };
-    public static final ChatChannel interactionChannel = new ChatChannelImpl("interaction", "e.g. bed messages", new ResourceLocation("chattweaks:textures/channel_interaction.png"), key -> ArrayUtils.contains(interactionLang, key));
-
     private static final String[] systemLang = new String[]{
             "gameMode.changed",
+            "commands.time.set",
             "chat.type.admin",
     };
     public static final ChatChannel systemChannel = new ChatChannelImpl("system", "e.g. command response", new ResourceLocation("chattweaks:textures/channel_system.png"), key -> ArrayUtils.contains(systemLang, key));
@@ -50,7 +46,6 @@ public class ChatManager {
 
     public static void init() {
         addChatChannel(mainChannel);
-        addChatChannel(interactionChannel);
         addChatChannel(systemChannel);
         addChatChannel(deathChannel);
 
@@ -77,12 +72,12 @@ public class ChatManager {
     }
 
     public static void removeChatChannel(String name) {
-        /* TODO ChatChannel channel = channels.remove(name);
-        if(channel != null) {
+        ChatChannel channel = channels.remove(name);
+        if (channel != null) {
             for (ChatView chatView : ChatViewManager.getViews()) {
-                chatView.getChannels().remove(channel);
+                chatView.removeChannel(channel.getName());
             }
-        }*/
+        }
     }
 
     @SubscribeEvent
@@ -104,15 +99,15 @@ public class ChatManager {
     public static void addChatMessage(ChatMessage message, ChatChannel channel) {
         channel.addChatMessage(message);
 
-        /*TODO List<ChatView> views = ChatViewManager.findChatViews(message, channel);
+        List<ChatView> views = ChatViewManager.findChatViews(message, channel);
         boolean hasReadMessage = views.contains(ChatViewManager.getActiveView());
         for (ChatView view : views) {
             ChatMessage viewMessage = view.addChatLine(message);
-            if (!hasReadMessage && view.getMessageStyle() == MessageStyle.Chat) {
-                view.markAsUnread(true);
+            if (!hasReadMessage) {
+                view.markAsUnread();
             }
             addChatMessageForDisplay(viewMessage, view);
-        }*/
+        }
     }
 
     public static ChatChannel findChatChannel(ChatMessage message) {
@@ -136,7 +131,7 @@ public class ChatManager {
     }
 
     private static void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
-        final ChatDisplay display = Math.random() < 0.5 ? displays.get("bottom") : displays.get("side");
-        display.addChatMessageForDisplay(chatMessage, view);
+        final ChatDisplay display = displays.getOrDefault(view.getDisplay(), displays.get("chat"));
+        display.addChatMessage(chatMessage, view);
     }
 }

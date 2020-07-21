@@ -6,10 +6,18 @@ import javax.annotation.Nullable;
 
 public interface ChatMessage {
     int getChatLineId();
+
     ITextComponent getTextComponent();
+
     ITextComponent getSenderComponent();
+
+    ITextComponent getMessageComponent();
+
     void setBackgroundColor(int color);
+
     int getBackgroundColor();
+
+    long getTimestamp();
 
     void setExclusiveView(@Nullable ChatView view);
 

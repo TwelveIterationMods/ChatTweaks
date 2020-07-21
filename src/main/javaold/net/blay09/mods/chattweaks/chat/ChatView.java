@@ -17,25 +17,6 @@ import java.util.regex.PatternSyntaxException;
 
 public class ChatView {
 
-    public static final Pattern defaultFilterPattern = Pattern.compile("(?:<(?<s>[^>]+)>)? ?(?<m>.*)", Pattern.DOTALL);
-    public static final Pattern groupPattern = Pattern.compile("\\$(?:([0-9])|\\{([\\w])\\})");
-    public static final Pattern outputFormattingPattern = Pattern.compile("(\\\\~|~[0-9abcdefkolmnr])");
-
-    private String filterPattern = "";
-    private String outputFormat = "$0";
-    private String outgoingPrefix;
-
-    private Pattern compiledFilterPattern = defaultFilterPattern;
-    private String builtOutputFormat = outputFormat;
-    private final List<ChatMessage> chatLines = Lists.newArrayList();
-
-    private boolean isTemporary;
-
-    public boolean messageMatches(String message) {
-        Matcher matcher = compiledFilterPattern.matcher(message);
-        return matcher.matches();
-    }
-
     private ITextComponent subTextComponent(ITextComponent component, int startIndex, int endIndex) {
         int index = 0;
         TextComponent result = new StringTextComponent("");
@@ -156,67 +137,6 @@ public class ChatView {
 
         chatLine.setTextComponent(resultComponent != null ? resultComponent : textComponent);
         return chatLine;
-    }
-
-    public List<ChatMessage> getChatLines() {
-        return chatLines;
-    }
-
-    public Collection<ChatChannel> getChannels() {
-        return channels;
-    }
-
-    public void setFilterPattern(String filterPattern) {
-        this.filterPattern = filterPattern;
-        if (!filterPattern.isEmpty()) {
-            try {
-                compiledFilterPattern = Pattern.compile(filterPattern, Pattern.DOTALL);
-            } catch (PatternSyntaxException e) {
-                compiledFilterPattern = defaultFilterPattern;
-            }
-        } else {
-            compiledFilterPattern = defaultFilterPattern;
-        }
-    }
-
-    public String getFilterPattern() {
-        return filterPattern;
-    }
-
-    public String getOutputFormat() {
-        return outputFormat;
-    }
-
-    public void setOutputFormat(String outputFormat) {
-        this.outputFormat = outputFormat;
-        Matcher matcher = outputFormattingPattern.matcher(outputFormat);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            matcher.appendReplacement(sb, "\u00a7" + matcher.group(1));
-        }
-        matcher.appendTail(sb);
-        builtOutputFormat = sb.toString();
-    }
-
-    public void setMuted(boolean isMuted) {
-        this.isMuted = isMuted;
-    }
-
-    @Nullable
-    public String getOutgoingPrefix() {
-        return outgoingPrefix;
-    }
-
-    public void setOutgoingPrefix(@Nullable String outgoingPrefix) {
-        this.outgoingPrefix = outgoingPrefix;
-    }
-
-    public boolean isTemporary() {
-        return isTemporary;
-    }
-
-    public void setTemporary(boolean temporary) {
-        isTemporary = temporary;
     }
 
     public void refresh() {

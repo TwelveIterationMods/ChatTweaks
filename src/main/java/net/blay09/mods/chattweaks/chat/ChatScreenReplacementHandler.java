@@ -1,6 +1,7 @@
 package net.blay09.mods.chattweaks.chat;
 
 import net.blay09.mods.chattweaks.ChatTweaks;
+import net.blay09.mods.chattweaks.core.ChatManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.SleepInMultiplayerScreen;
@@ -24,6 +25,8 @@ public class ChatScreenReplacementHandler {
     }
 
     public static void replaceNewChatGui() {
-        Minecraft.getInstance().ingameGUI.persistantChatGUI = new VanillaNewChatGui(Minecraft.getInstance());
+        final VanillaNewChatGui newChatGui = new VanillaNewChatGui(Minecraft.getInstance());
+        Minecraft.getInstance().ingameGUI.persistantChatGUI = newChatGui;
+        ChatManager.addChatDisplay(newChatGui);
     }
 }

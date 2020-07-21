@@ -11,10 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Mod.EventBusSubscriber(modid = ChatTweaks.MOD_ID, value = Dist.CLIENT)
 public class ChatViewManager {
@@ -25,7 +22,6 @@ public class ChatViewManager {
     public static ChatView createDefaultView() {
         ChatView defaultView = new ChatViewImpl("*");
         defaultView.addChannel(ChatManager.mainChannel.getName());
-        defaultView.addChannel(ChatManager.interactionChannel.getName());
         defaultView.addChannel(ChatManager.systemChannel.getName());
         defaultView.addChannel(ChatManager.deathChannel.getName());
         return defaultView;
@@ -37,14 +33,6 @@ public class ChatViewManager {
         systemView.setDisplay(ChatManager.sideChatDisplay.getName());
         systemView.setExclusive(true);
         return systemView;
-    }
-
-    public static ChatView createInteractionView() {
-        ChatView interactionView = new ChatViewImpl("interaction");
-        interactionView.addChannel(ChatManager.interactionChannel.getName());
-        interactionView.setDisplay(ChatManager.bottomChatDisplay.getName());
-        interactionView.setExclusive(true);
-        return interactionView;
     }
 
     public static List<ChatView> findChatViews(ChatMessage message, ChatChannel channel) {
@@ -83,7 +71,6 @@ public class ChatViewManager {
     public static void init() {
         views.put("*", createDefaultView());
         views.put("system", createSystemView());
-        views.put("interaction", createInteractionView());
     }
 
     @SubscribeEvent
@@ -92,5 +79,9 @@ public class ChatViewManager {
         /*for (ChatChannel channel : ChatManager.getChatChannels()) {
             channel.clearChatMessages();
         }*/
+    }
+
+    public static Collection<ChatView> getViews() {
+        return views.values();
     }
 }

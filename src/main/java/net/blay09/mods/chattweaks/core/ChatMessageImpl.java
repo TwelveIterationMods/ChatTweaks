@@ -10,15 +10,17 @@ public class ChatMessageImpl implements ChatMessage {
 
     private final int chatLineId;
     private final ITextComponent textComponent;
-    private final ITextComponent senderComponent;
-    private int backgroundColor;
+    private final long timestamp;
 
+    private ITextComponent senderComponent;
+    private ITextComponent messageComponent;
+    private int backgroundColor;
     private ChatView exclusiveView;
 
     public ChatMessageImpl(int chatLineId, ITextComponent textComponent) {
         this.chatLineId = chatLineId;
         this.textComponent = textComponent;
-        senderComponent = textComponent; // TODO
+        this.timestamp = System.currentTimeMillis();
     }
 
     @Override
@@ -37,6 +39,11 @@ public class ChatMessageImpl implements ChatMessage {
     }
 
     @Override
+    public ITextComponent getMessageComponent() {
+        return messageComponent;
+    }
+
+    @Override
     public void setBackgroundColor(int color) {
         backgroundColor = color;
     }
@@ -44,6 +51,11 @@ public class ChatMessageImpl implements ChatMessage {
     @Override
     public int getBackgroundColor() {
         return backgroundColor;
+    }
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
     }
 
     @Override

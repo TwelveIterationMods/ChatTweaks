@@ -41,7 +41,8 @@ public class ExtendedNewChatGui extends NewChatGui implements ChatDisplay {
     }
 
     @Override
-    public void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
+    public void addChatMessage(ChatMessage chatMessage, ChatView view) {
+        this.func_238493_a_(chatMessage.getTextComponent(), chatMessage.getChatLineId(), mc.ingameGUI.getTicks(), false);
         /*if (view != ChatViewManager.getActiveView()) {
             return;
         }

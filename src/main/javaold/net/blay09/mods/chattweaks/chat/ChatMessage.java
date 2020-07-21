@@ -12,35 +12,10 @@ import java.util.Map;
 
 public class ChatMessage {
 
-    private final int id;
-    private ITextComponent chatComponent;
-    private int backgroundColor;
     private List<ChatImage> images;
 	private int[] rgbColors;
     private CompoundNBT customData;
-	private long timestamp;
-	private ChatView exclusiveView;
-	private ITextComponent sender;
-	private ITextComponent message;
 	private Map<String, ITextComponent> outputVars;
-
-	public ChatMessage(int id, ITextComponent chatComponent) {
-        this.id = id;
-        this.chatComponent = chatComponent;
-		this.timestamp = System.currentTimeMillis();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-	public ITextComponent getTextComponent() {
-		return chatComponent;
-	}
-
-	public void setTextComponent(ITextComponent chatComponent) {
-		this.chatComponent = chatComponent;
-	}
 
     public CompoundNBT getCustomData() {
         return customData;
@@ -48,18 +23,6 @@ public class ChatMessage {
 
     public boolean hasData() {
         return customData != null;
-    }
-
-    public boolean hasBackgroundColor() {
-        return backgroundColor != 0;
-    }
-
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
     }
 
 	@Nullable
@@ -114,10 +77,6 @@ public class ChatMessage {
         return images != null;
     }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
-
 	public void clearImages() {
 		images = null;
 	}
@@ -139,36 +98,6 @@ public class ChatMessage {
 		return out;
 	}
 
-	public void setExclusiveView(ChatView view) {
-		this.exclusiveView = view;
-	}
-
-	public boolean hasExclusiveView() {
-		return exclusiveView != null;
-	}
-
-	public ChatView getExclusiveView() {
-		return exclusiveView;
-	}
-
-	public void setSender(@Nullable ITextComponent sender) {
-		this.sender = sender;
-	}
-
-	@Nullable
-	public ITextComponent getSender() {
-		return sender;
-	}
-
-	@Nullable
-	public ITextComponent getMessage() {
-		return message;
-	}
-
-	public void setMessage(ITextComponent message) {
-		this.message = message;
-	}
-
 	public void setOutputVar(String key, @Nullable ITextComponent value) {
 		if(outputVars == null) {
 			outputVars = Maps.newHashMap();
@@ -179,10 +108,5 @@ public class ChatMessage {
 	@Nullable
 	public ITextComponent getOutputVar(String key) {
 		return outputVars != null ? outputVars.get(key) : null;
-	}
-
-	@Override
-	public String toString() {
-		return chatComponent.getString();
 	}
 }
