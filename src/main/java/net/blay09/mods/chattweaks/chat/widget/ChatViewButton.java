@@ -14,8 +14,7 @@ public class ChatViewButton extends Button {
 
 	public ChatViewButton(int x, int y, FontRenderer fontRenderer, ChatView view) {
 		super(x, y, fontRenderer.getStringWidth(getViewButtonText(view)), 10, new StringTextComponent(getViewButtonText(view)), button -> {
-			//noinspection ConstantConditions
-			Minecraft.getInstance().player.sendStatusMessage(new StringTextComponent("nopey dopey"), false);
+			ChatViewManager.setActiveView(view);
 		});
 		this.view = view;
 	}

@@ -8,6 +8,8 @@ import net.minecraftforge.eventbus.api.Event;
 public class PrintChatMessageEvent extends Event {
 
     private ITextComponent chatComponent;
+
+    @Deprecated
     private int chatLineId;
 
     public PrintChatMessageEvent(ITextComponent chatComponent, int chatLineId) {
@@ -23,10 +25,12 @@ public class PrintChatMessageEvent extends Event {
         this.chatComponent = chatComponent;
     }
 
+    @Deprecated
     public int getChatLineId() {
         return chatLineId;
     }
 
+    @Deprecated
     public void setChatLineId(int chatLineId) {
         this.chatLineId = chatLineId;
     }

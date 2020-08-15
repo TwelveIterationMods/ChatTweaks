@@ -69,7 +69,7 @@ public class BottomChatDisplay implements ChatDisplay {
         AbstractGui.fill(event.getMatrixStack(), x - boxMarginX, y - boxMarginY, x + textWidth + boxMarginX, y + fontRenderer.FONT_HEIGHT + boxMarginY, backgroundColor);
         if (alpha > 12) {
             RenderSystem.enableBlend();
-            fontRenderer.func_238422_b_(event.getMatrixStack(), textComponent, x, y, 0xFFFFFF + (alpha << 24));
+            fontRenderer.func_243246_a(event.getMatrixStack(), textComponent, x, y, 0xFFFFFF + (alpha << 24));
         }
 
         RenderSystem.popMatrix();

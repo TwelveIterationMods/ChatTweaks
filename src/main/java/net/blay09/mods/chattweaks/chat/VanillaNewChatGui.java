@@ -4,6 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ChatLine;
+import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -20,7 +22,7 @@ public class VanillaNewChatGui extends ExtendedNewChatGui {
             int lineCount = this.getLineCount();
             int drawnChatLinesCount = this.drawnChatLines.size();
             if (drawnChatLinesCount > 0) {
-                final boolean isChatOpen = this.getChatOpen();
+                final boolean isChatOpen = this.mc.currentScreen instanceof ChatScreen;
 
                 double scale = this.getScale();
                 int scaledWidth = MathHelper.ceil((double) this.getChatWidth() / scale);
@@ -35,7 +37,7 @@ public class VanillaNewChatGui extends ExtendedNewChatGui {
                 int l = 0;
 
                 for (int i1 = 0; i1 + this.scrollPos < this.drawnChatLines.size() && i1 < lineCount; ++i1) {
-                    ChatLine chatLine = this.drawnChatLines.get(i1 + this.scrollPos);
+                    ChatLine<IReorderingProcessor> chatLine = this.drawnChatLines.get(i1 + this.scrollPos);
                     if (chatLine != null) {
                         int chatLineTicks = updateCounter - chatLine.getUpdatedCounter();
                         if (chatLineTicks < 200 || isChatOpen) {
@@ -67,7 +69,7 @@ public class VanillaNewChatGui extends ExtendedNewChatGui {
                     fill(matrixStack, -2, 0, scaledWidth + 4, 9, i3 << 24);
                     RenderSystem.enableBlend();
                     matrixStack.translate(0.0D, 0.0D, 50.0D);
-                    this.mc.fontRenderer.func_238407_a_(matrixStack, new TranslationTextComponent("chat.queue", this.field_238489_i_.size()), 0.0F, 1.0F, 16777215 + (k2 << 24));
+                    this.mc.fontRenderer.func_243246_a(matrixStack, new TranslationTextComponent("chat.queue", this.field_238489_i_.size()), 0.0F, 1.0F, 16777215 + (k2 << 24));
                     matrixStack.pop();
                     RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();

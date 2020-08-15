@@ -81,7 +81,7 @@ public class SideChatDisplay implements ChatDisplay {
             }
 
             final ITextComponent textComponent = message.chatMessage.getTextComponent();
-            Minecraft.getInstance().fontRenderer.func_238422_b_(event.getMatrixStack(), textComponent, -Minecraft.getInstance().fontRenderer.func_238414_a_(textComponent) - 16, message.y, 0xFFFFFF + (alpha << 24));
+            Minecraft.getInstance().fontRenderer.func_243246_a(event.getMatrixStack(), textComponent, -Minecraft.getInstance().fontRenderer.func_238414_a_(textComponent) - 16, message.y, 0xFFFFFF + (alpha << 24));
         }
         RenderSystem.disableBlend();
         RenderSystem.popMatrix();

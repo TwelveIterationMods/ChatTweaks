@@ -3,6 +3,7 @@ package net.blay09.mods.chattweaks.core;
 import net.blay09.mods.chattweaks.ChatTweaksConfig;
 import net.blay09.mods.chattweaks.api.ChatMessage;
 import net.blay09.mods.chattweaks.api.ChatView;
+import net.blay09.mods.chattweaks.chat.ExtendedNewChatGui;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
@@ -21,7 +22,7 @@ public class ChatViewImpl implements ChatView {
     private final List<ChatMessage> chatMessages = new ArrayList<>();
 
     private final String name;
-    private String display;
+    private String display = ExtendedNewChatGui.DISPLAY_NAME;
     private boolean muted;
     private boolean exclusive;
     private boolean unread;

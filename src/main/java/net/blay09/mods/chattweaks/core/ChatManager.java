@@ -74,7 +74,7 @@ public class ChatManager {
     public static void removeChatChannel(String name) {
         ChatChannel channel = channels.remove(name);
         if (channel != null) {
-            for (ChatView chatView : ChatViewManager.getViews()) {
+            for (ChatView chatView : ChatViewManager.getChatViews()) {
                 chatView.removeChannel(channel.getName());
             }
         }

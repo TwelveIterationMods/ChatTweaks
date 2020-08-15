@@ -14,6 +14,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class ExtendedNewChatGui extends NewChatGui implements ChatDisplay {
 
+    public static final String DISPLAY_NAME = "chat";
+
     protected final Minecraft mc;
 
     private boolean alternateBackground;
@@ -24,10 +26,10 @@ public class ExtendedNewChatGui extends NewChatGui implements ChatDisplay {
     }
 
     @Override
-    public void printChatMessageWithOptionalDeletion(ITextComponent chatComponent, int chatLineId) {
-        PrintChatMessageEvent event = new PrintChatMessageEvent(chatComponent, chatLineId);
+    public void printChatMessage(ITextComponent chatComponent) {
+        PrintChatMessageEvent event = new PrintChatMessageEvent(chatComponent, 0);
         if (!MinecraftForge.EVENT_BUS.post(event)) {
-            super.printChatMessageWithOptionalDeletion(event.getChatComponent(), event.getChatLineId());
+            super.printChatMessage(event.getChatComponent());
         }
     }
 
@@ -52,7 +54,7 @@ public class ExtendedNewChatGui extends NewChatGui implements ChatDisplay {
 
     @Override
     public String getName() {
-        return "chat";
+        return DISPLAY_NAME;
     }
 
     @Override

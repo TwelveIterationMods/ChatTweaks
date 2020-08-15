@@ -20,7 +20,7 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     public void refreshChat() {
-        for (ChatView chatView : ChatViewManager.getViews()) {
+        for (ChatView chatView : ChatViewManager.getChatViews()) {
             chatView.refresh();
         }
 

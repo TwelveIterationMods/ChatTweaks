@@ -16,7 +16,8 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = ChatTweaks.MOD_ID, value = Dist.CLIENT)
 public class ChatViewManager {
 
-    private static final Map<String, ChatView> views = new HashMap<>();
+    private static final List<ChatView> views = new ArrayList<>();
+    private static final Map<String, ChatView> viewsByName = new HashMap<>();
     private static ChatView activeView;
 
     public static ChatView createDefaultView() {
@@ -27,6 +28,16 @@ public class ChatViewManager {
         return defaultView;
     }
 
+    public static ChatView createTestView() {
+        ChatView testView = new ChatViewImpl("test");
+        testView.addChannel(ChatManager.mainChannel.getName());
+        testView.setFilterPattern(".+uwu.+");
+        testView.setOutgoingPrefix("*rawr*, ");
+        testView.setOutputFormat("${s}-wu: ${m}");
+        testView.setExclusive(true);
+        return testView;
+    }
+
     public static ChatView createSystemView() {
         ChatView systemView = new ChatViewImpl("system");
         systemView.addChannel(ChatManager.systemChannel.getName());
@@ -35,9 +46,14 @@ public class ChatViewManager {
         return systemView;
     }
 
+    public static void registerView(ChatView chatView) {
+        views.add(chatView);
+        viewsByName.put(chatView.getName(), chatView);
+    }
+
     public static List<ChatView> findChatViews(ChatMessage message, ChatChannel channel) {
         List<ChatView> result = new ArrayList<>();
-        for (ChatView view : views.values()) {
+        for (ChatView view : views) {
             if (view.containsChannel(channel.getName()) && view.matchesFilter(message)) {
                 if (view.isExclusive()) {
                     result.clear();
@@ -64,13 +80,14 @@ public class ChatViewManager {
 
     @Nullable
     public static ChatView getChatView(String name) {
-        return views.get(name);
+        return viewsByName.get(name);
     }
 
     public static void init() {
-        views.put("*", createDefaultView());
-        views.put("system", createSystemView());
-        activeView = views.get("*");
+        registerView(createDefaultView());
+        registerView(createTestView());
+        registerView(createSystemView());
+        activeView = views.get(0);
     }
 
     @SubscribeEvent
@@ -81,7 +98,7 @@ public class ChatViewManager {
         }*/
     }
 
-    public static Collection<ChatView> getViews() {
-        return views.values();
+    public static List<ChatView> getChatViews() {
+        return views;
     }
 }
