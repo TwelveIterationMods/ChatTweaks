@@ -7,6 +7,7 @@ import net.blay09.mods.chattweaks.api.ChatMessage;
 import net.blay09.mods.chattweaks.api.ChatView;
 import net.blay09.mods.chattweaks.api.event.PrintChatMessageEvent;
 import net.blay09.mods.chattweaks.bottombar.BottomChatDisplay;
+import net.blay09.mods.chattweaks.chat.ExtendedNewChatGui;
 import net.blay09.mods.chattweaks.sidebar.SideChatDisplay;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -133,5 +134,9 @@ public class ChatManager {
     public static void addChatMessageForDisplay(ChatMessage chatMessage, ChatView view) {
         final ChatDisplay display = displays.getOrDefault(view.getDisplay(), displays.get("chat"));
         display.addChatMessage(chatMessage, view);
+    }
+
+    public static ChatDisplay getDefaultChatDisplay() {
+        return displays.get(ExtendedNewChatGui.DISPLAY_NAME);
     }
 }

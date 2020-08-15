@@ -42,6 +42,11 @@ public class ExtendedNewChatGui extends NewChatGui implements ChatDisplay {
     }
 
     @Override
+    public void refreshDisplay() {
+        refreshChat();
+    }
+
+    @Override
     public void refreshChat() {
         this.drawnChatLines.clear();
         this.resetScroll();

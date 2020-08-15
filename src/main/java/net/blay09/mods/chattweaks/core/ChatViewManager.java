@@ -71,7 +71,7 @@ public class ChatViewManager {
     public static void setActiveView(ChatView view) {
         activeView = view;
         view.markAsRead();
-        // TODO ChatTweaks.getChatDisplay().refreshChat();
+        ChatManager.getDefaultChatDisplay().refreshDisplay();
     }
 
     public static ChatView getActiveView() {
